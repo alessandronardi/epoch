@@ -1,0 +1,452 @@
+{
+  "e1_farm": {
+    "file": "cards/placeholders/e1_farm.svg",
+    "alt": {
+      "it": "Illustrazione di una fattoria in legno all'alba con campo di grano e carro trainato da buoi."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Small timber farmstead at dawn, wheat field, ox cart, smoke rising from a thatched roof",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "e1_lumb": {
+    "file": "cards/placeholders/e1_lumb.svg",
+    "alt": {
+      "it": "Illustrazione di una segheria rustica ai margini del bosco con due uomini e tronchi accatastati."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Rustic sawing pit at a forest edge, two men with a long saw, stacked logs",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "e1_mine": {
+    "file": "cards/placeholders/e1_mine.svg",
+    "alt": {
+      "it": "Illustrazione di una cava di roccia a cielo aperto con impalcature in legno e minatori al lavoro."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Open rock quarry with crude timber scaffolds, miners with pickaxes, torchlight",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "e2_fnd": {
+    "file": "cards/placeholders/e2_fnd.svg",
+    "alt": {
+      "it": "Illustrazione di una fonderia con crogioli incandescenti, mantici e metallo fuso colato negli stampi."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Foundry with glowing crucibles and bellows, molten metal poured into molds, sparks",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "e2_mill": {
+    "file": "cards/placeholders/e2_mill.svg",
+    "alt": {
+      "it": "Illustrazione di un mulino in pietra con grande ruota idraulica in legno accanto a un torrente."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Stone watermill with a large wooden wheel beside a stream, flour sacks, bright afternoon",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "e2_saw": {
+    "file": "cards/placeholders/e2_saw.svg",
+    "alt": {
+      "it": "Illustrazione di una grande segheria ad acqua con lama alternativa che taglia un tronco imponente."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Water-powered sawmill with a reciprocating blade cutting a huge log",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "e3_frn": {
+    "file": "cards/placeholders/e3_frn.svg",
+    "alt": {
+      "it": "Illustrazione di un imponente altoforno reale che cola ferro fuso tra fumo denso e bagliori arancioni."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Massive blast furnace pouring molten iron, workers in silhouette, orange glow, smoke",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "e3_gld": {
+    "file": "cards/placeholders/e3_gld.svg",
+    "alt": {
+      "it": "Illustrazione dell'interno di una gilda dei mercanti con registri, monete d'oro e un atto sigillato."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Merchant guild hall interior, ledgers and gold coins on a table, a trader signing a deed with a wax seal",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "i1_arr": {
+    "file": "cards/placeholders/i1_arr.svg",
+    "alt": {
+      "it": "Illustrazione di una fitta salva di frecce che oscura il cielo sopra il campo di battaglia."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Dense volley of arrows darkening the sky above a battlefield",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "i1_wall": {
+    "file": "cards/placeholders/i1_wall.svg",
+    "alt": {
+      "it": "Illustrazione di soldati che piantano pali appuntiti su un terrapieno di notte alla luce delle torce."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Soldiers driving sharpened stakes into an earthen rampart at night by torchlight",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "i2_mor": {
+    "file": "cards/placeholders/i2_mor.svg",
+    "alt": {
+      "it": "Illustrazione di un comandante che lancia il grido di guerra dai bastioni con lo stendardo sollevato."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Commander roaring on a rampart with a raised banner, soldiers surging behind",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "i2_sab": {
+    "file": "cards/placeholders/i2_sab.svg",
+    "alt": {
+      "it": "Illustrazione di una galleria sotterranea con puntelli in legno e genieri sotto le mura di una fortezza."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Tunnel beneath fortress walls with timber props and sappers by candlelight, cracks above",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "i3_fir": {
+    "file": "cards/placeholders/i3_fir.svg",
+    "alt": {
+      "it": "Illustrazione di un sifone di bronzo che proietta getti di fuoco greco liquido contro le mura."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Bronze siphon spraying streams of liquid fire across a wall, flames reflected on armor",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "i3_ral": {
+    "file": "cards/placeholders/i3_ral.svg",
+    "alt": {
+      "it": "Illustrazione di fanteria e picchieri che caricano su un pendio dietro un alfiere nella luce dorata."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Infantry and spearmen charging up a slope behind a standard-bearer, golden backlight",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u1_arc_h": {
+    "file": "cards/placeholders/u1_arc_h.svg",
+    "alt": {
+      "it": "Illustrazione di una linea disciplinata di arcieri d'ordinanza in livrea che scoccano una salva."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Disciplined line of longbow archers in matching livery drawing together, volley rising",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u1_arc_l": {
+    "file": "cards/placeholders/u1_arc_l.svg",
+    "alt": {
+      "it": "Illustrazione di un cacciatore incappucciato che mira con un arco corto da una collina boscosa."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Hooded hunter-archer aiming a short bow from a wooded hillside",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u1_cav_h": {
+    "file": "cards/placeholders/u1_cav_h.svg",
+    "alt": {
+      "it": "Illustrazione di un cavaliere feudale in cotta di maglia e sopravveste araldica con lancia abbassata."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Feudal knight in mail and heraldic surcoat on a caparisoned horse, lance lowered",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u1_cav_l": {
+    "file": "cards/placeholders/u1_cav_l.svg",
+    "alt": {
+      "it": "Illustrazione di un esploratore a cavallo al galoppo lungo un crinale che solleva una scia di polvere."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Light scout rider on a lean horse at full gallop along a ridge, dust trail",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u1_inf_h": {
+    "file": "cards/placeholders/u1_inf_h.svg",
+    "alt": {
+      "it": "Illustrazione di un fante con cotta di maglia e spada corta saldo dietro un grande scudo a goccia."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Infantryman braced behind a large kite shield, mail coif, short sword, impact imminent",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u1_inf_l": {
+    "file": "cards/placeholders/u1_inf_l.svg",
+    "alt": {
+      "it": "Illustrazione di miliziani cittadini con giubbotti imbottiti e scudi rotondi davanti alla porta."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Townsmen militia in mismatched leather and quilted jackets, round wooden shields, behind a town gate",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u1_sig_h": {
+    "file": "cards/placeholders/u1_sig_h.svg",
+    "alt": {
+      "it": "Illustrazione di un ariete da assedio coperto con trave ferrata spinto verso una porta fortificata."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Roofed battering ram with an iron-capped log being pushed toward a gate",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u1_sig_l": {
+    "file": "cards/placeholders/u1_sig_l.svg",
+    "alt": {
+      "it": "Illustrazione di una squadra di genieri militari con leve e puntelli che scalzano un muro di pietra."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Military engineers with crowbars and wooden props undermining a stone wall",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u1_spr_h": {
+    "file": "cards/placeholders/u1_spr_h.svg",
+    "alt": {
+      "it": "Illustrazione di un lanciere pesante inginocchiato con il calcio della lancia piantato nel terreno."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Armored spearman kneeling with spear butt planted in the ground, aimed at charging horsemen",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u1_spr_l": {
+    "file": "cards/placeholders/u1_spr_l.svg",
+    "alt": {
+      "it": "Illustrazione di un picchiere di leva con lunga lancia davanti a una schiera di compagni d'arme."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Levy spearman in a plain cap holding a long spear, field and line of spears behind him",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u2_arc_h": {
+    "file": "cards/placeholders/u2_arc_h.svg",
+    "alt": {
+      "it": "Illustrazione di un balestriere pesante che carica una balestra d'acciaio dietro un grande pavese."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Crossbowman winding a heavy steel crossbow behind a large pavise shield",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u2_arc_l": {
+    "file": "cards/placeholders/u2_arc_l.svg",
+    "alt": {
+      "it": "Illustrazione di un arciere che tende un arco composito ricurvo sotto un cielo terso color acciaio."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Archer drawing a recurved composite bow, horn and sinew detail, cold steel sky",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u2_cav_h": {
+    "file": "cards/placeholders/u2_cav_h.svg",
+    "alt": {
+      "it": "Illustrazione di un cavaliere in armatura completa a piastre alla carica su un destriero corazzato."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Fully plated knight on an armored warhorse charging, sunlit steel",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u2_cav_l": {
+    "file": "cards/placeholders/u2_cav_l.svg",
+    "alt": {
+      "it": "Illustrazione di ussari alati alla carica con telai di piume sul dorso e lance levate al cielo."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Winged hussar cavalry charging with feathered wing frames on their backs, lances aloft",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u2_inf_h": {
+    "file": "cards/placeholders/u2_inf_h.svg",
+    "alt": {
+      "it": "Illustrazione di un uomo d'arme in armatura completa d'acciaio con azza a due mani e stendardo."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Man-at-arms in full steel harness with a poleaxe, visor open, banner behind",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u2_inf_l": {
+    "file": "cards/placeholders/u2_inf_l.svg",
+    "alt": {
+      "it": "Illustrazione di uno spadaccino scelto veterano in mezza armatura in guardia con la spada lunga."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Veteran swordsman in a half-plate cuirass in a longsword guard stance, scarred face",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u2_sig_h": {
+    "file": "cards/placeholders/u2_sig_h.svg",
+    "alt": {
+      "it": "Illustrazione di un mangano pesante a contrappeso nell'istante in cui scaglia un masso nel cielo."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Counterweight mangonel mid-throw, boulder against the sky, crew hauling ropes",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u2_sig_l": {
+    "file": "cards/placeholders/u2_sig_l.svg",
+    "alt": {
+      "it": "Illustrazione di uno scorpione d'assedio a torsione su affusto ruotato mentre l'equipaggio carica un dardo."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Large torsion siege crossbow on a wheeled wooden frame, crew loading a huge bolt",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u2_spr_h": {
+    "file": "cards/placeholders/u2_spr_h.svg",
+    "alt": {
+      "it": "Illustrazione di una guardia svizzera con farsetto tagliato, cappello piumato e picca in formazione."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Mercenary pikeman in slashed doublet and plumed cap with a long pike, tight formation",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u2_spr_l": {
+    "file": "cards/placeholders/u2_spr_l.svg",
+    "alt": {
+      "it": "Illustrazione di un alabardiere con elmo morione che avanza tenendo l'alabarda in diagonale."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Halberdier in a morion helmet advancing, halberd held diagonally",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u3_arc_h": {
+    "file": "cards/placeholders/u3_arc_h.svg",
+    "alt": {
+      "it": "Illustrazione di un archibugiere che fa fuoco con un archibugio a miccia in una densa nube di fumo."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Arquebusier firing a matchlock, huge cloud of powder smoke, plumed hat",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u3_arc_l": {
+    "file": "cards/placeholders/u3_arc_l.svg",
+    "alt": {
+      "it": "Illustrazione di un arciere lungo reale in mezza armatura che scocca con un alto arco da guerra al tramonto."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Royal longbowman in partial plate with a tall war bow, sunset volley",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u3_cav_h": {
+    "file": "cards/placeholders/u3_cav_h.svg",
+    "alt": {
+      "it": "Illustrazione di un catafratto reale pesantemente corazzato con bardatura completa e cimieri dorati."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Heavily armored cavalry with full horse barding and golden crests, charging",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u3_cav_l": {
+    "file": "cards/placeholders/u3_cav_l.svg",
+    "alt": {
+      "it": "Illustrazione di un dragone imperiale a cavallo che spara con una carabina tra il fumo della battaglia."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Mounted dragoon firing a carbine from horseback, early modern uniform, smoke",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u3_inf_h": {
+    "file": "cards/placeholders/u3_inf_h.svg",
+    "alt": {
+      "it": "Illustrazione di un campione imperiale in armatura pesante dorata con spadone e stendardo imperiale."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Champion in gilded heavy armor with a greatsword, imperial standard behind",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u3_inf_l": {
+    "file": "cards/placeholders/u3_inf_l.svg",
+    "alt": {
+      "it": "Illustrazione di un berserker d'élite con due asce da guerra e pellicce nel fumo della battaglia."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Elite warrior with two axes mid-roar, fur and scars, battlefield smoke",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u3_sig_h": {
+    "file": "cards/placeholders/u3_sig_h.svg",
+    "alt": {
+      "it": "Illustrazione di un'enorme bombarda di bronzo su affusto di legno che fa fuoco contro le mura."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Huge bronze bombard on a timber carriage, flash and smoke at the muzzle, wall crumbling",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u3_sig_l": {
+    "file": "cards/placeholders/u3_sig_l.svg",
+    "alt": {
+      "it": "Illustrazione di una torre d'assedio in legno rivestita di pelli che avanza verso le mura di una fortezza."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Wooden siege tower covered in hides rolling up to a fortress wall, archers on the top deck",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u3_sig_m": {
+    "file": "cards/placeholders/u3_sig_m.svg",
+    "alt": {
+      "it": "Illustrazione di un gigantesco trabucco nel momento del rilascio con un'enorme cassa di contrappeso."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Gigantic trebuchet at the moment of release, massive counterweight box, dust and stones",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u3_spr_h": {
+    "file": "cards/placeholders/u3_spr_h.svg",
+    "alt": {
+      "it": "Illustrazione di una falange imperiale compatta con scudi alti e lunghe lance nella luce dorata."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Tight phalanx with tall shields and long spears advancing, golden light",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  },
+  "u3_spr_l": {
+    "file": "cards/placeholders/u3_spr_l.svg",
+    "alt": {
+      "it": "Illustrazione di un picchiere reale in formazione picca e moschetto circondato da una selva di picche."
+    },
+    "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Royal pikeman in a pike-and-shot formation, forest of tall pikes, livery coats",
+    "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+    "status": "placeholder",
+    "credit": "The Epochs Art Pipeline (Placeholder SVG)"
+  }
+}

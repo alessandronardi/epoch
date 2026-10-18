@@ -1,0 +1,850 @@
+{
+  "e1_farm": {
+    "id": "e1_farm",
+    "era": 1,
+    "type": "economy",
+    "cost": {
+      "food": 0,
+      "wood": 2,
+      "metal": 0
+    },
+    "production": {
+      "food": 1,
+      "wood": 0,
+      "metal": 0
+    },
+    "abilities": []
+  },
+  "e1_lumb": {
+    "id": "e1_lumb",
+    "era": 1,
+    "type": "economy",
+    "cost": {
+      "food": 2,
+      "wood": 0,
+      "metal": 0
+    },
+    "production": {
+      "food": 0,
+      "wood": 1,
+      "metal": 0
+    },
+    "abilities": []
+  },
+  "e1_mine": {
+    "id": "e1_mine",
+    "era": 1,
+    "type": "economy",
+    "cost": {
+      "food": 2,
+      "wood": 2,
+      "metal": 0
+    },
+    "production": {
+      "food": 0,
+      "wood": 0,
+      "metal": 1
+    },
+    "abilities": []
+  },
+  "e2_fnd": {
+    "id": "e2_fnd",
+    "era": 2,
+    "type": "economy",
+    "cost": {
+      "food": 2,
+      "wood": 3,
+      "metal": 0
+    },
+    "production": {
+      "food": 0,
+      "wood": 0,
+      "metal": 2
+    },
+    "abilities": []
+  },
+  "e2_mill": {
+    "id": "e2_mill",
+    "era": 2,
+    "type": "economy",
+    "cost": {
+      "food": 1,
+      "wood": 3,
+      "metal": 1
+    },
+    "production": {
+      "food": 2,
+      "wood": 0,
+      "metal": 0
+    },
+    "abilities": []
+  },
+  "e2_saw": {
+    "id": "e2_saw",
+    "era": 2,
+    "type": "economy",
+    "cost": {
+      "food": 3,
+      "wood": 1,
+      "metal": 1
+    },
+    "production": {
+      "food": 0,
+      "wood": 2,
+      "metal": 0
+    },
+    "abilities": []
+  },
+  "e3_frn": {
+    "id": "e3_frn",
+    "era": 3,
+    "type": "conversion",
+    "cost": {
+      "food": 2,
+      "wood": 0,
+      "metal": 0
+    },
+    "abilities": [],
+    "effect": {
+      "kind": "gain_and_dem_bonus",
+      "gain": {
+        "food": 0,
+        "wood": 2,
+        "metal": 3
+      },
+      "demBonus": 1
+    }
+  },
+  "e3_gld": {
+    "id": "e3_gld",
+    "era": 3,
+    "type": "conversion",
+    "cost": {
+      "food": 0,
+      "wood": 1,
+      "metal": 0
+    },
+    "abilities": [],
+    "effect": {
+      "kind": "gain_per_building",
+      "perBuilding": {
+        "food": 1,
+        "wood": 1,
+        "metal": 1
+      }
+    }
+  },
+  "i1_arr": {
+    "id": "i1_arr",
+    "era": 1,
+    "type": "instant",
+    "cost": {
+      "food": 0,
+      "wood": 2,
+      "metal": 0
+    },
+    "abilities": [],
+    "effect": {
+      "kind": "atk_mod",
+      "target": "own_archers",
+      "amount": 2
+    }
+  },
+  "i1_wall": {
+    "id": "i1_wall",
+    "era": 1,
+    "type": "instant",
+    "cost": {
+      "food": 0,
+      "wood": 2,
+      "metal": 0
+    },
+    "abilities": [],
+    "effect": {
+      "kind": "walls_mod",
+      "target": "own",
+      "amount": 3
+    }
+  },
+  "i2_mor": {
+    "id": "i2_mor",
+    "era": 2,
+    "type": "instant",
+    "cost": {
+      "food": 2,
+      "wood": 0,
+      "metal": 1
+    },
+    "abilities": [],
+    "effect": {
+      "kind": "atk_mod",
+      "target": "own_front",
+      "amount": 2
+    }
+  },
+  "i2_sab": {
+    "id": "i2_sab",
+    "era": 2,
+    "type": "instant",
+    "cost": {
+      "food": 1,
+      "wood": 0,
+      "metal": 2
+    },
+    "abilities": [],
+    "effect": {
+      "kind": "walls_mod",
+      "target": "enemy",
+      "amount": -4
+    }
+  },
+  "i3_fir": {
+    "id": "i3_fir",
+    "era": 3,
+    "type": "instant",
+    "cost": {
+      "food": 0,
+      "wood": 2,
+      "metal": 3
+    },
+    "abilities": [],
+    "effect": {
+      "kind": "walls_mod",
+      "target": "enemy",
+      "amount": -6
+    }
+  },
+  "i3_ral": {
+    "id": "i3_ral",
+    "era": 3,
+    "type": "instant",
+    "cost": {
+      "food": 3,
+      "wood": 0,
+      "metal": 2
+    },
+    "abilities": [],
+    "effect": {
+      "kind": "atk_mod",
+      "target": "own_front",
+      "amount": 2
+    }
+  },
+  "u1_arc_h": {
+    "id": "u1_arc_h",
+    "era": 1,
+    "type": "unit",
+    "category": "archer",
+    "line": "rear",
+    "cost": {
+      "food": 1,
+      "wood": 2,
+      "metal": 0
+    },
+    "atk": 3,
+    "dem": 0,
+    "hp": 2,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "volley",
+        "bonusVsSpearman": 1
+      }
+    ]
+  },
+  "u1_arc_l": {
+    "id": "u1_arc_l",
+    "era": 1,
+    "type": "unit",
+    "category": "archer",
+    "line": "rear",
+    "cost": {
+      "food": 1,
+      "wood": 1,
+      "metal": 0
+    },
+    "atk": 2,
+    "dem": 0,
+    "hp": 1,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "volley",
+        "bonusVsSpearman": 1
+      }
+    ]
+  },
+  "u1_cav_h": {
+    "id": "u1_cav_h",
+    "era": 1,
+    "type": "unit",
+    "category": "cavalry",
+    "line": "center",
+    "cost": {
+      "food": 2,
+      "wood": 0,
+      "metal": 1
+    },
+    "atk": 4,
+    "dem": 1,
+    "hp": 3,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "flank",
+        "bonusVsArcher": 1
+      }
+    ]
+  },
+  "u1_cav_l": {
+    "id": "u1_cav_l",
+    "era": 1,
+    "type": "unit",
+    "category": "cavalry",
+    "line": "center",
+    "cost": {
+      "food": 3,
+      "wood": 0,
+      "metal": 0
+    },
+    "atk": 2,
+    "dem": 1,
+    "hp": 3,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "flank",
+        "bonusVsArcher": 1
+      }
+    ]
+  },
+  "u1_inf_h": {
+    "id": "u1_inf_h",
+    "era": 1,
+    "type": "unit",
+    "category": "infantry",
+    "line": "front",
+    "cost": {
+      "food": 2,
+      "wood": 1,
+      "metal": 0
+    },
+    "atk": 2,
+    "dem": 1,
+    "hp": 5,
+    "isCombatant": true,
+    "abilities": []
+  },
+  "u1_inf_l": {
+    "id": "u1_inf_l",
+    "era": 1,
+    "type": "unit",
+    "category": "infantry",
+    "line": "front",
+    "cost": {
+      "food": 2,
+      "wood": 0,
+      "metal": 0
+    },
+    "atk": 2,
+    "dem": 1,
+    "hp": 3,
+    "isCombatant": true,
+    "abilities": []
+  },
+  "u1_sig_h": {
+    "id": "u1_sig_h",
+    "era": 1,
+    "type": "unit",
+    "category": "siege",
+    "line": "rear",
+    "cost": {
+      "food": 0,
+      "wood": 3,
+      "metal": 1
+    },
+    "atk": 0,
+    "dem": 6,
+    "hp": 3,
+    "isCombatant": false,
+    "abilities": []
+  },
+  "u1_sig_l": {
+    "id": "u1_sig_l",
+    "era": 1,
+    "type": "unit",
+    "category": "siege",
+    "line": "rear",
+    "cost": {
+      "food": 1,
+      "wood": 2,
+      "metal": 0
+    },
+    "atk": 0,
+    "dem": 2,
+    "hp": 2,
+    "isCombatant": false,
+    "abilities": []
+  },
+  "u1_spr_h": {
+    "id": "u1_spr_h",
+    "era": 1,
+    "type": "unit",
+    "category": "spearman",
+    "line": "front",
+    "cost": {
+      "food": 1,
+      "wood": 2,
+      "metal": 0
+    },
+    "atk": 2,
+    "dem": 1,
+    "hp": 4,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "impale",
+        "damage": 3
+      }
+    ]
+  },
+  "u1_spr_l": {
+    "id": "u1_spr_l",
+    "era": 1,
+    "type": "unit",
+    "category": "spearman",
+    "line": "front",
+    "cost": {
+      "food": 1,
+      "wood": 1,
+      "metal": 0
+    },
+    "atk": 1,
+    "dem": 0,
+    "hp": 3,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "impale",
+        "damage": 3
+      }
+    ]
+  },
+  "u2_arc_h": {
+    "id": "u2_arc_h",
+    "era": 2,
+    "type": "unit",
+    "category": "archer",
+    "line": "rear",
+    "cost": {
+      "food": 1,
+      "wood": 3,
+      "metal": 1
+    },
+    "atk": 5,
+    "dem": 0,
+    "hp": 3,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "volley",
+        "bonusVsSpearman": 2
+      }
+    ]
+  },
+  "u2_arc_l": {
+    "id": "u2_arc_l",
+    "era": 2,
+    "type": "unit",
+    "category": "archer",
+    "line": "rear",
+    "cost": {
+      "food": 1,
+      "wood": 3,
+      "metal": 0
+    },
+    "atk": 4,
+    "dem": 0,
+    "hp": 2,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "volley",
+        "bonusVsSpearman": 2
+      }
+    ]
+  },
+  "u2_cav_h": {
+    "id": "u2_cav_h",
+    "era": 2,
+    "type": "unit",
+    "category": "cavalry",
+    "line": "center",
+    "cost": {
+      "food": 3,
+      "wood": 0,
+      "metal": 2
+    },
+    "atk": 6,
+    "dem": 2,
+    "hp": 6,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "flank",
+        "bonusVsArcher": 2
+      }
+    ]
+  },
+  "u2_cav_l": {
+    "id": "u2_cav_l",
+    "era": 2,
+    "type": "unit",
+    "category": "cavalry",
+    "line": "center",
+    "cost": {
+      "food": 3,
+      "wood": 1,
+      "metal": 1
+    },
+    "atk": 5,
+    "dem": 2,
+    "hp": 4,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "flank",
+        "bonusVsArcher": 2
+      }
+    ]
+  },
+  "u2_inf_h": {
+    "id": "u2_inf_h",
+    "era": 2,
+    "type": "unit",
+    "category": "infantry",
+    "line": "front",
+    "cost": {
+      "food": 3,
+      "wood": 1,
+      "metal": 1
+    },
+    "atk": 4,
+    "dem": 2,
+    "hp": 8,
+    "isCombatant": true,
+    "abilities": []
+  },
+  "u2_inf_l": {
+    "id": "u2_inf_l",
+    "era": 2,
+    "type": "unit",
+    "category": "infantry",
+    "line": "front",
+    "cost": {
+      "food": 3,
+      "wood": 0,
+      "metal": 1
+    },
+    "atk": 5,
+    "dem": 2,
+    "hp": 5,
+    "isCombatant": true,
+    "abilities": []
+  },
+  "u2_sig_h": {
+    "id": "u2_sig_h",
+    "era": 2,
+    "type": "unit",
+    "category": "siege",
+    "line": "rear",
+    "cost": {
+      "food": 0,
+      "wood": 4,
+      "metal": 2
+    },
+    "atk": 0,
+    "dem": 10,
+    "hp": 5,
+    "isCombatant": false,
+    "abilities": []
+  },
+  "u2_sig_l": {
+    "id": "u2_sig_l",
+    "era": 2,
+    "type": "unit",
+    "category": "siege",
+    "line": "rear",
+    "cost": {
+      "food": 0,
+      "wood": 3,
+      "metal": 1
+    },
+    "atk": 0,
+    "dem": 6,
+    "hp": 3,
+    "isCombatant": false,
+    "abilities": []
+  },
+  "u2_spr_h": {
+    "id": "u2_spr_h",
+    "era": 2,
+    "type": "unit",
+    "category": "spearman",
+    "line": "front",
+    "cost": {
+      "food": 2,
+      "wood": 3,
+      "metal": 1
+    },
+    "atk": 3,
+    "dem": 2,
+    "hp": 6,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "impale",
+        "damage": 5
+      }
+    ]
+  },
+  "u2_spr_l": {
+    "id": "u2_spr_l",
+    "era": 2,
+    "type": "unit",
+    "category": "spearman",
+    "line": "front",
+    "cost": {
+      "food": 2,
+      "wood": 2,
+      "metal": 0
+    },
+    "atk": 3,
+    "dem": 1,
+    "hp": 5,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "impale",
+        "damage": 5
+      }
+    ]
+  },
+  "u3_arc_h": {
+    "id": "u3_arc_h",
+    "era": 3,
+    "type": "unit",
+    "category": "archer",
+    "line": "rear",
+    "cost": {
+      "food": 2,
+      "wood": 3,
+      "metal": 3
+    },
+    "atk": 8,
+    "dem": 1,
+    "hp": 4,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "volley",
+        "bonusVsSpearman": 3
+      }
+    ]
+  },
+  "u3_arc_l": {
+    "id": "u3_arc_l",
+    "era": 3,
+    "type": "unit",
+    "category": "archer",
+    "line": "rear",
+    "cost": {
+      "food": 2,
+      "wood": 4,
+      "metal": 1
+    },
+    "atk": 6,
+    "dem": 0,
+    "hp": 4,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "volley",
+        "bonusVsSpearman": 3
+      }
+    ]
+  },
+  "u3_cav_h": {
+    "id": "u3_cav_h",
+    "era": 3,
+    "type": "unit",
+    "category": "cavalry",
+    "line": "center",
+    "cost": {
+      "food": 5,
+      "wood": 0,
+      "metal": 4
+    },
+    "atk": 9,
+    "dem": 3,
+    "hp": 8,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "flank",
+        "bonusVsArcher": 3
+      }
+    ]
+  },
+  "u3_cav_l": {
+    "id": "u3_cav_l",
+    "era": 3,
+    "type": "unit",
+    "category": "cavalry",
+    "line": "center",
+    "cost": {
+      "food": 4,
+      "wood": 1,
+      "metal": 2
+    },
+    "atk": 7,
+    "dem": 2,
+    "hp": 6,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "flank",
+        "bonusVsArcher": 3
+      }
+    ]
+  },
+  "u3_inf_h": {
+    "id": "u3_inf_h",
+    "era": 3,
+    "type": "unit",
+    "category": "infantry",
+    "line": "front",
+    "cost": {
+      "food": 4,
+      "wood": 1,
+      "metal": 3
+    },
+    "atk": 6,
+    "dem": 3,
+    "hp": 12,
+    "isCombatant": true,
+    "abilities": []
+  },
+  "u3_inf_l": {
+    "id": "u3_inf_l",
+    "era": 3,
+    "type": "unit",
+    "category": "infantry",
+    "line": "front",
+    "cost": {
+      "food": 4,
+      "wood": 0,
+      "metal": 2
+    },
+    "atk": 8,
+    "dem": 3,
+    "hp": 8,
+    "isCombatant": true,
+    "abilities": []
+  },
+  "u3_sig_h": {
+    "id": "u3_sig_h",
+    "era": 3,
+    "type": "unit",
+    "category": "siege",
+    "line": "rear",
+    "cost": {
+      "food": 0,
+      "wood": 5,
+      "metal": 5
+    },
+    "atk": 0,
+    "dem": 18,
+    "hp": 4,
+    "isCombatant": false,
+    "abilities": []
+  },
+  "u3_sig_l": {
+    "id": "u3_sig_l",
+    "era": 3,
+    "type": "unit",
+    "category": "siege",
+    "line": "rear",
+    "cost": {
+      "food": 0,
+      "wood": 5,
+      "metal": 2
+    },
+    "atk": 0,
+    "dem": 11,
+    "hp": 8,
+    "isCombatant": false,
+    "abilities": []
+  },
+  "u3_sig_m": {
+    "id": "u3_sig_m",
+    "era": 3,
+    "type": "unit",
+    "category": "siege",
+    "line": "rear",
+    "cost": {
+      "food": 0,
+      "wood": 6,
+      "metal": 3
+    },
+    "atk": 0,
+    "dem": 15,
+    "hp": 5,
+    "isCombatant": false,
+    "abilities": []
+  },
+  "u3_spr_h": {
+    "id": "u3_spr_h",
+    "era": 3,
+    "type": "unit",
+    "category": "spearman",
+    "line": "front",
+    "cost": {
+      "food": 3,
+      "wood": 4,
+      "metal": 2
+    },
+    "atk": 5,
+    "dem": 2,
+    "hp": 9,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "impale",
+        "damage": 7
+      }
+    ]
+  },
+  "u3_spr_l": {
+    "id": "u3_spr_l",
+    "era": 3,
+    "type": "unit",
+    "category": "spearman",
+    "line": "front",
+    "cost": {
+      "food": 3,
+      "wood": 3,
+      "metal": 1
+    },
+    "atk": 4,
+    "dem": 2,
+    "hp": 7,
+    "isCombatant": true,
+    "abilities": [
+      {
+        "kind": "impale",
+        "damage": 7
+      }
+    ]
+  }
+}

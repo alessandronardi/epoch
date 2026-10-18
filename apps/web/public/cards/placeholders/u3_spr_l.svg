@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 1152" width="1536" height="1152">
+  <defs>
+    <radialGradient id="bg-u3_spr_l" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#33261E" />
+      <stop offset="100%" stop-color="#18151C" />
+    </radialGradient>
+    <linearGradient id="accent-u3_spr_l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D9B04A" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#C85A32" stop-opacity="0.15" />
+    </linearGradient>
+  </defs>
+  <rect width="1536" height="1152" fill="url(#bg-u3_spr_l)" />
+  <rect x="96" y="72" width="1344" height="1008" rx="24" fill="url(#accent-u3_spr_l)" stroke="#D9B04A" stroke-width="4" stroke-opacity="0.5" />
+  <g>
+    <circle cx="768" cy="576" r="330" fill="none" stroke="#D9B04A" stroke-width="3" stroke-opacity="0.45"/>
+    <circle cx="768" cy="576" r="364" fill="none" stroke="#D9B04A" stroke-width="3" stroke-opacity="0.35"/>
+    <circle cx="768" cy="576" r="398" fill="none" stroke="#D9B04A" stroke-width="3" stroke-opacity="0.25"/>
+    
+        <g transform="translate(768, 576)">
+          <circle r="240" fill="#18151C" stroke="#D9B04A" stroke-width="10"/>
+          <path d="M-160,180 L140,-180 M-90,195 L185,-135 M-195,125 L85,-205" stroke="#F5DA82" stroke-width="10" stroke-linecap="round"/>
+          <polygon points="140,-180 175,-225 110,-195" fill="#D9B04A" stroke="#F5DA82" stroke-width="4"/>
+          <polygon points="185,-135 220,-180 155,-150" fill="#D9B04A" stroke="#F5DA82" stroke-width="4"/>
+        </g>
+      
+  </g>
+</svg>

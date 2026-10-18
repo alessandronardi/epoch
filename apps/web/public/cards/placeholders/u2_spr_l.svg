@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 1152" width="1536" height="1152">
+  <defs>
+    <radialGradient id="bg-u2_spr_l" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#243546" />
+      <stop offset="100%" stop-color="#141E27" />
+    </radialGradient>
+    <linearGradient id="accent-u2_spr_l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9FB1C2" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#A8404D" stop-opacity="0.15" />
+    </linearGradient>
+  </defs>
+  <rect width="1536" height="1152" fill="url(#bg-u2_spr_l)" />
+  <rect x="96" y="72" width="1344" height="1008" rx="24" fill="url(#accent-u2_spr_l)" stroke="#9FB1C2" stroke-width="4" stroke-opacity="0.5" />
+  <g>
+    <circle cx="768" cy="576" r="330" fill="none" stroke="#9FB1C2" stroke-width="3" stroke-opacity="0.45"/>
+    <circle cx="768" cy="576" r="364" fill="none" stroke="#9FB1C2" stroke-width="3" stroke-opacity="0.35"/>
+    
+        <g transform="translate(768, 576)">
+          <circle r="240" fill="#141E27" stroke="#9FB1C2" stroke-width="10"/>
+          <path d="M-160,180 L140,-180 M-90,195 L185,-135 M-195,125 L85,-205" stroke="#DCE7F2" stroke-width="10" stroke-linecap="round"/>
+          <polygon points="140,-180 175,-225 110,-195" fill="#9FB1C2" stroke="#DCE7F2" stroke-width="4"/>
+          <polygon points="185,-135 220,-180 155,-150" fill="#9FB1C2" stroke="#DCE7F2" stroke-width="4"/>
+        </g>
+      
+  </g>
+</svg>

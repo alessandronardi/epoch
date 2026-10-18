@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 1152" width="1536" height="1152">
+  <defs>
+    <radialGradient id="bg-u1_inf_l" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#36261B" />
+      <stop offset="100%" stop-color="#1E1610" />
+    </radialGradient>
+    <linearGradient id="accent-u1_inf_l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A86F3C" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#86A94C" stop-opacity="0.15" />
+    </linearGradient>
+  </defs>
+  <rect width="1536" height="1152" fill="url(#bg-u1_inf_l)" />
+  <rect x="96" y="72" width="1344" height="1008" rx="24" fill="url(#accent-u1_inf_l)" stroke="#A86F3C" stroke-width="4" stroke-opacity="0.5" />
+  <g>
+    <circle cx="768" cy="576" r="330" fill="none" stroke="#A86F3C" stroke-width="3" stroke-opacity="0.45"/>
+    
+        <g transform="translate(768, 576)">
+          <path d="M0,-240 L190,-150 C190,40 120,170 0,250 C-120,170 -190,40 -190,-150 Z" fill="#1E1610" stroke="#A86F3C" stroke-width="10"/>
+          <path d="M0,-195 L145,-120 C145,25 90,130 0,195 C-90,130 -145,25 -145,-120 Z" fill="#86A94C" fill-opacity="0.4" stroke="#D8A36C" stroke-width="6"/>
+          <path d="M0,-230 L0,210 M-75,-70 L75,-70" stroke="#D8A36C" stroke-width="10" stroke-linecap="round"/>
+        </g>
+      
+  </g>
+</svg>
