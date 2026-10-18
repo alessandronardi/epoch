@@ -5,8 +5,9 @@
 
 ---
 
-## Task M0-01: Configurazione root del monorepo pnpm e TypeScript strict
+## Task M0-01: Configurazione root del monorepo pnpm e TypeScript strict [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Configurato il workspace pnpm monorepo con script radice, dipendenze fissate e TypeScript strict con target ES2022.
 * **Tier:** [TIER: LOW]
 * **Dipendenze:** Nessuna
 * **File target:**
@@ -21,10 +22,12 @@
   * Comando: `pnpm exec tsc --showConfig --project tsconfig.base.json`
   * Condizione di successo: 0 errori di parsing JSON/TSConfig, flag `strict`, `noUncheckedIndexedAccess` ed `exactOptionalPropertyTypes` attivi, nessun file extra modificato.
 
+
 ---
 
-## Task M0-02: Configurazione ESLint flat config, Prettier e registro ADR `docs/DECISIONS.md`
+## Task M0-02: Configurazione ESLint flat config, Prettier e registro ADR `docs/DECISIONS.md` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Configurato ESLint flat config con divieto di any e confini architetturali, Prettier e registro ADR docs/DECISIONS.md con le decisioni DEC-001..DEC-006.
 * **Tier:** [TIER: LOW]
 * **Dipendenze:** M0-01
 * **File target:**
@@ -40,10 +43,12 @@
   * Comando: `pnpm exec eslint --print-config eslint.config.mjs`
   * Condizione di successo: Configurazione ESLint risolta con successo (exit code 0), `docs/DECISIONS.md` conforme al template §13.3, nessun file extra modificato.
 
+
 ---
 
-## Task M0-03: Allineamento documenti normativi in `docs/` e configurazione Vitest
+## Task M0-03: Allineamento documenti normativi in `docs/` e configurazione Vitest [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Allineati in docs/ i documenti normativi GDD.md e TECH-SPEC.md e configurato Vitest con soglie di coverage V8 per tutti i package.
 * **Tier:** [TIER: LOW]
 * **Dipendenze:** M0-01
 * **File target:**
@@ -60,10 +65,12 @@
   * Comando: `pnpm exec tsc --noEmit vitest.config.ts`
   * Condizione di successo: 0 errori typecheck su `vitest.config.ts`, contenuto di `docs/GDD.md` identico byte per byte a `GDD.md`.
 
+
 ---
 
-## Task M0-04: Schemi Zod dei file dati (`cards`, `deck`, `scenario`)
+## Task M0-04: Schemi Zod dei file dati (`cards`, `deck`, `scenario`) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati in Zod gli schemi rigorosi e tipizzati per carte (regole, testi, arte), mazzi da 60 carte e scenari di test deterministico.
 * **Tier:** [TIER: LOW]
 * **Dipendenze:** M0-01
 * **File target:**
@@ -79,10 +86,12 @@
   * Comando: `pnpm exec tsc --noEmit data/schema/cards.schema.ts data/schema/deck.schema.ts data/schema/scenario.schema.ts`
   * Condizione di successo: 0 errori typecheck, esportazione dei tipi inferiti e degli schemi Zod completata senza alcun uso di `any`.
 
+
 ---
 
-## Task M0-05: Tabella di mapping deterministico effetti e abilità (`tools/card-effects.ts`)
+## Task M0-05: Tabella di mapping deterministico effetti e abilità (`tools/card-effects.ts`) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Creata la mappa esplicita e immutabile degli effetti, produzioni e abilità di combattimento per tutte le 45 carte secondo l'Appendice C.1.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M0-04
 * **File target:**
@@ -97,10 +106,12 @@
   * Comando: `pnpm exec tsc --noEmit tools/card-effects.ts`
   * Condizione di successo: 0 errori typecheck e corrispondenza esatta con la tabella dell'Appendice C.1.
 
+
 ---
 
-## Task M0-06: Parser `tools/gdd-to-cards.ts` e generazione di `data/cards.rules.json`
+## Task M0-06: Parser `tools/gdd-to-cards.ts` e generazione di `data/cards.rules.json` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato il parser idempotente tools/gdd-to-cards.ts che estrae le 45 carte dal GDD e genera data/cards.rules.json validato.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M0-04, M0-05
 * **File target:**
@@ -117,10 +128,12 @@
   * Comando: `pnpm exec tsx tools/gdd-to-cards.ts --check`
   * Condizione di successo: Exit code 0, esattamente 45 carte (15 per Era) validate in `data/cards.rules.json`, 0 diff in esecuzione ripetuta.
 
+
 ---
 
-## Task M0-07: Creazione di `data/cards.text.it.json` e `data/cards.art.json`
+## Task M0-07: Creazione di `data/cards.text.it.json` e `data/cards.art.json` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Creati e validati data/cards.text.it.json (nomi, typeLine e flavor) e data/cards.art.json (prompt stile pittura a olio e metadati segnaposto) per tutte le 45 carte.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M0-06
 * **File target:**
@@ -136,10 +149,12 @@
   * Comando: `pnpm exec tsx -e "import { CardsTextFileSchema, CardsArtFileSchema } from './data/schema/cards.schema'; import fs from 'node:fs'; CardsTextFileSchema.parse(JSON.parse(fs.readFileSync('data/cards.text.it.json','utf8'))); CardsArtFileSchema.parse(JSON.parse(fs.readFileSync('data/cards.art.json','utf8')));"`
   * Condizione di successo: Validazione Zod di entrambi i file JSON superata con exit code 0 per tutte le 45 carte.
 
+
 ---
 
-## Task M0-08: Package `@epochs/content` — Generazione testo regole, tooltip e loader catalogo
+## Task M0-08: Package `@epochs/content` — Generazione testo regole, tooltip e loader catalogo [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato il package @epochs/content esportando loader del catalogo, generazione pura del testo regole con i 10 template normativi e tooltip delle 6 parole chiave.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M0-06, M0-07
 * **File target:**
@@ -158,10 +173,12 @@
   * Comando: `pnpm --filter @epochs/content exec tsc --noEmit`
   * Condizione di successo: 0 errori typecheck, zero dipendenze verso `apps/*`.
 
+
 ---
 
-## Task M0-09: Validatore CLI `tools/content-validate.ts` e test unitari `@epochs/content`
+## Task M0-09: Validatore CLI `tools/content-validate.ts` e test unitari `@epochs/content` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato il validatore CLI tools/content-validate.ts con exit code bloccante e suite di test unitari con copertura V8 del 99% su @epochs/content.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M0-08
 * **File target:**
@@ -180,10 +197,12 @@
   * Comando: `pnpm exec tsx tools/content-validate.ts && pnpm exec vitest run packages/content/tests/content.test.ts`
   * Condizione di successo: Validatore CLI verde (exit code 0) e tutti i test unitari di `@epochs/content` verdi con coverage >= 85%.
 
+
 ---
 
-## Task M0-10: Generatore SVG segnaposto per le 45 carte (`tools/art-placeholders.ts`)
+## Task M0-10: Generatore SVG segnaposto per le 45 carte (`tools/art-placeholders.ts`) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato tools/art-placeholders.ts generando 45 SVG segnaposto 4:3 distinti per palette d'Era e iconografia di tipo/categoria in apps/web/public/cards/placeholders/.
 * **Tier:** [TIER: LOW]
 * **Dipendenze:** M0-07
 * **File target:**
@@ -198,10 +217,12 @@
   * Comando: `pnpm exec tsx tools/art-placeholders.ts`
   * Condizione di successo: 45 file SVG validi generati correttamente in `apps/web/public/cards/placeholders/`, exit code 0.
 
+
 ---
 
-## Task M0-11: Mazzi preset ufficiali (`aggro-breach`, `balanced-tactical`, `boom-economy`)
+## Task M0-11: Mazzi preset ufficiali (`aggro-breach`, `balanced-tactical`, `boom-economy`) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Creati e validati i 3 mazzi preset ufficiali da 60 carte (aggro-breach, balanced-tactical, boom-economy) rispettando i limiti di copia e le identità strategiche.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M0-04, M0-06
 * **File target:**
@@ -217,6 +238,7 @@
 * **Criteri di stop / Gate di validazione:**
   * Comando: `pnpm exec tsx -e "import { DeckPayloadSchema } from './data/schema/deck.schema'; import fs from 'node:fs'; for (const f of ['aggro-breach','balanced-tactical','boom-economy']) DeckPayloadSchema.parse(JSON.parse(fs.readFileSync('data/decks/'+f+'.json','utf8')));"`
   * Condizione di successo: Tutti e 3 i mazzi superano la validazione dello schema `DeckPayloadSchema` (20+20+20 carte, <= 3 copie per carta, Era congruente).
+
 
 ---
 
