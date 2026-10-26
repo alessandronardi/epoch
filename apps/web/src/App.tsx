@@ -16,6 +16,7 @@ import { LocalGameController } from './controllers/local-controller.js';
 import type { RemoteGameController } from './controllers/remote-controller.js';
 import type { GameController } from './controllers/types.js';
 import { CardArchiveScreen } from './screens/CardArchiveScreen.js';
+import { DeckBuilderScreen } from './screens/DeckBuilderScreen.js';
 import {
   HomeScreen,
   PRESET_DECK_OPTIONS,
@@ -27,6 +28,7 @@ import { OnlineLobbyScreen } from './screens/OnlineLobbyScreen.js';
 import { QuickRulesScreen } from './screens/QuickRulesScreen.js';
 import { ReplayViewerScreen } from './screens/ReplayViewerScreen.js';
 import { useGameStore } from './state/game-store.js';
+import { useDeckBuilderStore } from './state/deck-builder-store.js';
 
 type ExtendedScreenId = AppScreenId | 'replay';
 
@@ -67,6 +69,20 @@ export function App(): ReactElement {
     string | undefined
   >(undefined);
   const matchCounterRef = useRef<number>(1);
+  const savedDecks = useDeckBuilderStore((state) => state.savedDecks);
+  const availableDecks = [
+    ...PRESET_DECK_OPTIONS,
+    ...savedDecks.flatMap((deck) =>
+      deck.id === undefined
+        ? []
+        : [{
+            id: `custom:${deck.id}`,
+            name: `${deck.name} · Personale`,
+            description: deck.description ?? 'Mazzo personale da 60 carte.',
+            payload: deck,
+          }],
+    ),
+  ];
 
   const view = useGameStore((s) => s.view);
   const inspectedCardId = useGameStore((s) => s.inspectedCardId);
@@ -214,6 +230,7 @@ export function App(): ReactElement {
       <>
         <style>{A11Y_CONTRAST_OVERRIDES_CSS}</style>
         <HomeScreen
+          availableDecks={availableDecks}
           onStartBotMatch={startBotMatch}
           onStartHotSeatMatch={startHotSeatMatch}
           onNavigate={(screen) => setActiveScreen(screen)}
@@ -396,6 +413,7 @@ export function App(): ReactElement {
       <>
         <style>{A11Y_CONTRAST_OVERRIDES_CSS}</style>
         <OnlineLobbyScreen
+          availableDecks={availableDecks}
           onMatchReady={startRemoteMatch}
           onOpenReplayViewer={handleOpenReplayViewer}
           onBackHome={handleReturnHome}
@@ -455,92 +473,16 @@ export function App(): ReactElement {
     );
   }
 
-  // Schermate di navigazione secondarie (Deck Builder, Multiplayer Online)
   return (
-    <main
-      className="cartographer-table"
-      data-testid={`screen-${activeScreen}`}
-      style={{
-        width: '100%',
-        height: '100dvh',
-        maxHeight: '100dvh',
-        overflowY: 'auto',
-        padding: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '16px',
-      }}
-    >
-      <div
-        style={{
-          width: 'min(1080px, 100%)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-        }}
-      >
-        <header
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '12px',
-            padding: '14px 18px',
-            borderRadius: '10px',
-            backgroundColor: 'rgba(20, 30, 39, 0.9)',
-            border: '1px solid var(--brass, #B58E48)',
-          }}
-        >
-          <h1
-            className="font-display"
-            style={{ margin: 0, fontSize: '1.45rem', color: 'var(--brass)' }}
-          >
-            {activeScreen === 'deck-builder' && 'Deck Builder (3×20 Carte)'}
-          </h1>
-
-          <button
-            type="button"
-            className="touch-target"
-            data-testid="back-to-home-btn"
-            onClick={handleReturnHome}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '6px',
-              border: '1px solid var(--brass, #B58E48)',
-              backgroundColor: 'var(--surface-card, #223444)',
-              color: 'var(--chalk, #E9E5D6)',
-              fontFamily: 'var(--font-numeric)',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-          >
-            Torna alla Home
-          </button>
-        </header>
-
-        <section
-          style={{
-            padding: '18px 20px',
-            borderRadius: '10px',
-            backgroundColor: 'rgba(20, 30, 39, 0.86)',
-            border: '1px solid rgba(181, 142, 72, 0.35)',
-            lineHeight: 1.5,
-          }}
-        >
-          <p style={{ margin: 0 }}>
-            Sezione pronta sul Tavolo del Cartografo. Utilizza il pulsante
-            &ldquo;Torna alla Home&rdquo; per avviare una partita contro Bot o
-            in modalità Locale Hot-Seat.
-          </p>
-        </section>
-      </div>
-
+    <>
+      <DeckBuilderScreen
+        onBackHome={handleReturnHome}
+        onInspectCard={(cardId) => setInspectedCardId(cardId)}
+      />
       <CardInspectModal
         cardId={inspectedCardId}
         onClose={() => setInspectedCardId(null)}
       />
-    </main>
+    </>
   );
 }

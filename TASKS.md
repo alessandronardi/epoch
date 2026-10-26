@@ -1169,8 +1169,9 @@
 
 ---
 
-## Task M6-02: Schermata Deck Builder (`DeckBuilderScreen.tsx`), integrazione in `App.tsx` e test E2E
+## Task M6-02: Schermata Deck Builder (`DeckBuilderScreen.tsx`), integrazione in `App.tsx` e test E2E [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementata `<DeckBuilderScreen>` responsive con catalogo e quantità per Era, indicatori 3×20, curve Cibo/Legno/Metallo, conteggi per tipo, import JSON da testo/file, export scaricabile e salvataggio dei soli mazzi validi, collegando i mazzi personali ai selettori Bot/Hot-Seat/Online in `App.tsx`, verificata con 6 E2E desktop/mobile verdi (inclusi audit axe, touch target ≥44×44, persistenza e mano iniziale deterministica del mazzo custom), typecheck, ESLint e build web.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M4-02, M6-01
 * **File target:**
