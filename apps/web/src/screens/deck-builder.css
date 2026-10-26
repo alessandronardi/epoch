@@ -1,6 +1,8 @@
-.deck-builder {
+/* Il tavolo di partita blocca lo scroll nel tema globale; il builder deve scorrere. */
+.cartographer-table.deck-builder {
   height: 100dvh;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: clamp(12px, 2.5vw, 28px);
   color: var(--chalk, #e9e5d6);
 }

@@ -5,6 +5,17 @@ import { createGame, type DeckPayload } from '@epochs/engine';
 import { expect, test } from '@playwright/test';
 import balancedDeck from '../../../data/decks/balanced-tactical.json' with { type: 'json' };
 
+test('permette di scorrere verso il catalogo con rotella o trackpad', async ({ page }) => {
+  await page.goto('/');
+  await page.getByTestId('nav-deck-builder-btn').click();
+  const builder = page.getByTestId('screen-deck-builder');
+  await builder.hover({ position: { x: 20, y: 200 } });
+  await page.mouse.wheel(0, 600);
+  // I click di Playwright scorrono anche contenitori con overflow:hidden:
+  // la rotella verifica che il catalogo sia raggiungibile anche dall'utente.
+  await expect.poll(() => builder.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+});
+
 test('crea un mazzo 3×20, blocca bozze incomplete, salva e usa il mazzo personale in partita', async ({
   page,
 }, testInfo) => {
