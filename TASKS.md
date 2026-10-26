@@ -1191,8 +1191,9 @@
 
 ---
 
-## Task M7-01: Effetti sonori sintetici Web Audio API (`sound-effects.ts`) e controlli audio
+## Task M7-01: Effetti sonori sintetici Web Audio API (`sound-effects.ts`) e controlli audio [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato il sintetizzatore procedurale Web Audio con 9 feedback distinti per giocata, Passo, rivelazione, Tiro, Impalamento, Accerchiamento, Mischia, Breccia e fine partita, sincronizzato all'EventPlayer (pausa, velocità 1×/2× e salto della coda). Integrati in Home e partita i controlli accessibili mute/volume persistiti in localStorage, con attivazione al primo gesto utente e fallback silenzioso per API audio o storage indisponibili, verificati con 14 test audio dedicati, 66 test web complessivi, 3 E2E di partita locale desktop/mobile con audit axe, typecheck, ESLint e build web verdi.
 * **Tier:** [TIER: LOW]
 * **Dipendenze:** M3-05
 * **File target:**

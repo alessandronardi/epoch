@@ -1,6 +1,6 @@
 import type { BotKind } from '@epochs/bots';
 import type { DeckPayload } from '@epochs/engine';
-import { useState, type ReactElement } from 'react';
+import { useState, type ReactElement, type ReactNode } from 'react';
 import aggroBreachJson from '../../../../data/decks/aggro-breach.json' with { type: 'json' };
 import balancedTacticalJson from '../../../../data/decks/balanced-tactical.json' with { type: 'json' };
 import boomEconomyJson from '../../../../data/decks/boom-economy.json' with { type: 'json' };
@@ -56,6 +56,7 @@ export interface StartHotSeatMatchRequest {
 }
 
 export interface HomeScreenProps {
+  readonly audioControls?: ReactNode;
   readonly availableDecks?: readonly PresetDeckOption[] | undefined;
   readonly defaultSeed?: string | undefined;
   readonly onStartBotMatch: (request: StartBotMatchRequest) => void;
@@ -64,6 +65,7 @@ export interface HomeScreenProps {
 }
 
 export function HomeScreen({
+  audioControls,
   availableDecks = PRESET_DECK_OPTIONS,
   defaultSeed = 'epochs-cartographer-seed-1',
   onStartBotMatch,
@@ -144,6 +146,7 @@ export function HomeScreen({
         }}
       >
         {/* Intestazione "Il Tavolo del Cartografo" */}
+        {audioControls}
         <header
           data-testid="home-header"
           style={{

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState, type ReactElement } from 'react';
+import { AudioControls } from './audio/AudioControls.js';
+import { connectGameAudio, soundEffects } from './audio/sound-effects.js';
 import {
   ActionControls,
   DevelopmentPlayDndProvider,
@@ -91,6 +93,20 @@ export function App(): ReactElement {
   const setActiveConversionUid = useGameStore((s) => s.setActiveConversionUid);
   const setUnplayableBanner = useGameStore((s) => s.setUnplayableBanner);
   const resetStore = useGameStore((s) => s.resetStore);
+
+  useEffect(() => {
+    const disconnect = connectGameAudio(useGameStore, soundEffects);
+    const unlock = (): void => {
+      void soundEffects.unlock();
+    };
+    document.addEventListener('pointerdown', unlock, true);
+    document.addEventListener('keydown', unlock, true);
+    return () => {
+      document.removeEventListener('pointerdown', unlock, true);
+      document.removeEventListener('keydown', unlock, true);
+      disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -230,6 +246,7 @@ export function App(): ReactElement {
       <>
         <style>{A11Y_CONTRAST_OVERRIDES_CSS}</style>
         <HomeScreen
+          audioControls={<AudioControls />}
           availableDecks={availableDecks}
           onStartBotMatch={startBotMatch}
           onStartHotSeatMatch={startHotSeatMatch}
@@ -380,6 +397,7 @@ export function App(): ReactElement {
                   onInspectCard={(cardId) => setInspectedCardId(cardId)}
                 />
               </div>
+              <AudioControls />
             </div>
           }
           overlaySlot={
