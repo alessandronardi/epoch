@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "paths": {
+      "@epochs/engine": ["../../packages/engine/src/index.ts"],
+      "@epochs/content": ["../../packages/content/src/index.ts"],
+      "@epochs/bots": ["../../packages/bots/src/index.ts"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "e2e/**/*.ts",
+    "vite.config.ts",
+    "../../packages/content/src/index.ts",
+    "../../packages/engine/src/index.ts"
+  ]
+}

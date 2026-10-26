@@ -1,0 +1,435 @@
+[
+  {
+    "id": "scenario-tv13-flank-mutual-annihilation",
+    "description": "TV-13: Cavaliere Corazzato vs Arciere Composto + Uomo d'Arme senza Lancieri. Fase 1: Arciere 4 -> Cavaliere hp 2. Fase 2B: Accerchiamento 6+2=8 (rear->front->center): Arciere muore, eccesso 6 su Uomo d'Arme (hp 2). Fase 3 Ciclo 1: eliminazione reciproca, Fase 4 saltata.",
+    "era": 2,
+    "initiative": "P1",
+    "setup": {
+      "P1": { "units": ["u2_cav_h"], "walls": 8, "cityDamage": 0 },
+      "P2": { "units": ["u2_arc_l", "u2_inf_h"], "walls": 8, "cityDamage": 0 }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "mutual_annihilation",
+      "winner": null,
+      "survivors": { "P1": [], "P2": [] },
+      "wallsAfter": { "P1": 8, "P2": 8 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "breach": false
+    }
+  },
+  {
+    "id": "scenario-tv11-melee-p2-wins",
+    "description": "TV-11: Milizia Cittadina (2/1/3) vs Fante con Scudo (2/1/5), zero Istantanee. Ciclo 1: Milizia hp 1, Fante hp 3. Ciclo 2: Milizia muore. Vince P2; Fase 4: D=1, W=6 -> Mura P1 = 5, nessuna breccia.",
+    "era": 1,
+    "initiative": "P1",
+    "setup": {
+      "P1": {
+        "units": ["u1_inf_l"],
+        "resources": { "food": 4, "wood": 4, "metal": 0 },
+        "walls": 6
+      },
+      "P2": { "units": ["u1_inf_h"], "resources": { "food": 4, "wood": 4, "metal": 0 }, "walls": 6 }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "winner",
+      "winner": "P2",
+      "survivors": { "P1": [], "P2": ["u1_inf_h"] },
+      "wallsAfter": { "P1": 5, "P2": 6 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "resourcesAfter": {
+        "P1": { "food": 4, "wood": 4, "metal": 0 },
+        "P2": { "food": 4, "wood": 4, "metal": 0 }
+      },
+      "breach": false
+    }
+  },
+  {
+    "id": "scenario-tv12-impale-guard-pre-2b",
+    "description": "TV-12: Lanciere Pesante (Impalamento 3) vs Cavaliere Feudale (hp 3). Fase 2A uccide la Cavalleria; la Guardia pre-2B assegna la vittoria a P1. Fase 4: D=1, W=6 -> Mura P2 = 5.",
+    "era": 1,
+    "initiative": "P1",
+    "setup": {
+      "P1": { "units": ["u1_spr_h"], "walls": 6 },
+      "P2": { "units": ["u1_cav_h"], "walls": 6 }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "winner",
+      "winner": "P1",
+      "survivors": { "P1": ["u1_spr_h"], "P2": [] },
+      "wallsAfter": { "P1": 6, "P2": 5 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "breach": false
+    }
+  },
+  {
+    "id": "scenario-tv07-raid-blocked-by-cap-and-empty-stock",
+    "description": "TV-07: breccia con razzia nulla. Attaccante Cibo 7 (cap Era I) e Legno 5; difensore Cibo 3 e Legno 0 -> nessun trasferimento.",
+    "era": 1,
+    "initiative": "P1",
+    "setup": {
+      "P1": {
+        "units": ["u1_inf_l"],
+        "resources": { "food": 7, "wood": 5, "metal": 0 },
+        "walls": 6
+      },
+      "P2": { "units": [], "resources": { "food": 3, "wood": 0, "metal": 0 }, "walls": 1 }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "winner",
+      "winner": "P1",
+      "survivors": { "P1": ["u1_inf_l"], "P2": [] },
+      "wallsAfter": { "P1": 6, "P2": 0 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "resourcesAfter": {
+        "P1": { "food": 7, "wood": 5, "metal": 0 },
+        "P2": { "food": 3, "wood": 0, "metal": 0 }
+      },
+      "breach": true
+    }
+  },
+  {
+    "id": "scenario-tv07b-raid-food-and-wood",
+    "description": "TV-07b: breccia (D=1 >= W=1). Razzia +1 Cibo e +1 Legno all'attaccante (7,6,0), -1/-1 al difensore (2,1,4). Il Metallo non viene mai razziato.",
+    "era": 1,
+    "initiative": "P1",
+    "setup": {
+      "P1": {
+        "units": ["u1_inf_l"],
+        "resources": { "food": 6, "wood": 5, "metal": 0 },
+        "walls": 6
+      },
+      "P2": { "units": [], "resources": { "food": 3, "wood": 2, "metal": 4 }, "walls": 1 }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "winner",
+      "winner": "P1",
+      "survivors": { "P1": ["u1_inf_l"], "P2": [] },
+      "wallsAfter": { "P1": 6, "P2": 0 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "resourcesAfter": {
+        "P1": { "food": 7, "wood": 6, "metal": 0 },
+        "P2": { "food": 2, "wood": 1, "metal": 4 }
+      },
+      "breach": true
+    }
+  },
+  {
+    "id": "scenario-tv07c-annihilation-without-raid",
+    "description": "TV-07c: D=1+2=3 contro W=1 -> breccia, danno diretto 2; Centro Città P2 da 1 HP a -1 -> vittoria immediata per annientamento, nessuna razzia.",
+    "era": 1,
+    "initiative": "P1",
+    "setup": {
+      "P1": {
+        "units": ["u1_inf_l", "u1_sig_l"],
+        "resources": { "food": 4, "wood": 4, "metal": 0 },
+        "walls": 6
+      },
+      "P2": {
+        "units": [],
+        "resources": { "food": 5, "wood": 5, "metal": 2 },
+        "walls": 1,
+        "cityDamage": 9
+      }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "winner",
+      "winner": "P1",
+      "survivors": { "P1": ["u1_inf_l", "u1_sig_l"], "P2": [] },
+      "wallsAfter": { "P1": 6, "P2": 0 },
+      "cityDamageAfter": { "P1": 0, "P2": 11 },
+      "resourcesAfter": {
+        "P1": { "food": 4, "wood": 4, "metal": 0 },
+        "P2": { "food": 5, "wood": 5, "metal": 2 }
+      },
+      "breach": true,
+      "gameEnded": { "kind": "annihilation", "winner": "P1" }
+    }
+  },
+  {
+    "id": "scenario-tv10-excess-damage-transfer",
+    "description": "TV-10 esteso: Balestriere Pesante (ATK 5) in Fase 1 uccide Milizia (3) e trasferisce 2 al Fante con Scudo (hp 3). Mischia: l'Arciere infligge max(1, floor(5/2)) = 2; al Ciclo 2 i due superstiti si eliminano a vicenda.",
+    "era": 2,
+    "initiative": "P2",
+    "setup": {
+      "P1": { "units": ["u2_arc_h"], "walls": 8 },
+      "P2": { "units": ["u1_inf_l", "u1_inf_h"], "walls": 8 }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "mutual_annihilation",
+      "winner": null,
+      "survivors": { "P1": [], "P2": [] },
+      "wallsAfter": { "P1": 8, "P2": 8 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "breach": false
+    }
+  },
+  {
+    "id": "scenario-tv14-walls-aggregate-clamp",
+    "description": "TV-14: Mura P1 = 4; P1 gioca Palizzata Extra (+3), P2 gioca Fuoco Greco (-6). Somma algebrica prima del clamp: max(0, 4+3-6) = 1. Costi delle Istantanee scalati.",
+    "era": 1,
+    "initiative": "P1",
+    "setup": {
+      "P1": { "units": [], "resources": { "food": 4, "wood": 4, "metal": 4 }, "walls": 4 },
+      "P2": { "units": [], "resources": { "food": 4, "wood": 4, "metal": 4 }, "walls": 6 }
+    },
+    "instants": { "P1": ["i1_wall"], "P2": ["i3_fir"] },
+    "expect": {
+      "outcome": "mutual_annihilation",
+      "winner": null,
+      "survivors": { "P1": [], "P2": [] },
+      "wallsAfter": { "P1": 1, "P2": 6 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "resourcesAfter": {
+        "P1": { "food": 4, "wood": 2, "metal": 4 },
+        "P2": { "food": 4, "wood": 2, "metal": 1 }
+      },
+      "breach": false
+    }
+  },
+  {
+    "id": "scenario-tv14b-walls-clamp-at-zero",
+    "description": "TV-14 (variante): solo Fuoco Greco (-6) contro Mura 4 -> max(0, 4-6) = 0.",
+    "era": 1,
+    "initiative": "P1",
+    "setup": {
+      "P1": { "units": [], "resources": { "food": 4, "wood": 4, "metal": 4 }, "walls": 4 },
+      "P2": { "units": [], "resources": { "food": 4, "wood": 4, "metal": 4 }, "walls": 6 }
+    },
+    "instants": { "P1": [], "P2": ["i3_fir"] },
+    "expect": {
+      "outcome": "mutual_annihilation",
+      "winner": null,
+      "survivors": { "P1": [], "P2": [] },
+      "wallsAfter": { "P1": 0, "P2": 6 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "resourcesAfter": {
+        "P1": { "food": 4, "wood": 4, "metal": 4 },
+        "P2": { "food": 4, "wood": 2, "metal": 1 }
+      },
+      "breach": false
+    }
+  },
+  {
+    "id": "scenario-tv16-altoforno-dem-bonus-breach",
+    "description": "TV-16: Era III, demBonus 2 (due Altoforno Reale). Campione Imperiale (DEM 3+2) + Bombarda di Bronzo (DEM 18+2) -> D = 25 contro Mura 10: breccia, danno diretto 15 (Centro Città P2 7/22), razzia +1/+1. Fine Era III ai punti: vince P1.",
+    "era": 3,
+    "initiative": "P1",
+    "setup": {
+      "P1": {
+        "units": ["u3_inf_h", "u3_sig_h"],
+        "buildings": ["e1_farm", "e2_fnd"],
+        "resources": { "food": 5, "wood": 5, "metal": 5 },
+        "walls": 10,
+        "demBonus": 2
+      },
+      "P2": {
+        "units": ["u1_arc_l"],
+        "buildings": ["e1_lumb"],
+        "resources": { "food": 3, "wood": 3, "metal": 3 },
+        "walls": 10
+      }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "winner",
+      "winner": "P1",
+      "survivors": { "P1": ["u3_inf_h", "u3_sig_h"], "P2": [] },
+      "wallsAfter": { "P1": 10, "P2": 0 },
+      "cityDamageAfter": { "P1": 0, "P2": 15 },
+      "resourcesAfter": {
+        "P1": { "food": 6, "wood": 6, "metal": 5 },
+        "P2": { "food": 2, "wood": 2, "metal": 3 }
+      },
+      "breach": true,
+      "gameEnded": { "kind": "points", "winner": "P1" }
+    }
+  },
+  {
+    "id": "scenario-tv22-siege-only-mutual-annihilation",
+    "description": "TV-22: P1 schiera solo Ariete Batteria (non combattente), P2 nessuna unità. Guardia prima della Fase 1: c1 = 0, c2 = 0 -> mutual_annihilation, Fase 4 saltata.",
+    "era": 1,
+    "initiative": "P1",
+    "setup": {
+      "P1": { "units": ["u1_sig_h"], "walls": 6 },
+      "P2": { "units": [], "walls": 6 }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "mutual_annihilation",
+      "winner": null,
+      "survivors": { "P1": ["u1_sig_h"], "P2": [] },
+      "wallsAfter": { "P1": 6, "P2": 6 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "breach": false
+    }
+  },
+  {
+    "id": "scenario-tv23-points-victory",
+    "description": "TV-23: fine Era III senza unità; Centro Città P1 = 12 HP (22-10), P2 = 9 HP (22-13) -> vince P1 ai punti.",
+    "era": 3,
+    "initiative": "P1",
+    "setup": {
+      "P1": { "units": [], "walls": 10, "cityDamage": 10 },
+      "P2": { "units": [], "walls": 10, "cityDamage": 13 }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "mutual_annihilation",
+      "winner": null,
+      "survivors": { "P1": [], "P2": [] },
+      "wallsAfter": { "P1": 10, "P2": 10 },
+      "cityDamageAfter": { "P1": 10, "P2": 13 },
+      "gameEnded": { "kind": "points", "winner": "P1" }
+    }
+  },
+  {
+    "id": "scenario-tv23b-points-draw",
+    "description": "TV-23 (variante): fine Era III con entrambi i Centri Città a 12 HP -> pareggio.",
+    "era": 3,
+    "initiative": "P1",
+    "setup": {
+      "P1": { "units": [], "walls": 10, "cityDamage": 10 },
+      "P2": { "units": [], "walls": 10, "cityDamage": 10 }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "mutual_annihilation",
+      "winner": null,
+      "survivors": { "P1": [], "P2": [] },
+      "wallsAfter": { "P1": 10, "P2": 10 },
+      "cityDamageAfter": { "P1": 10, "P2": 10 },
+      "gameEnded": { "kind": "draw", "winner": "DRAW" }
+    }
+  },
+  {
+    "id": "scenario-tv24-d1-d4-arrows-volley-and-melee",
+    "description": "TV-24: Era III, Cacciatore di Era I (ATK 2) + Pioggia di Frecce (+2) contro un Lanciere (hp 7). Fase 1: 4 + 1 (bonus stampato D1) = 5 -> hp 2. Fase 3: max(1, floor(4/2)) = 2 (D4) uccide il Lanciere, che a sua volta uccide il Cacciatore: annientamento reciproco.",
+    "era": 3,
+    "initiative": "P1",
+    "setup": {
+      "P1": {
+        "units": ["u1_arc_l"],
+        "resources": { "food": 2, "wood": 2, "metal": 0 },
+        "walls": 10
+      },
+      "P2": {
+        "units": ["u3_spr_l"],
+        "resources": { "food": 0, "wood": 0, "metal": 0 },
+        "walls": 10
+      }
+    },
+    "instants": { "P1": ["i1_arr"], "P2": [] },
+    "expect": {
+      "outcome": "mutual_annihilation",
+      "winner": null,
+      "survivors": { "P1": [], "P2": [] },
+      "wallsAfter": { "P1": 10, "P2": 10 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "resourcesAfter": {
+        "P1": { "food": 2, "wood": 0, "metal": 0 },
+        "P2": { "food": 0, "wood": 0, "metal": 0 }
+      },
+      "breach": false,
+      "gameEnded": { "kind": "draw", "winner": "DRAW" }
+    }
+  },
+  {
+    "id": "scenario-volley-kills-cavalry-before-impact",
+    "description": "Era II: l'Arciere Composto (ATK 4, nessun Lanciere nemico -> nessun bonus Tiro) uccide la Cavalleria Leggera (hp 4) in Fase 1; la Guardia pre-2A assegna la vittoria a P2. Fase 4: D = 0 + 1 = 1 contro Mura 8 -> 7.",
+    "era": 2,
+    "initiative": "P2",
+    "setup": {
+      "P1": { "units": ["u2_cav_l"], "walls": 8 },
+      "P2": { "units": ["u2_arc_l", "u2_spr_l"], "walls": 8 }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "winner",
+      "winner": "P2",
+      "survivors": { "P1": [], "P2": ["u2_arc_l", "u2_spr_l"] },
+      "wallsAfter": { "P1": 7, "P2": 8 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "breach": false
+    }
+  },
+  {
+    "id": "scenario-impale-after-volley-zero-dem-siege",
+    "description": "Era I: Arciere (2) porta il Cavaliere Feudale a hp 1, l'Impalamento (3) lo elimina in Fase 2A. Vince P2 con D = 0 (Lanciere Leggero e Arciere hanno DEM 0): nessuna breccia, Mura invariate.",
+    "era": 1,
+    "initiative": "P1",
+    "setup": {
+      "P1": { "units": ["u1_cav_h"], "walls": 6 },
+      "P2": { "units": ["u1_spr_l", "u1_arc_l"], "walls": 6 }
+    },
+    "instants": { "P1": [], "P2": [] },
+    "expect": {
+      "outcome": "winner",
+      "winner": "P2",
+      "survivors": { "P1": [], "P2": ["u1_spr_l", "u1_arc_l"] },
+      "wallsAfter": { "P1": 6, "P2": 6 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "breach": false
+    }
+  },
+  {
+    "id": "scenario-war-cry-front-buff-decides-melee",
+    "description": "Era II: Uomo d'Arme (4/2/8) + Grido di Guerra (+2 ATK al Fronte) contro Spadaccino Scelto (5/2/5). Con il buff l'Uomo d'Arme (6) uccide al Ciclo 1 e sopravvive a hp 3; senza buff sarebbe annientamento reciproco al Ciclo 2. Fase 4: D=2 contro Mura 8 -> 6.",
+    "era": 2,
+    "initiative": "P2",
+    "setup": {
+      "P1": {
+        "units": ["u2_inf_h"],
+        "resources": { "food": 3, "wood": 3, "metal": 3 },
+        "walls": 8
+      },
+      "P2": { "units": ["u2_inf_l"], "resources": { "food": 3, "wood": 3, "metal": 3 }, "walls": 8 }
+    },
+    "instants": { "P1": ["i2_mor"], "P2": [] },
+    "expect": {
+      "outcome": "winner",
+      "winner": "P1",
+      "survivors": { "P1": ["u2_inf_h"], "P2": [] },
+      "wallsAfter": { "P1": 8, "P2": 6 },
+      "cityDamageAfter": { "P1": 0, "P2": 0 },
+      "resourcesAfter": {
+        "P1": { "food": 1, "wood": 3, "metal": 2 },
+        "P2": { "food": 3, "wood": 3, "metal": 3 }
+      },
+      "breach": false
+    }
+  },
+  {
+    "id": "scenario-sapper-mine-siege-breach-and-raid",
+    "description": "Era II: Mina Sotterranea (-4 alle Mura nemiche) porta le Mura P2 da 8 a 4; P2 senza unità -> vittoria campale P1. Fase 4: D = 2 + 6 = 8 >= 4 -> breccia, danno diretto 4, razzia +1 Cibo/+1 Legno.",
+    "era": 2,
+    "initiative": "P2",
+    "setup": {
+      "P1": {
+        "units": ["u2_inf_l", "u2_sig_l"],
+        "resources": { "food": 5, "wood": 5, "metal": 5 },
+        "walls": 8
+      },
+      "P2": { "units": [], "resources": { "food": 3, "wood": 3, "metal": 3 }, "walls": 8 }
+    },
+    "instants": { "P1": ["i2_sab"], "P2": [] },
+    "expect": {
+      "outcome": "winner",
+      "winner": "P1",
+      "survivors": { "P1": ["u2_inf_l", "u2_sig_l"], "P2": [] },
+      "wallsAfter": { "P1": 8, "P2": 0 },
+      "cityDamageAfter": { "P1": 0, "P2": 4 },
+      "resourcesAfter": {
+        "P1": { "food": 5, "wood": 6, "metal": 3 },
+        "P2": { "food": 2, "wood": 2, "metal": 3 }
+      },
+      "breach": true
+    }
+  }
+]

@@ -1,0 +1,157 @@
+/* The Epochs — Design System: "Il Tavolo del Cartografo" (TECH-SPEC §9.1, §9.6) */
+
+@import '@fontsource/cinzel/400.css';
+@import '@fontsource/cinzel/700.css';
+@import '@fontsource/im-fell-english-sc/400.css';
+@import '@fontsource/alegreya/400.css';
+@import '@fontsource/alegreya/400-italic.css';
+@import '@fontsource/alegreya/700.css';
+@import '@fontsource/barlow-condensed/600.css';
+@import '@fontsource/barlow-condensed/700.css';
+
+:root {
+  /* Palette strategica "Il Tavolo del Cartografo" (§9.1) */
+  --table-deep: #141E27;
+  --table: #1C2B38;
+  --surface-card: #223444;
+  --chalk: #E9E5D6;
+  --chalk-muted: #A7B4C2;
+  --brass: #B58E48;
+  --crimson: #A8404D;
+
+  /* Cornici carta per Era: Bronzo (I), Acciaio (II), Oro (III) */
+  --era1: #A86F3C;
+  --era2: #9FB1C2;
+  --era3: #D9B04A;
+
+  /* Pip delle risorse */
+  --food: #86A94C;
+  --wood: #8A5A34;
+  --metal: #6F7F91;
+
+  /* Superfici e ombre di supporto */
+  --surface-elevated: #283D50;
+  --surface-overlay: rgba(20, 30, 39, 0.88);
+  --brass-glow: rgba(181, 142, 72, 0.45);
+  --brass-subtle: rgba(181, 142, 72, 0.28);
+  --crimson-glow: rgba(168, 64, 77, 0.45);
+  --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.48);
+  --shadow-modal: 0 18px 48px rgba(0, 0, 0, 0.72);
+
+  /* Tipografia (§9.1) */
+  --font-display: 'IM Fell English SC', 'Cinzel', Georgia, serif;
+  --font-body: 'Alegreya', Georgia, serif;
+  --font-numeric: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+
+  /* Ergonomia Mobile-First e Accessibilità (§9.6) */
+  --touch-target-min: 44px;
+  --focus-ring: 2px solid var(--brass);
+  --focus-ring-offset: 2px;
+
+  /* Durate animazione */
+  --motion-fast: 120ms;
+  --motion-normal: 220ms;
+  --motion-slow: 360ms;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  background-color: var(--table-deep);
+  color: var(--chalk);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+#root {
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at 50% 42%, var(--table) 0%, var(--table-deep) 92%);
+}
+
+/* Utilità tipografiche */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-numeric {
+  font-family: var(--font-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Controlli interattivi e accessibilità da tastiera (§9.6) */
+button,
+[role='button'],
+input,
+select {
+  font-family: inherit;
+  color: inherit;
+}
+
+.touch-target {
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+}
+
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Contenitore principale del tavolo di gioco (§9.2, §9.6) */
+.cartographer-table {
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  background-color: var(--table);
+  color: var(--chalk);
+  position: relative;
+}
+
+/* Rispetto per prefers-reduced-motion (§9.5, §9.6) */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 40ms;
+    --motion-normal: 80ms;
+    --motion-slow: 100ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 80ms !important;
+    scroll-behavior: auto !important;
+  }
+}

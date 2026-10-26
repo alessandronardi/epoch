@@ -25,6 +25,7 @@ const config: VitestRootConfig = {
     include: [
       'packages/**/tests/**/*.test.ts',
       'apps/**/tests/**/*.test.ts',
+      'apps/**/tests/**/*.test.tsx',
       'apps/**/src/**/*.test.ts',
       'apps/**/src/**/*.test.tsx',
     ],

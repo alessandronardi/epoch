@@ -242,8 +242,9 @@
 
 ---
 
-## Task M1-01: Scheletro `@epochs/engine` e tipi canonici di stato e `RulesConfig`
+## Task M1-01: Scheletro `@epochs/engine` e tipi canonici di stato e `RulesConfig` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Configurato il package @epochs/engine con immer e definiti tutti i tipi canonici JSON-safe di stato, carte, istanze e DEFAULT_RULES_CONFIG.
 * **Tier:** [TIER: LOW]
 * **Dipendenze:** M0-02
 * **File target:**
@@ -262,8 +263,9 @@
 
 ---
 
-## Task M1-02: Tipi per Comandi, Eventi, Errori di Dominio, `LegalCommands` e `PlayerView`
+## Task M1-02: Tipi per Comandi, Eventi, Errori di Dominio, `LegalCommands` e `PlayerView` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Definiti in commands.ts, events.ts e view-types.ts tutti i tipi per Command, ClientCommand, RuleError, Result, GameEvent e i contratti di proiezione PlayerView e LegalCommands.
 * **Tier:** [TIER: LOW]
 * **Dipendenze:** M1-01
 * **File target:**
@@ -281,8 +283,9 @@
 
 ---
 
-## Task M1-03: PRNG deterministico (`xmur3` + `sfc32`), mescolamento Fisher-Yates e `stateHash`
+## Task M1-03: PRNG deterministico (`xmur3` + `sfc32`), mescolamento Fisher-Yates e `stateHash` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati in rng.ts e hash.ts l'hash xmur3, il PRNG puro sfc32, il mescolamento Fisher-Yates e stateHash (JSON canonico + SHA-256 puro) con test unitari.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M1-01
 * **File target:**
@@ -300,8 +303,9 @@
 
 ---
 
-## Task M1-04: Validazione mazzo (`validateDeck`) e politica di scarto FIFO (`autoDiscard` — TV-09)
+## Task M1-04: Validazione mazzo (`validateDeck`) e politica di scarto FIFO (`autoDiscard` — TV-09) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati validateDeck in deck.ts e autoDiscard in discard-policy.ts con test unitari completi incluso il vettore nominale TV-09.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M1-02
 * **File target:**
@@ -321,8 +325,9 @@
 
 ---
 
-## Task M1-05: Modulo Economia — Cap di magazzino, Raccolto d'apertura e Rendite periodiche (TV-01, TV-02, TV-03)
+## Task M1-05: Modulo Economia — Cap di magazzino, Raccolto d'apertura e Rendite periodiche (TV-01, TV-02, TV-03) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato economy.ts (cap di magazzino, accredito con troncamento ed emissione di ResourcesChanged/ResourcesOverflowed, Raccolto d'apertura d'Era e Rendite periodiche) con test unitari TV-01, TV-02 e TV-03 al 100% di coverage.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M1-02
 * **File target:**
@@ -341,8 +346,9 @@
 
 ---
 
-## Task M1-06: Avvio partita (`createGame`), pesca iniziale e risoluzione `mulligan` (TV-08, R6)
+## Task M1-06: Avvio partita (`createGame`), pesca iniziale e risoluzione `mulligan` (TV-08, R6) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati in setup.ts createGame, drawCardsFromSubdeck, startEraDevelopment e submitMulligan (commit simultaneo, pesca sostitutiva prima del reinserimento ordinato R6/TV-08 e transizione automatica a development) con test unitari al 100% di coverage.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M1-03, M1-04, M1-05
 * **File target:**
@@ -363,8 +369,9 @@
 
 ---
 
-## Task M1-07: Calcolo delle mosse legali (`legalCommands`) e motivi di non giocabilità
+## Task M1-07: Calcolo delle mosse legali (`legalCommands`) e motivi di non giocabilità [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati in legal.ts legalCommands ed evaluateCardPlayability per tutte le fasi e i 6 motivi di non giocabilità (no_slot, insufficient_resources, no_building_to_sacrifice, wrong_phase, already_passed, already_committed) con test unitari.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M1-04, M1-05
 * **File target:**
@@ -384,8 +391,9 @@
 
 ---
 
-## Task M1-08: Transizioni `hand_limit` e `development` (Cicli, Carte da campo, Riconversioni, Passo — TV-15..TV-20)
+## Task M1-08: Transizioni `hand_limit` e `development` (Cicli, Carte da campo, Riconversioni, Passo — TV-15..TV-20) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati in development.ts SubmitDiscard, PlayCard (seq D5), PlayConversion (Gilda dei Mercanti pre-sacrificio e Altoforno Reale R4), Pass, avanzamento cicli con rendite e transizione a prebattle (R1) con test TV-15..TV-20 al 100%.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M1-05, M1-06, M1-07
 * **File target:**
@@ -406,8 +414,9 @@
 
 ---
 
-## Task M1-09: Risoluzione deterministica della Battaglia Campale (Fasi 1, 2A, 2B, 3 e Guardia — TV-10..TV-13, TV-21, TV-22, TV-24)
+## Task M1-09: Risoluzione deterministica della Battaglia Campale (Fasi 1, 2A, 2B, 3 e Guardia — TV-10..TV-13, TV-21, TV-22, TV-24) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati in battle.ts orderTargets, assignDamage, evaluateBattleGuard (inclusa R5 post-6° ciclo) e resolveFieldBattle (Fasi 1, 2A, 2B, 3 con D1 e D4) con test unitari TV-10..TV-13, TV-21, TV-22 e TV-24 al 100%.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M1-02
 * **File target:**
@@ -426,8 +435,9 @@
 
 ---
 
-## Task M1-10: Finestra `prebattle`, Fase 4 (Assedio, Breccia, Razzia) e Transizione d'Era / Vittoria (TV-04..TV-07c, TV-14, TV-23)
+## Task M1-10: Finestra `prebattle`, Fase 4 (Assedio, Breccia, Razzia) e Transizione d'Era / Vittoria (TV-04..TV-07c, TV-14, TV-23) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati in siege-and-era.ts LockInstants (R2, R3, TV-14), Fase 4 (calculateSiege, resolveSiegeAndRaid, annihilation e razzia TV-06..TV-07c) e resolveEndOfEra (riporto Mura TV-04/TV-04b, cityMax TV-05 e vittoria ai punti/pareggio TV-23) con test al 100%.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M1-05, M1-09
 * **File target:**
@@ -448,8 +458,9 @@
 
 ---
 
-## Task M1-11: Proiezione di visibilità `playerView` e redazione eventi `projectEvent` (Matrice §5.3–5.4, D3, TV-25)
+## Task M1-11: Proiezione di visibilità `playerView` e redazione eventi `projectEvent` (Matrice §5.3–5.4, D3, TV-25) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati in projection.ts playerView e projectEvent conformi alle matrici §5.3 e §5.4 e alla decisione D3, con test di redazione esaustiva su tutti i 24 tipi di GameEvent e verifica TV-25.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M1-02, M1-07
 * **File target:**
@@ -470,8 +481,9 @@
 
 ---
 
-## Task M1-12: Orchestratore immutabile `apply` (inclusi `ApplyTimeout` D2 e `Concede`) ed export API pubblica
+## Task M1-12: Orchestratore immutabile `apply` (inclusi `ApplyTimeout` D2 e `Concede`) ed export API pubblica [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati in apply.ts l'orchestratore immutabile apply(state, cmd) con gestione di ApplyTimeout (D2 + soglia di abbandono) e Concede, ed esportata in src/index.ts l'intera API pubblica §4.6.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M1-06, M1-08, M1-10, M1-11
 * **File target:**
@@ -494,8 +506,9 @@
 
 ---
 
-## Task M1-13: Suite completa dei 25 Vettori di Test Nominali (`TV-01` – `TV-25`)
+## Task M1-13: Suite completa dei 25 Vettori di Test Nominali (`TV-01` – `TV-25`) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementata in test-vectors.test.ts la suite normativa end-to-end su tutti i 29 vettori di test dell'Appendice A (TV-01..TV-25 inclusi TV-04b, TV-07b, TV-07c, TV-19b) tramite l'API pubblica di @epochs/engine.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M0-06, M1-12
 * **File target:**
@@ -513,8 +526,9 @@
 
 ---
 
-## Task M1-14: Property-based testing (`fast-check`), invarianti 10.2, anti-leak 5.5 e determinismo 1000 partite
+## Task M1-14: Property-based testing (`fast-check`), invarianti 10.2, anti-leak 5.5 e determinismo 1000 partite [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati i test property-based con fast-check per i 6 invarianti formali §10.2 (invariants.property.test.ts), l'anti-leak §5.5 (anti-leak.property.test.ts) e il determinismo bit-per-bit su 1000 partite complete (determinism.test.ts), raggiungendo il 99.59% statements e 96.36% branches di coverage su @epochs/engine.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M1-13
 * **File target:**
@@ -534,8 +548,9 @@
 
 ---
 
-## Task M2-01: Interfaccia `Bot` e implementazione di `RandomBot` in `@epochs/bots`
+## Task M2-01: Interfaccia `Bot` e implementazione di `RandomBot` in `@epochs/bots` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Configurato il package @epochs/bots e implementati l'interfaccia Bot e RandomBot (operanti esclusivamente su PlayerView con probabilità di Pass configurabile e selezione uniforme tra le mosse legali in mulligan, hand_limit, development e prebattle).
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M1-12
 * **File target:**
@@ -555,8 +570,9 @@
 
 ---
 
-## Task M2-02: Implementazione di `GreedyBot`, `RationalBot` e test suite `@epochs/bots`
+## Task M2-02: Implementazione di `GreedyBot`, `RationalBot` e test suite `@epochs/bots` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati GreedyBot e RationalBot in greedy-bot.ts secondo le euristiche §7.1, esportata l'API pubblica in index.ts e creata la test suite in bots.test.ts (96.09% statements e 89.67% branches coverage).
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M0-06, M2-01
 * **File target:**
@@ -576,8 +592,9 @@
 
 ---
 
-## Task M2-03: Scenari JSON normativi ed esecutore standalone `tools/validate-scenarios.ts`
+## Task M2-03: Scenari JSON normativi ed esecutore standalone `tools/validate-scenarios.ts` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Creata la suite `tv-nominal-suite.json` (18 scenari: TV-07/07b/07c, TV-10, TV-11, TV-12, TV-13, TV-14/14b, TV-16, TV-22, TV-23/23b, TV-24 e 4 scenari aggiuntivi di combattimento/assedio) e implementato `tools/validate-scenarios.ts` che valida con Zod, esegue sul motore via `apply` e verifica esito, superstiti, Mura, danno Centro Città, risorse, breccia, fine partita, determinismo (`stateHash`) e assenza di leak (18/18 verdi, exit code 0).
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M0-04, M0-06, M1-12
 * **File target:**
@@ -596,8 +613,9 @@
 
 ---
 
-## Task M2-04: Worker di simulazione partite per `@epochs/sim`
+## Task M2-04: Worker di simulazione partite per `@epochs/sim` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Configurato il package `@epochs/sim` e implementato `src/worker.ts` (`simulateGame`, `runWorkerBatch`, `deriveGameSeed`) con seed deterministico `${masterSeed}:${gameIndex}`, alternanza bilanciata dei posti `P1`/`P2` e raccolta completa delle metriche §7.2 (vincitore, esito, cicli/brecce/danno diretto/HP Mura/razzie per Era, esiti campali `winner`/`stalemate`/`mutual_annihilation` e statistiche per singola carta).
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M0-11, M2-02
 * **File target:**
@@ -617,8 +635,9 @@
 
 ---
 
-## Task M2-05: Aggregatore multi-worker, CLI `packages/sim` e test di riproducibilità
+## Task M2-05: Aggregatore multi-worker, CLI `packages/sim` e test di riproducibilità [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati in `src/index.ts` l'orchestratore multi-worker `runSimulation` (`worker_threads`), l'aggregatore deterministico `aggregateSimulationRecords` ordinato per `gameIndex` con `reportHash` SHA-256 e `formatReportAsCsv`, la CLI `src/cli.ts` (`--deckA`, `--deckB`, `--botA`, `--botB`, `--games`, `--seed`, `--workers`, `--out`) e la suite `tests/sim.test.ts` (6/6 test verdi, identità bit-per-bit tra 1 e 4 worker verificata).
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M2-04
 * **File target:**
@@ -638,8 +657,9 @@
 
 ---
 
-## Task M3-01: Scheletro `@epochs/web` e sistema di design CSS "Il Tavolo del Cartografo"
+## Task M3-01: Scheletro `@epochs/web` e sistema di design CSS "Il Tavolo del Cartografo" [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Configurato il package `@epochs/web` con dipendenze fissate (React, Zustand, Motion, `@dnd-kit/core`, `lucide-react`, font self-hosted `@fontsource/*`) e definito `src/styles/theme.css` con tutti i token colore §9.1, tipografia, layout `100dvh` senza scroll accidentale e supporto `prefers-reduced-motion: reduce`.
 * **Tier:** [TIER: LOW]
 * **Dipendenze:** M0-08, M1-12
 * **File target:**
@@ -657,8 +677,9 @@
 
 ---
 
-## Task M3-02: Configurazione Vite, `index.html` e icone SVG di dominio (`DomainIcons.tsx`)
+## Task M3-02: Configurazione Vite, `index.html` e icone SVG di dominio (`DomainIcons.tsx`) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Creati `vite.config.ts` e `index.html` mobile-first in italiano e implementate in `DomainIcons.tsx` tutte le icone SVG accessibili con etichette testuali per risorse (`food`, `wood`, `metal`), Ere (`I`, `II`, `III`), linee (`front`, `center`, `rear`), categorie unità, tipi carta e statistiche (`atk`, `dem`, `hp`, `walls`, `cityCenter`).
 * **Tier:** [TIER: LOW]
 * **Dipendenze:** M3-01
 * **File target:**
@@ -677,8 +698,9 @@
 
 ---
 
-## Task M3-03: Componente `<Card>` (rapporto 5:7, Container Queries, 5 fasce) e `<CardToken>` compatto
+## Task M3-03: Componente `<Card>` (rapporto 5:7, Container Queries, 5 fasce) e `<CardToken>` compatto [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati `<Card>` (rapporto 5:7, Container Queries `cqw`, griglia a 5 fasce `9fr 47fr 6fr 29fr 9fr`, evidenziazione `--brass` per bonus e `--crimson` per danni) e `<CardToken>` compatto per le linee di battaglia mobile con touch target >= 44x44px.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M0-08, M3-02
 * **File target:**
@@ -698,8 +720,9 @@
 
 ---
 
-## Task M3-04: Modale d'ispezione carta a schermo intero con tooltip parole chiave e test componente
+## Task M3-04: Modale d'ispezione carta a schermo intero con tooltip parole chiave e test componente [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato `<CardInspectModal>` (apertura con long-press 250ms, doppio tap o tasto dedicato, chiusura con `Esc` o tap esterno e visualizzazione dei box di richiamo per tutte le 6 parole chiave) con test unitari completi in `apps/web/tests/card-component.test.tsx` (6/6 verdi).
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M3-03
 * **File target:**
@@ -717,8 +740,9 @@
 
 ---
 
-## Task M3-05: Descrittore eventi in italiano (`describeEvent`), coda `EventPlayer` e store Zustand
+## Task M3-05: Descrittore eventi in italiano (`describeEvent`), coda `EventPlayer` e store Zustand [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati `describeEvent` e `getBattleStageLabel` in `event-describer.ts` per tutti i 24 tipi di `GameEvent` e lo store Zustand con macchina `EventPlayer` (`1x`, `2x`, `Pausa`, `Salta alla fine`, cascata `120ms` per `UnitsRevealed` e scansione fasi `1`, `2A`, `2B`, `3`, `4`) in `game-store.ts`, verificati in `apps/web/tests/event-player.test.ts` (5/5 test verdi).
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M1-12, M3-01
 * **File target:**
@@ -738,8 +762,9 @@
 
 ---
 
-## Task M3-06: Interfaccia `GameController` e `LocalGameController` (vs Bot e Hot-Seat)
+## Task M3-06: Interfaccia `GameController` e `LocalGameController` (vs Bot e Hot-Seat) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Definita l'interfaccia `GameController` in `controllers/types.ts` e implementato `LocalGameController` in `controllers/local-controller.ts` con proiezione sistematica tramite `playerView`/`projectEvent`, esecuzione automatica del bot e gestione del blocco privacy `awaitingHotSeatHandover` in modalità Hot-Seat, verificati in `apps/web/tests/local-controller.test.ts` (3/3 test verdi).
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M2-02, M3-05
 * **File target:**
@@ -759,8 +784,9 @@
 
 ---
 
-## Task M3-07: Layout del Tavolo di Partita (`BattlefieldBoard`, `CityAndLines`) Desktop e Mobile
+## Task M3-07: Layout del Tavolo di Partita (`BattlefieldBoard`, `CityAndLines`) Desktop e Mobile [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati `BattlefieldBoard.tsx`, `CityAndLines.tsx` e `board.css` con layout responsive Desktop/Mobile, barre stato giocatore/avversario (Mura, Centro Città, Slot, Risorse o stato nascosto, Mano/Mazzi/Scarti), zona Città (carte coperte con badge proprietario e dorsi impilati con `coveredCount` avversario), le 3 linee di battaglia (`Fronte`, `Centro`, `Retroguardia`) con animazione a cascata `UnitsRevealed` e drawer laterale mobile.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M3-03, M3-05
 * **File target:**
@@ -780,8 +806,9 @@
 
 ---
 
-## Task M3-08: Mano a ventaglio interattiva (Drag & Drop + Tap-to-Play) e controlli d'azione
+## Task M3-08: Mano a ventaglio interattiva (Drag & Drop + Tap-to-Play) e controlli d'azione [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati `PlayerHand.tsx` (mano a ventaglio fino a 10 carte con navigazione da tastiera Frecce/Tab/Invio/Esc, bordo `--brass`, trascinamento `@dnd-kit/core` e banner esplicativo in italiano per tutti i 6 codici `UnplayableReason`) e `ActionControls.tsx` (doppio flusso Drag & Drop e Tap-to-Play con `"Gioca Carta"` e pulsante `"Passo"` con dialogo di conferma rapida disattivabile).
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M3-04, M3-07
 * **File target:**
@@ -800,8 +827,9 @@
 
 ---
 
-## Task M3-09: Modali e barre di fase (`MulliganModal`, `HandLimitModal`, `ConversionModal`, `PrebattleInstantsBar`)
+## Task M3-09: Modali e barre di fase (`MulliganModal`, `HandLimitModal`, `ConversionModal`, `PrebattleInstantsBar`) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati `MulliganAndDiscardModals.tsx` (`MulliganModal` con `"Conferma Mulligan (N carte)"`/`"Mantieni mano"` e `HandLimitModal` con `"Seleziona N carte da scartare"`, `"Conferma Scarto"` a esattamente N carte e `"Suggerisci (FIFO)"` collegato ad `autoDiscard`), `ConversionModal.tsx` (selettore edificio da sacrificare con anteprima guadagno netto post-cap 16 e bonus DEM) e `PrebattleInstantsBar.tsx` (barra non bloccante per Istantanee con costo aggregato, saldo residuo e anteprima bonus Mura/Unità prima di `"Blocca Scelte Pre-Battaglia"`).
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M3-08
 * **File target:**
@@ -821,8 +849,9 @@
 
 ---
 
-## Task M3-10: Barra `EventPlayer`, Registro di Battaglia (`aria-live`), drawer mobile e modali Hot-Seat / Fine Partita
+## Task M3-10: Barra `EventPlayer`, Registro di Battaglia (`aria-live`), drawer mobile e modali Hot-Seat / Fine Partita [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati `BattlePlaybackAndLog.tsx` (`BattlePlaybackBar` con indicatore fasi `1`, `2A`, `2B`, `3`, `4` e controlli `1x`, `2x`, `Pausa`, `"Salta alla fine"`, contatori sotto-mazzi/scarti e `Registro di Battaglia` con `aria-live="polite"`) e `HotSeatAndGameOverModal.tsx` (`HotSeatHandoverModal` con schermata privacy e `GameOverModal` per `annihilation`, `points`, `draw`, `concession`, `timeout`).
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M3-06, M3-07
 * **File target:**
@@ -841,8 +870,9 @@
 
 ---
 
-## Task M3-11: Schermata Home, routing dell'applicazione e montaggio in `App.tsx`
+## Task M3-11: Schermata Home, routing dell'applicazione e montaggio in `App.tsx` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati `HomeScreen.tsx` (avvio partita contro Bot `RandomBot`/`GreedyBot` con selezione dei 3 mazzi preset e seed, avvio partita Locale Hot-Seat e navigazione verso Multiplayer Online, Deck Builder, Archivio Carte e Regolamento Rapido), `App.tsx` e `main.tsx` con build Vite di produzione completata (152.7 kB gzip).
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M0-11, M3-09, M3-10
 * **File target:**
@@ -862,8 +892,9 @@
 
 ---
 
-## Task M3-12: Configurazione Playwright + `axe-core` e test E2E partita completa vs Bot (Desktop e Mobile)
+## Task M3-12: Configurazione Playwright + `axe-core` e test E2E partita completa vs Bot (Desktop e Mobile) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Configurato `playwright.config.ts` (Desktop `1280x800`, Mobile Landscape `800x360`, Mobile Portrait `360x800` con `webServer` automatico) e implementato `apps/web/e2e/local-match-and-a11y.spec.ts` che porta a termine una partita completa su 3 Ere contro Bot fino a `finished` con 0 violazioni `@axe-core/playwright` critical/serious (3/3 progetti verdi).
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M3-11
 * **File target:**
@@ -881,8 +912,9 @@
 
 ---
 
-## Task M4-01: Pipeline immagini `tools/art-build.ts` (`sharp` WebP/AVIF) e componente `<CardArtPicture>`
+## Task M4-01: Pipeline immagini `tools/art-build.ts` (`sharp` WebP/AVIF) e componente `<CardArtPicture>` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementata la pipeline `tools/art-build.ts` con `sharp` generando le varianti WebP e AVIF a 256/512/1024px (in rapporto 4:3) e `apps/web/public/cards/art-manifest.json` per tutte le 45 carte, creato `<CardArtPicture>` con `<picture>` (`srcset` AVIF/WebP + fallback SVG e `alt` localizzato) integrato in `<Card>`, e verificato con `packages/content/tests/art-pipeline.test.ts` (2/2 test verdi).
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M0-10, M3-03
 * **File target:**
@@ -902,8 +934,9 @@
 
 ---
 
-## Task M4-02: Schermata Archivio Carte esplorabile e Schermata Regolamento Rapido
+## Task M4-02: Schermata Archivio Carte esplorabile e Schermata Regolamento Rapido [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementate `<CardArchiveScreen>` (griglia responsive delle 45 carte con filtri combinabili per Era, Tipo, Categoria, Linea, ricerca testuale, glossario rapido delle 6 parole chiave e ispezione tramite `<CardInspectModal>`) e `<QuickRulesScreen>` (riepilogo strutturato GDD in 6 sezioni con tutte le 6 parole chiave), integrate in `App.tsx` e verificate in `apps/web/tests/archive-rules.test.tsx` (5/5 test verdi).
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M3-11, M4-01
 * **File target:**
@@ -924,8 +957,9 @@
 
 ---
 
-## Task M5-01: Package `@epochs/protocol` — Schemi Zod dei messaggi WebSocket/REST e `ErrorCode`
+## Task M5-01: Package `@epochs/protocol` — Schemi Zod dei messaggi WebSocket/REST e `ErrorCode` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato il package `@epochs/protocol` con schemi Zod rigorosi e tipi TypeScript per tutti i 15 `ErrorCode` normativi, `ClientCommand` (privo di `player`), messaggi Client -> Server (`hello`, `queue.join`, `room.create`, `game.command`, `game.resync`), messaggi Server -> Client (`welcome`, `room.created`, `match.found`, `game.snapshot`, `game.events`, `game.error`, `game.deadline`, `game.ended`), `PlayerView`, `GameEvent` e schemi REST di replay/healthz.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M0-04, M1-02
 * **File target:**
@@ -946,8 +980,9 @@
 
 ---
 
-## Task M5-02: Test unitari di validazione e sicurezza per `@epochs/protocol`
+## Task M5-02: Test unitari di validazione e sicurezza per `@epochs/protocol` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementata la suite `packages/protocol/tests/protocol.test.ts` (7/7 test verdi, 100% statements e 100% branches coverage V8) verificando i 15 `ErrorCode`, la validazione positiva/negativa di tutti i messaggi C->S e S->C, il rifiuto di `player` iniettato o `expectedStateVersion` negativo e gli schemi di replay.
 * **Tier:** [TIER: LOW]
 * **Dipendenze:** M5-01
 * **File target:**
@@ -963,8 +998,9 @@
 
 ---
 
-## Task M5-03: Scheletro `@epochs/server` e interfaccia `GameRepository`
+## Task M5-03: Scheletro `@epochs/server` e interfaccia `GameRepository` [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Configurato il package `@epochs/server` con dipendenze fissate (`fastify`, `@fastify/websocket`, `better-sqlite3`, `pino`, `zod`) e definita in `src/db/repository.ts` l'interfaccia astratta `GameRepository` con contratti tipizzati per `players`, `decks`, `games`, `game_commands` e transazione atomica `saveTransition`.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M1-12, M5-01
 * **File target:**
@@ -983,8 +1019,9 @@
 
 ---
 
-## Task M5-04: Implementazione `SqliteRepository` (`better-sqlite3`) con persistenza ibrida e test DB
+## Task M5-04: Implementazione `SqliteRepository` (`better-sqlite3`) con persistenza ibrida e test DB [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato `SqliteRepository` con `better-sqlite3` creando le 4 tabelle §6.4 (`players`, `decks`, `games`, `game_commands` con `PRIMARY KEY (game_id, idx)` e `UNIQUE (game_id, command_id)`), transazione atomica `saveTransition` e verifica di integrità `stateHash` su scrittura e ripristino, validati in `apps/server/tests/repository.test.ts` (4/4 test verdi).
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M5-03
 * **File target:**
@@ -1002,8 +1039,9 @@
 
 ---
 
-## Task M5-05: Attore `GameRoom` — Coda sequenziale, concorrenza ottimistica, idempotenza e timer
+## Task M5-05: Attore `GameRoom` — Coda sequenziale, concorrenza ottimistica, idempotenza e timer [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato l'attore `GameRoom` in `src/rooms/game-room.ts` con serializzazione dei comandi per partita, isolamento delle seat (`MATCH_NOT_ACCESSIBLE`), idempotenza su `commandId` (`IDEMPOTENCY_KEY_REUSED`), concorrenza ottimistica su `expectedStateVersion` (`STALE_STATE_VERSION` + `game.snapshot`), proiezione anti-leak, timer di finestra (`30s/30s/45s/30s`), fine partita dopo 3 timeout consecutivi e grace period di disconnessione (`60s`), verificato in `apps/server/tests/game-room.test.ts` (6/6 test verdi).
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M5-04
 * **File target:**
@@ -1022,8 +1060,9 @@
 
 ---
 
-## Task M5-06: Autenticazione ospite (SHA-256 token) e `RoomManager` (matchmaking e ripristino)
+## Task M5-06: Autenticazione ospite (SHA-256 token) e `RoomManager` (matchmaking e ripristino) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati `src/auth/guest-session.ts` (emissione token opachi a 256 bit di entropia salvando solo l'hash SHA-256 in `players.token_hash`) e `src/rooms/room-manager.ts` (validazione mazzi `INVALID_DECK`, coda rapida `mode: 'quick'`, stanze private tramite `roomCode`, `game.resync` e ripristino in memoria delle partite `ACTIVE` al riavvio), verificati in `apps/server/tests/room-manager.test.ts` (5/5 test verdi).
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M5-05
 * **File target:**
@@ -1043,8 +1082,9 @@
 
 ---
 
-## Task M5-07: Server Fastify + WebSocket, `/api/v1/healthz`, CRUD mazzi e Replay deterministico
+## Task M5-07: Server Fastify + WebSocket, `/api/v1/healthz`, CRUD mazzi e Replay deterministico [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati `src/routes/replay-and-decks.ts` (`GET /api/v1/healthz`, sessione ospite, CRUD mazzi con validazione `INVALID_DECK`, `GET /api/v1/games/:id/replay?as=P1|P2|public` bloccato con 403 su partite `ACTIVE`, privo di `seed` e ricostruito da `seed` + `rules_json` + `game_commands` con verifica `stateHash` a ogni passo) e `src/server.ts` (Fastify + WebSocket con `maxPayload` 16 KB, controllo `Origin`, rate limiting, logger `pino` con redazione dei segreti e graceful shutdown), verificati in `apps/server/tests/server-ws-replay.test.ts` (4/4 test verdi).
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M5-06
 * **File target:**
@@ -1064,8 +1104,9 @@
 
 ---
 
-## Task M5-08: `RemoteGameController`, schermata Lobby Online e Visualizzatore Replay nel client
+## Task M5-08: `RemoteGameController`, schermata Lobby Online e Visualizzatore Replay nel client [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementati `RemoteGameController` (token ospite persistito, handshake `hello`/`welcome`, `commandId` univoci, `expectedStateVersion`, riallineamento e ritentativo su `STALE_STATE_VERSION`, offset `serverTime` per la `deadline`, riconnessione automatica con `game.resync`), `<OnlineLobbyScreen>` (Coda Veloce, Crea/Entra in Stanza Privata) e `<ReplayViewerScreen>` (Inizio / Passo Indietro / Play-Pausa / Passo Avanti / Fine e prospettive `P1`, `P2`, `Pubblico`) integrati in `App.tsx`, verificati con 0 errori `tsc --noEmit` e 0 violazioni ESLint.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M3-11, M5-07
 * **File target:**
@@ -1086,8 +1127,9 @@
 
 ---
 
-## Task M5-09: Test E2E Playwright multiplayer online con 2 browser context, riconnessione e replay
+## Task M5-09: Test E2E Playwright multiplayer online con 2 browser context, riconnessione e replay [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato `apps/web/e2e/online-multiplayer.spec.ts` che avvia il server Fastify in-memory, abbina 2 `BrowserContext` isolati tramite stanza privata, completa il Mulligan, simula disconnessione/riconnessione con `game.resync` verificando l'allineamento di `stateVersion`, porta la partita a `finished` e verifica il Visualizzatore Replay (passi, Play/Pausa, prospettive `P1`/`P2`/`Pubblico`), verde su tutti e 3 i progetti Playwright (`desktop`, `mobile-landscape`, `mobile-portrait`) con exit code 0.
 * **Tier:** [TIER: ARGON-HIGH]
 * **Dipendenze:** M3-12, M5-08
 * **File target:**

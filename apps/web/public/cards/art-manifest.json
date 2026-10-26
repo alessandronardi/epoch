@@ -1,0 +1,1135 @@
+{
+  "version": 1,
+  "widths": [
+    256,
+    512,
+    1024
+  ],
+  "cards": {
+    "e1_farm": {
+      "id": "e1_farm",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/e1_farm-256.avif",
+        "512": "/cards/e1_farm-512.avif",
+        "1024": "/cards/e1_farm-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/e1_farm-256.webp",
+        "512": "/cards/e1_farm-512.webp",
+        "1024": "/cards/e1_farm-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/e1_farm.svg",
+      "alt": {
+        "it": "Illustrazione di una fattoria in legno all'alba con campo di grano e carro trainato da buoi."
+      }
+    },
+    "e1_lumb": {
+      "id": "e1_lumb",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/e1_lumb-256.avif",
+        "512": "/cards/e1_lumb-512.avif",
+        "1024": "/cards/e1_lumb-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/e1_lumb-256.webp",
+        "512": "/cards/e1_lumb-512.webp",
+        "1024": "/cards/e1_lumb-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/e1_lumb.svg",
+      "alt": {
+        "it": "Illustrazione di una segheria rustica ai margini del bosco con due uomini e tronchi accatastati."
+      }
+    },
+    "e1_mine": {
+      "id": "e1_mine",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/e1_mine-256.avif",
+        "512": "/cards/e1_mine-512.avif",
+        "1024": "/cards/e1_mine-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/e1_mine-256.webp",
+        "512": "/cards/e1_mine-512.webp",
+        "1024": "/cards/e1_mine-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/e1_mine.svg",
+      "alt": {
+        "it": "Illustrazione di una cava di roccia a cielo aperto con impalcature in legno e minatori al lavoro."
+      }
+    },
+    "e2_fnd": {
+      "id": "e2_fnd",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/e2_fnd-256.avif",
+        "512": "/cards/e2_fnd-512.avif",
+        "1024": "/cards/e2_fnd-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/e2_fnd-256.webp",
+        "512": "/cards/e2_fnd-512.webp",
+        "1024": "/cards/e2_fnd-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/e2_fnd.svg",
+      "alt": {
+        "it": "Illustrazione di una fonderia con crogioli incandescenti, mantici e metallo fuso colato negli stampi."
+      }
+    },
+    "e2_mill": {
+      "id": "e2_mill",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/e2_mill-256.avif",
+        "512": "/cards/e2_mill-512.avif",
+        "1024": "/cards/e2_mill-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/e2_mill-256.webp",
+        "512": "/cards/e2_mill-512.webp",
+        "1024": "/cards/e2_mill-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/e2_mill.svg",
+      "alt": {
+        "it": "Illustrazione di un mulino in pietra con grande ruota idraulica in legno accanto a un torrente."
+      }
+    },
+    "e2_saw": {
+      "id": "e2_saw",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/e2_saw-256.avif",
+        "512": "/cards/e2_saw-512.avif",
+        "1024": "/cards/e2_saw-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/e2_saw-256.webp",
+        "512": "/cards/e2_saw-512.webp",
+        "1024": "/cards/e2_saw-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/e2_saw.svg",
+      "alt": {
+        "it": "Illustrazione di una grande segheria ad acqua con lama alternativa che taglia un tronco imponente."
+      }
+    },
+    "e3_frn": {
+      "id": "e3_frn",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/e3_frn-256.avif",
+        "512": "/cards/e3_frn-512.avif",
+        "1024": "/cards/e3_frn-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/e3_frn-256.webp",
+        "512": "/cards/e3_frn-512.webp",
+        "1024": "/cards/e3_frn-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/e3_frn.svg",
+      "alt": {
+        "it": "Illustrazione di un imponente altoforno reale che cola ferro fuso tra fumo denso e bagliori arancioni."
+      }
+    },
+    "e3_gld": {
+      "id": "e3_gld",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/e3_gld-256.avif",
+        "512": "/cards/e3_gld-512.avif",
+        "1024": "/cards/e3_gld-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/e3_gld-256.webp",
+        "512": "/cards/e3_gld-512.webp",
+        "1024": "/cards/e3_gld-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/e3_gld.svg",
+      "alt": {
+        "it": "Illustrazione dell'interno di una gilda dei mercanti con registri, monete d'oro e un atto sigillato."
+      }
+    },
+    "i1_arr": {
+      "id": "i1_arr",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/i1_arr-256.avif",
+        "512": "/cards/i1_arr-512.avif",
+        "1024": "/cards/i1_arr-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/i1_arr-256.webp",
+        "512": "/cards/i1_arr-512.webp",
+        "1024": "/cards/i1_arr-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/i1_arr.svg",
+      "alt": {
+        "it": "Illustrazione di una fitta salva di frecce che oscura il cielo sopra il campo di battaglia."
+      }
+    },
+    "i1_wall": {
+      "id": "i1_wall",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/i1_wall-256.avif",
+        "512": "/cards/i1_wall-512.avif",
+        "1024": "/cards/i1_wall-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/i1_wall-256.webp",
+        "512": "/cards/i1_wall-512.webp",
+        "1024": "/cards/i1_wall-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/i1_wall.svg",
+      "alt": {
+        "it": "Illustrazione di soldati che piantano pali appuntiti su un terrapieno di notte alla luce delle torce."
+      }
+    },
+    "i2_mor": {
+      "id": "i2_mor",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/i2_mor-256.avif",
+        "512": "/cards/i2_mor-512.avif",
+        "1024": "/cards/i2_mor-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/i2_mor-256.webp",
+        "512": "/cards/i2_mor-512.webp",
+        "1024": "/cards/i2_mor-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/i2_mor.svg",
+      "alt": {
+        "it": "Illustrazione di un comandante che lancia il grido di guerra dai bastioni con lo stendardo sollevato."
+      }
+    },
+    "i2_sab": {
+      "id": "i2_sab",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/i2_sab-256.avif",
+        "512": "/cards/i2_sab-512.avif",
+        "1024": "/cards/i2_sab-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/i2_sab-256.webp",
+        "512": "/cards/i2_sab-512.webp",
+        "1024": "/cards/i2_sab-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/i2_sab.svg",
+      "alt": {
+        "it": "Illustrazione di una galleria sotterranea con puntelli in legno e genieri sotto le mura di una fortezza."
+      }
+    },
+    "i3_fir": {
+      "id": "i3_fir",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/i3_fir-256.avif",
+        "512": "/cards/i3_fir-512.avif",
+        "1024": "/cards/i3_fir-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/i3_fir-256.webp",
+        "512": "/cards/i3_fir-512.webp",
+        "1024": "/cards/i3_fir-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/i3_fir.svg",
+      "alt": {
+        "it": "Illustrazione di un sifone di bronzo che proietta getti di fuoco greco liquido contro le mura."
+      }
+    },
+    "i3_ral": {
+      "id": "i3_ral",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/i3_ral-256.avif",
+        "512": "/cards/i3_ral-512.avif",
+        "1024": "/cards/i3_ral-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/i3_ral-256.webp",
+        "512": "/cards/i3_ral-512.webp",
+        "1024": "/cards/i3_ral-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/i3_ral.svg",
+      "alt": {
+        "it": "Illustrazione di fanteria e picchieri che caricano su un pendio dietro un alfiere nella luce dorata."
+      }
+    },
+    "u1_arc_h": {
+      "id": "u1_arc_h",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u1_arc_h-256.avif",
+        "512": "/cards/u1_arc_h-512.avif",
+        "1024": "/cards/u1_arc_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u1_arc_h-256.webp",
+        "512": "/cards/u1_arc_h-512.webp",
+        "1024": "/cards/u1_arc_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u1_arc_h.svg",
+      "alt": {
+        "it": "Illustrazione di una linea disciplinata di arcieri d'ordinanza in livrea che scoccano una salva."
+      }
+    },
+    "u1_arc_l": {
+      "id": "u1_arc_l",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u1_arc_l-256.avif",
+        "512": "/cards/u1_arc_l-512.avif",
+        "1024": "/cards/u1_arc_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u1_arc_l-256.webp",
+        "512": "/cards/u1_arc_l-512.webp",
+        "1024": "/cards/u1_arc_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u1_arc_l.svg",
+      "alt": {
+        "it": "Illustrazione di un cacciatore incappucciato che mira con un arco corto da una collina boscosa."
+      }
+    },
+    "u1_cav_h": {
+      "id": "u1_cav_h",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u1_cav_h-256.avif",
+        "512": "/cards/u1_cav_h-512.avif",
+        "1024": "/cards/u1_cav_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u1_cav_h-256.webp",
+        "512": "/cards/u1_cav_h-512.webp",
+        "1024": "/cards/u1_cav_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u1_cav_h.svg",
+      "alt": {
+        "it": "Illustrazione di un cavaliere feudale in cotta di maglia e sopravveste araldica con lancia abbassata."
+      }
+    },
+    "u1_cav_l": {
+      "id": "u1_cav_l",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u1_cav_l-256.avif",
+        "512": "/cards/u1_cav_l-512.avif",
+        "1024": "/cards/u1_cav_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u1_cav_l-256.webp",
+        "512": "/cards/u1_cav_l-512.webp",
+        "1024": "/cards/u1_cav_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u1_cav_l.svg",
+      "alt": {
+        "it": "Illustrazione di un esploratore a cavallo al galoppo lungo un crinale che solleva una scia di polvere."
+      }
+    },
+    "u1_inf_h": {
+      "id": "u1_inf_h",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u1_inf_h-256.avif",
+        "512": "/cards/u1_inf_h-512.avif",
+        "1024": "/cards/u1_inf_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u1_inf_h-256.webp",
+        "512": "/cards/u1_inf_h-512.webp",
+        "1024": "/cards/u1_inf_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u1_inf_h.svg",
+      "alt": {
+        "it": "Illustrazione di un fante con cotta di maglia e spada corta saldo dietro un grande scudo a goccia."
+      }
+    },
+    "u1_inf_l": {
+      "id": "u1_inf_l",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u1_inf_l-256.avif",
+        "512": "/cards/u1_inf_l-512.avif",
+        "1024": "/cards/u1_inf_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u1_inf_l-256.webp",
+        "512": "/cards/u1_inf_l-512.webp",
+        "1024": "/cards/u1_inf_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u1_inf_l.svg",
+      "alt": {
+        "it": "Illustrazione di miliziani cittadini con giubbotti imbottiti e scudi rotondi davanti alla porta."
+      }
+    },
+    "u1_sig_h": {
+      "id": "u1_sig_h",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u1_sig_h-256.avif",
+        "512": "/cards/u1_sig_h-512.avif",
+        "1024": "/cards/u1_sig_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u1_sig_h-256.webp",
+        "512": "/cards/u1_sig_h-512.webp",
+        "1024": "/cards/u1_sig_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u1_sig_h.svg",
+      "alt": {
+        "it": "Illustrazione di un ariete da assedio coperto con trave ferrata spinto verso una porta fortificata."
+      }
+    },
+    "u1_sig_l": {
+      "id": "u1_sig_l",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u1_sig_l-256.avif",
+        "512": "/cards/u1_sig_l-512.avif",
+        "1024": "/cards/u1_sig_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u1_sig_l-256.webp",
+        "512": "/cards/u1_sig_l-512.webp",
+        "1024": "/cards/u1_sig_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u1_sig_l.svg",
+      "alt": {
+        "it": "Illustrazione di una squadra di genieri militari con leve e puntelli che scalzano un muro di pietra."
+      }
+    },
+    "u1_spr_h": {
+      "id": "u1_spr_h",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u1_spr_h-256.avif",
+        "512": "/cards/u1_spr_h-512.avif",
+        "1024": "/cards/u1_spr_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u1_spr_h-256.webp",
+        "512": "/cards/u1_spr_h-512.webp",
+        "1024": "/cards/u1_spr_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u1_spr_h.svg",
+      "alt": {
+        "it": "Illustrazione di un lanciere pesante inginocchiato con il calcio della lancia piantato nel terreno."
+      }
+    },
+    "u1_spr_l": {
+      "id": "u1_spr_l",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u1_spr_l-256.avif",
+        "512": "/cards/u1_spr_l-512.avif",
+        "1024": "/cards/u1_spr_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u1_spr_l-256.webp",
+        "512": "/cards/u1_spr_l-512.webp",
+        "1024": "/cards/u1_spr_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u1_spr_l.svg",
+      "alt": {
+        "it": "Illustrazione di un picchiere di leva con lunga lancia davanti a una schiera di compagni d'arme."
+      }
+    },
+    "u2_arc_h": {
+      "id": "u2_arc_h",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u2_arc_h-256.avif",
+        "512": "/cards/u2_arc_h-512.avif",
+        "1024": "/cards/u2_arc_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u2_arc_h-256.webp",
+        "512": "/cards/u2_arc_h-512.webp",
+        "1024": "/cards/u2_arc_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u2_arc_h.svg",
+      "alt": {
+        "it": "Illustrazione di un balestriere pesante che carica una balestra d'acciaio dietro un grande pavese."
+      }
+    },
+    "u2_arc_l": {
+      "id": "u2_arc_l",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u2_arc_l-256.avif",
+        "512": "/cards/u2_arc_l-512.avif",
+        "1024": "/cards/u2_arc_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u2_arc_l-256.webp",
+        "512": "/cards/u2_arc_l-512.webp",
+        "1024": "/cards/u2_arc_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u2_arc_l.svg",
+      "alt": {
+        "it": "Illustrazione di un arciere che tende un arco composito ricurvo sotto un cielo terso color acciaio."
+      }
+    },
+    "u2_cav_h": {
+      "id": "u2_cav_h",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u2_cav_h-256.avif",
+        "512": "/cards/u2_cav_h-512.avif",
+        "1024": "/cards/u2_cav_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u2_cav_h-256.webp",
+        "512": "/cards/u2_cav_h-512.webp",
+        "1024": "/cards/u2_cav_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u2_cav_h.svg",
+      "alt": {
+        "it": "Illustrazione di un cavaliere in armatura completa a piastre alla carica su un destriero corazzato."
+      }
+    },
+    "u2_cav_l": {
+      "id": "u2_cav_l",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u2_cav_l-256.avif",
+        "512": "/cards/u2_cav_l-512.avif",
+        "1024": "/cards/u2_cav_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u2_cav_l-256.webp",
+        "512": "/cards/u2_cav_l-512.webp",
+        "1024": "/cards/u2_cav_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u2_cav_l.svg",
+      "alt": {
+        "it": "Illustrazione di ussari alati alla carica con telai di piume sul dorso e lance levate al cielo."
+      }
+    },
+    "u2_inf_h": {
+      "id": "u2_inf_h",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u2_inf_h-256.avif",
+        "512": "/cards/u2_inf_h-512.avif",
+        "1024": "/cards/u2_inf_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u2_inf_h-256.webp",
+        "512": "/cards/u2_inf_h-512.webp",
+        "1024": "/cards/u2_inf_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u2_inf_h.svg",
+      "alt": {
+        "it": "Illustrazione di un uomo d'arme in armatura completa d'acciaio con azza a due mani e stendardo."
+      }
+    },
+    "u2_inf_l": {
+      "id": "u2_inf_l",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u2_inf_l-256.avif",
+        "512": "/cards/u2_inf_l-512.avif",
+        "1024": "/cards/u2_inf_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u2_inf_l-256.webp",
+        "512": "/cards/u2_inf_l-512.webp",
+        "1024": "/cards/u2_inf_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u2_inf_l.svg",
+      "alt": {
+        "it": "Illustrazione di uno spadaccino scelto veterano in mezza armatura in guardia con la spada lunga."
+      }
+    },
+    "u2_sig_h": {
+      "id": "u2_sig_h",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u2_sig_h-256.avif",
+        "512": "/cards/u2_sig_h-512.avif",
+        "1024": "/cards/u2_sig_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u2_sig_h-256.webp",
+        "512": "/cards/u2_sig_h-512.webp",
+        "1024": "/cards/u2_sig_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u2_sig_h.svg",
+      "alt": {
+        "it": "Illustrazione di un mangano pesante a contrappeso nell'istante in cui scaglia un masso nel cielo."
+      }
+    },
+    "u2_sig_l": {
+      "id": "u2_sig_l",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u2_sig_l-256.avif",
+        "512": "/cards/u2_sig_l-512.avif",
+        "1024": "/cards/u2_sig_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u2_sig_l-256.webp",
+        "512": "/cards/u2_sig_l-512.webp",
+        "1024": "/cards/u2_sig_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u2_sig_l.svg",
+      "alt": {
+        "it": "Illustrazione di uno scorpione d'assedio a torsione su affusto ruotato mentre l'equipaggio carica un dardo."
+      }
+    },
+    "u2_spr_h": {
+      "id": "u2_spr_h",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u2_spr_h-256.avif",
+        "512": "/cards/u2_spr_h-512.avif",
+        "1024": "/cards/u2_spr_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u2_spr_h-256.webp",
+        "512": "/cards/u2_spr_h-512.webp",
+        "1024": "/cards/u2_spr_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u2_spr_h.svg",
+      "alt": {
+        "it": "Illustrazione di una guardia svizzera con farsetto tagliato, cappello piumato e picca in formazione."
+      }
+    },
+    "u2_spr_l": {
+      "id": "u2_spr_l",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u2_spr_l-256.avif",
+        "512": "/cards/u2_spr_l-512.avif",
+        "1024": "/cards/u2_spr_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u2_spr_l-256.webp",
+        "512": "/cards/u2_spr_l-512.webp",
+        "1024": "/cards/u2_spr_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u2_spr_l.svg",
+      "alt": {
+        "it": "Illustrazione di un alabardiere con elmo morione che avanza tenendo l'alabarda in diagonale."
+      }
+    },
+    "u3_arc_h": {
+      "id": "u3_arc_h",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_arc_h-256.avif",
+        "512": "/cards/u3_arc_h-512.avif",
+        "1024": "/cards/u3_arc_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_arc_h-256.webp",
+        "512": "/cards/u3_arc_h-512.webp",
+        "1024": "/cards/u3_arc_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_arc_h.svg",
+      "alt": {
+        "it": "Illustrazione di un archibugiere che fa fuoco con un archibugio a miccia in una densa nube di fumo."
+      }
+    },
+    "u3_arc_l": {
+      "id": "u3_arc_l",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_arc_l-256.avif",
+        "512": "/cards/u3_arc_l-512.avif",
+        "1024": "/cards/u3_arc_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_arc_l-256.webp",
+        "512": "/cards/u3_arc_l-512.webp",
+        "1024": "/cards/u3_arc_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_arc_l.svg",
+      "alt": {
+        "it": "Illustrazione di un arciere lungo reale in mezza armatura che scocca con un alto arco da guerra al tramonto."
+      }
+    },
+    "u3_cav_h": {
+      "id": "u3_cav_h",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_cav_h-256.avif",
+        "512": "/cards/u3_cav_h-512.avif",
+        "1024": "/cards/u3_cav_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_cav_h-256.webp",
+        "512": "/cards/u3_cav_h-512.webp",
+        "1024": "/cards/u3_cav_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_cav_h.svg",
+      "alt": {
+        "it": "Illustrazione di un catafratto reale pesantemente corazzato con bardatura completa e cimieri dorati."
+      }
+    },
+    "u3_cav_l": {
+      "id": "u3_cav_l",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_cav_l-256.avif",
+        "512": "/cards/u3_cav_l-512.avif",
+        "1024": "/cards/u3_cav_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_cav_l-256.webp",
+        "512": "/cards/u3_cav_l-512.webp",
+        "1024": "/cards/u3_cav_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_cav_l.svg",
+      "alt": {
+        "it": "Illustrazione di un dragone imperiale a cavallo che spara con una carabina tra il fumo della battaglia."
+      }
+    },
+    "u3_inf_h": {
+      "id": "u3_inf_h",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_inf_h-256.avif",
+        "512": "/cards/u3_inf_h-512.avif",
+        "1024": "/cards/u3_inf_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_inf_h-256.webp",
+        "512": "/cards/u3_inf_h-512.webp",
+        "1024": "/cards/u3_inf_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_inf_h.svg",
+      "alt": {
+        "it": "Illustrazione di un campione imperiale in armatura pesante dorata con spadone e stendardo imperiale."
+      }
+    },
+    "u3_inf_l": {
+      "id": "u3_inf_l",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_inf_l-256.avif",
+        "512": "/cards/u3_inf_l-512.avif",
+        "1024": "/cards/u3_inf_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_inf_l-256.webp",
+        "512": "/cards/u3_inf_l-512.webp",
+        "1024": "/cards/u3_inf_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_inf_l.svg",
+      "alt": {
+        "it": "Illustrazione di un berserker d'élite con due asce da guerra e pellicce nel fumo della battaglia."
+      }
+    },
+    "u3_sig_h": {
+      "id": "u3_sig_h",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_sig_h-256.avif",
+        "512": "/cards/u3_sig_h-512.avif",
+        "1024": "/cards/u3_sig_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_sig_h-256.webp",
+        "512": "/cards/u3_sig_h-512.webp",
+        "1024": "/cards/u3_sig_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_sig_h.svg",
+      "alt": {
+        "it": "Illustrazione di un'enorme bombarda di bronzo su affusto di legno che fa fuoco contro le mura."
+      }
+    },
+    "u3_sig_l": {
+      "id": "u3_sig_l",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_sig_l-256.avif",
+        "512": "/cards/u3_sig_l-512.avif",
+        "1024": "/cards/u3_sig_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_sig_l-256.webp",
+        "512": "/cards/u3_sig_l-512.webp",
+        "1024": "/cards/u3_sig_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_sig_l.svg",
+      "alt": {
+        "it": "Illustrazione di una torre d'assedio in legno rivestita di pelli che avanza verso le mura di una fortezza."
+      }
+    },
+    "u3_sig_m": {
+      "id": "u3_sig_m",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_sig_m-256.avif",
+        "512": "/cards/u3_sig_m-512.avif",
+        "1024": "/cards/u3_sig_m-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_sig_m-256.webp",
+        "512": "/cards/u3_sig_m-512.webp",
+        "1024": "/cards/u3_sig_m-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_sig_m.svg",
+      "alt": {
+        "it": "Illustrazione di un gigantesco trabucco nel momento del rilascio con un'enorme cassa di contrappeso."
+      }
+    },
+    "u3_spr_h": {
+      "id": "u3_spr_h",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_spr_h-256.avif",
+        "512": "/cards/u3_spr_h-512.avif",
+        "1024": "/cards/u3_spr_h-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_spr_h-256.webp",
+        "512": "/cards/u3_spr_h-512.webp",
+        "1024": "/cards/u3_spr_h-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_spr_h.svg",
+      "alt": {
+        "it": "Illustrazione di una falange imperiale compatta con scudi alti e lunghe lance nella luce dorata."
+      }
+    },
+    "u3_spr_l": {
+      "id": "u3_spr_l",
+      "source": "placeholder",
+      "status": "placeholder",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_spr_l-256.avif",
+        "512": "/cards/u3_spr_l-512.avif",
+        "1024": "/cards/u3_spr_l-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_spr_l-256.webp",
+        "512": "/cards/u3_spr_l-512.webp",
+        "1024": "/cards/u3_spr_l-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_spr_l.svg",
+      "alt": {
+        "it": "Illustrazione di un picchiere reale in formazione picca e moschetto circondato da una selva di picche."
+      }
+    }
+  }
+}

@@ -1,0 +1,500 @@
+/* Componente <Card> (5:7, Container Queries, 5 fasce) e <CardToken> (TECH-SPEC §9.3, §9.6) */
+
+.epochs-card-wrapper {
+  container-type: inline-size;
+  container-name: epochs-card;
+  aspect-ratio: 5 / 7;
+  width: 100%;
+  max-width: 280px;
+  min-width: var(--touch-target-min, 44px);
+  min-height: var(--touch-target-min, 44px);
+  position: relative;
+  display: block;
+}
+
+.epochs-card {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 5 / 7;
+  display: grid;
+  grid-template-rows: 9fr 47fr 6fr 29fr 9fr;
+  background-color: var(--table-deep, #141E27);
+  color: var(--chalk, #E9E5D6);
+  border-radius: 3.5cqw;
+  border: 0.9cqw solid var(--era1, #A86F3C);
+  box-shadow: var(--shadow-card, 0 6px 18px rgba(0, 0, 0, 0.48));
+  overflow: hidden;
+  padding: 2cqw;
+  gap: 1cqw;
+  position: relative;
+  transition:
+    transform var(--motion-fast, 120ms) ease,
+    box-shadow var(--motion-fast, 120ms) ease,
+    border-color var(--motion-fast, 120ms) ease,
+    opacity var(--motion-fast, 120ms) ease;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Cornici per Era (§9.1: Bronzo I, Acciaio II, Oro III) */
+.epochs-card[data-era='1'] {
+  border-color: var(--era1, #A86F3C);
+  --card-era-accent: var(--era1, #A86F3C);
+}
+
+.epochs-card[data-era='2'] {
+  border-color: var(--era2, #9FB1C2);
+  --card-era-accent: var(--era2, #9FB1C2);
+}
+
+.epochs-card[data-era='3'] {
+  border-color: var(--era3, #D9B04A);
+  --card-era-accent: var(--era3, #D9B04A);
+}
+
+/* Stati interattivi in mano e sul campo (§9.4) */
+.epochs-card--playable {
+  border-color: var(--brass, #B58E48) !important;
+  box-shadow:
+    0 0 0 1px var(--brass, #B58E48),
+    0 6px 20px var(--brass-glow, rgba(181, 142, 72, 0.45));
+}
+
+.epochs-card--selected {
+  transform: translateY(-4%);
+  border-color: var(--brass, #B58E48) !important;
+  box-shadow:
+    0 0 0 2px var(--brass, #B58E48),
+    0 12px 28px var(--brass-glow, rgba(181, 142, 72, 0.45));
+}
+
+.epochs-card--unplayable {
+  opacity: 0.62;
+  filter: saturate(0.72);
+}
+
+.epochs-card:hover:not(.epochs-card--unplayable) {
+  transform: translateY(-2%);
+}
+
+/* Fascia 1 (9fr): Header — Nome carta a sinistra, pip risorse costo > 0 a destra */
+.epochs-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5cqw;
+  padding: 0 2cqw;
+  background-color: var(--surface-card, #223444);
+  border: 1px solid rgba(233, 229, 214, 0.14);
+  border-radius: 1.8cqw;
+  min-height: 0;
+}
+
+.epochs-card__name {
+  font-family: var(--font-display, 'IM Fell English SC', 'Cinzel', serif);
+  font-size: clamp(0.62rem, 5.4cqw, 1.25rem);
+  font-weight: 700;
+  color: var(--chalk, #E9E5D6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.1;
+}
+
+.epochs-card__costs {
+  display: inline-flex;
+  align-items: center;
+  gap: 1cqw;
+  flex-shrink: 0;
+}
+
+.epochs-card__cost-pip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6cqw;
+  padding: 0.4cqw 1.4cqw;
+  border-radius: 999px;
+  font-family: var(--font-numeric, 'Barlow Condensed', sans-serif);
+  font-weight: 700;
+  font-size: clamp(0.6rem, 4.8cqw, 1.05rem);
+  line-height: 1;
+  color: var(--chalk, #E9E5D6);
+  border: 1px solid rgba(233, 229, 214, 0.28);
+}
+
+.epochs-card__cost-pip--food {
+  background-color: var(--food, #86A94C);
+  color: #101812;
+}
+
+.epochs-card__cost-pip--wood {
+  background-color: var(--wood, #8A5A34);
+  color: var(--chalk, #E9E5D6);
+}
+
+.epochs-card__cost-pip--metal {
+  background-color: var(--metal, #6F7F91);
+  color: var(--chalk, #E9E5D6);
+}
+
+/* Fascia 2 (47fr): Finestra illustrazione 4:3 */
+.epochs-card__art-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  background-color: #0e161d;
+  border: 1px solid var(--card-era-accent, var(--brass, #B58E48));
+  border-radius: 1.5cqw;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.epochs-card__art-picture,
+.epochs-card__art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.epochs-card__covered-badge {
+  position: absolute;
+  top: 2cqw;
+  left: 2cqw;
+  background-color: rgba(20, 30, 39, 0.88);
+  color: var(--brass, #B58E48);
+  border: 1px solid var(--brass, #B58E48);
+  border-radius: 1.4cqw;
+  padding: 0.5cqw 1.8cqw;
+  font-family: var(--font-numeric, 'Barlow Condensed', sans-serif);
+  font-size: clamp(0.55rem, 3.8cqw, 0.85rem);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* Fascia 3 (6fr): Riga del Tipo + icona Era */
+.epochs-card__type-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5cqw;
+  padding: 0 2cqw;
+  background-color: var(--surface-elevated, #283D50);
+  border: 1px solid rgba(181, 142, 72, 0.35);
+  border-radius: 1.4cqw;
+  min-height: 0;
+}
+
+.epochs-card__type-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2cqw;
+  font-family: var(--font-body, 'Alegreya', serif);
+  font-size: clamp(0.54rem, 4.1cqw, 0.92rem);
+  font-weight: 700;
+  color: var(--chalk, #E9E5D6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.epochs-card__era-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8cqw;
+  font-family: var(--font-display, 'IM Fell English SC', 'Cinzel', serif);
+  font-size: clamp(0.54rem, 4cqw, 0.88rem);
+  font-weight: 700;
+  color: var(--card-era-accent, var(--brass, #B58E48));
+  flex-shrink: 0;
+}
+
+/* Fascia 4 (29fr): Box Testo regole + filetto in ottone + flavor in corsivo */
+.epochs-card__text-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.8cqw 2.2cqw;
+  background-color: var(--surface-card, #223444);
+  border: 1px solid rgba(233, 229, 214, 0.14);
+  border-radius: 1.8cqw;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.epochs-card__rules-text {
+  margin: 0;
+  font-family: var(--font-body, 'Alegreya', serif);
+  font-size: clamp(0.56rem, 4.3cqw, 0.96rem);
+  line-height: 1.22;
+  color: var(--chalk, #E9E5D6);
+}
+
+.epochs-card__brass-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--brass, #B58E48) 20%,
+    var(--brass, #B58E48) 80%,
+    transparent 100%
+  );
+  margin: 1cqw 0;
+  border: 0;
+  flex-shrink: 0;
+}
+
+.epochs-card__flavor-text {
+  margin: 0;
+  font-family: var(--font-body, 'Alegreya', serif);
+  font-style: italic;
+  font-size: clamp(0.5rem, 3.7cqw, 0.84rem);
+  line-height: 1.18;
+  color: var(--chalk-muted, #A7B4C2);
+}
+
+/* Fascia 5 (9fr): Footer Statistiche ATK / DEM / HP */
+.epochs-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5cqw;
+  padding: 0 2cqw;
+  background-color: var(--surface-card, #223444);
+  border: 1px solid rgba(233, 229, 214, 0.16);
+  border-radius: 1.8cqw;
+  min-height: 0;
+}
+
+.epochs-card__stat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 1cqw;
+  padding: 0.4cqw 1.6cqw;
+  border-radius: 1.4cqw;
+  font-family: var(--font-numeric, 'Barlow Condensed', sans-serif);
+  font-size: clamp(0.62rem, 5cqw, 1.1rem);
+  font-weight: 700;
+  color: var(--chalk, #E9E5D6);
+  background-color: rgba(20, 30, 39, 0.55);
+  border: 1px solid rgba(233, 229, 214, 0.15);
+}
+
+.epochs-card__stat-badge--buffed {
+  color: var(--brass, #B58E48);
+  border-color: var(--brass, #B58E48);
+  background-color: rgba(181, 142, 72, 0.16);
+}
+
+.epochs-card__stat-badge--damaged {
+  color: var(--crimson, #A8404D);
+  border-color: var(--crimson, #A8404D);
+  background-color: rgba(168, 64, 77, 0.18);
+}
+
+.epochs-card__nonunit-footer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-numeric, 'Barlow Condensed', sans-serif);
+  font-size: clamp(0.56rem, 4.2cqw, 0.92rem);
+  font-weight: 600;
+  color: var(--chalk-muted, #A7B4C2);
+}
+
+/* Componente <CardToken> compatto per le linee di battaglia su Mobile (§9.3, §9.6) */
+.epochs-card-token {
+  min-width: var(--touch-target-min, 44px);
+  min-height: var(--touch-target-min, 44px);
+  display: inline-grid;
+  grid-template-columns: 40px 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px 4px 4px;
+  background-color: var(--surface-card, #223444);
+  color: var(--chalk, #E9E5D6);
+  border: 2px solid var(--era1, #A86F3C);
+  border-radius: 8px;
+  box-shadow: var(--shadow-card, 0 6px 18px rgba(0, 0, 0, 0.48));
+  cursor: pointer;
+  user-select: none;
+}
+
+.epochs-card-token[data-era='1'] {
+  border-color: var(--era1, #A86F3C);
+}
+
+.epochs-card-token[data-era='2'] {
+  border-color: var(--era2, #9FB1C2);
+}
+
+.epochs-card-token[data-era='3'] {
+  border-color: var(--era3, #D9B04A);
+}
+
+.epochs-card-token__thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+  background-color: #0e161d;
+  border: 1px solid rgba(233, 229, 214, 0.22);
+}
+
+.epochs-card-token__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.epochs-card-token__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.epochs-card-token__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.epochs-card-token__title {
+  font-family: var(--font-display, 'IM Fell English SC', 'Cinzel', serif);
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.epochs-card-token__icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--chalk-muted, #A7B4C2);
+  flex-shrink: 0;
+}
+
+.epochs-card-token__stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.epochs-card-token__stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-numeric, 'Barlow Condensed', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--chalk, #E9E5D6);
+}
+
+.epochs-card-token__stat--buffed {
+  color: var(--brass, #B58E48);
+}
+
+.epochs-card-token__stat--damaged {
+  color: var(--crimson, #A8404D);
+}
+
+/* Stili per <CardInspectModal> (§8.3, §9.3, §9.6) */
+.epochs-inspect-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: var(--surface-overlay, rgba(20, 30, 39, 0.88));
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.epochs-inspect-dialog {
+  width: min(760px, 96vw);
+  max-height: 92dvh;
+  background-color: var(--table, #1C2B38);
+  border: 2px solid var(--brass, #B58E48);
+  border-radius: 14px;
+  box-shadow: var(--shadow-modal, 0 18px 48px rgba(0, 0, 0, 0.72));
+  padding: 20px;
+  display: grid;
+  grid-template-columns: minmax(210px, 280px) 1fr;
+  gap: 20px;
+  overflow-y: auto;
+  color: var(--chalk, #E9E5D6);
+}
+
+@media (max-width: 680px) {
+  .epochs-inspect-dialog {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+}
+
+.epochs-inspect-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.epochs-inspect-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.epochs-inspect-close {
+  min-width: var(--touch-target-min, 44px);
+  min-height: var(--touch-target-min, 44px);
+  border-radius: 8px;
+  border: 1px solid var(--brass, #B58E48);
+  background-color: var(--surface-card, #223444);
+  color: var(--chalk, #E9E5D6);
+  font-family: var(--font-numeric, 'Barlow Condensed', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.epochs-inspect-keywords {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.epochs-inspect-keyword-box {
+  background-color: var(--surface-card, #223444);
+  border-left: 3px solid var(--brass, #B58E48);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.epochs-inspect-keyword-title {
+  font-family: var(--font-display, 'IM Fell English SC', 'Cinzel', serif);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--brass, #B58E48);
+  margin: 0 0 2px 0;
+}
+
+.epochs-inspect-keyword-desc {
+  font-family: var(--font-body, 'Alegreya', serif);
+  font-size: 0.92rem;
+  color: var(--chalk, #E9E5D6);
+  margin: 0;
+}

@@ -13,6 +13,8 @@
     "validate:scenarios": "tsx tools/validate-scenarios.ts",
     "art:placeholders": "tsx tools/art-placeholders.ts",
     "art:build": "tsx tools/art-build.ts",
+    "art:ingest": "tsx tools/art-ingest.ts",
+    "art:export-prompts": "tsx tools/art-export-prompts.ts",
     "sim": "pnpm --filter @epochs/sim start",
     "lint": "eslint .",
     "format": "prettier --write .",

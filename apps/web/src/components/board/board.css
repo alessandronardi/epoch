@@ -1,0 +1,447 @@
+/* The Epochs — Layout "Il Tavolo del Cartografo" (TECH-SPEC §9.1, §9.2, §9.6) */
+
+@keyframes unitCascadeReveal {
+  0% {
+    opacity: 0;
+    transform: perspective(600px) rotateY(85deg) translateY(-10px) scale(0.94);
+  }
+  65% {
+    opacity: 1;
+    transform: perspective(600px) rotateY(-6deg) translateY(0) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(600px) rotateY(0deg) translateY(0) scale(1);
+  }
+}
+
+@keyframes unitFadeReveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.battlefield-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 290px;
+  grid-template-rows: minmax(0, 1fr);
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 46% 45%, var(--table) 0%, var(--table-deep) 95%);
+  color: var(--chalk);
+  position: relative;
+}
+
+.battlefield-board__main {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto minmax(0, 1fr) auto auto;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding: 6px 10px;
+  gap: 6px;
+}
+
+.battlefield-board__sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background-color: var(--table-deep);
+  border-left: 1px solid var(--brass-subtle);
+  padding: 10px;
+  gap: 10px;
+}
+
+/* Barre stato Giocatore e Avversario (§9.2) */
+.board-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 5px 10px;
+  background-color: rgba(20, 30, 39, 0.86);
+  border: 1px solid var(--brass-subtle);
+  border-radius: 6px;
+  min-height: 40px;
+}
+
+.board-status-bar--self {
+  border-color: var(--brass);
+}
+
+.board-status-bar__group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.board-status-bar__identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--chalk);
+}
+
+.board-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background-color: var(--surface-card);
+  border: 1px solid rgba(233, 229, 214, 0.16);
+  font-family: var(--font-numeric);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--chalk);
+  white-space: nowrap;
+}
+
+.board-badge--brass {
+  border-color: var(--brass);
+  background-color: rgba(181, 142, 72, 0.18);
+  color: var(--chalk);
+}
+
+.board-badge--crimson {
+  border-color: var(--crimson);
+  background-color: rgba(168, 64, 77, 0.22);
+  color: var(--chalk);
+}
+
+.board-badge--muted {
+  color: var(--chalk-muted);
+}
+
+.board-resource-pip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: var(--font-numeric);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--chalk);
+  background-color: var(--surface-card);
+  border: 1px solid rgba(233, 229, 214, 0.2);
+}
+
+.board-resource-pip--food {
+  border-left: 3px solid var(--food);
+}
+
+.board-resource-pip--wood {
+  border-left: 3px solid var(--wood);
+}
+
+.board-resource-pip--metal {
+  border-left: 3px solid var(--metal);
+}
+
+/* Fascia divisoria centrale d'Era e Iniziativa (§9.2) */
+.board-center-divider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 12px;
+  border-top: 1px solid var(--brass-subtle);
+  border-bottom: 1px solid var(--brass-subtle);
+  background: linear-gradient(
+    90deg,
+    rgba(20, 30, 39, 0.4) 0%,
+    rgba(34, 52, 68, 0.85) 50%,
+    rgba(20, 30, 39, 0.4) 100%
+  );
+}
+
+.board-center-divider__era {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--chalk);
+}
+
+.board-center-divider__turn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-numeric);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.board-center-divider__turn--active {
+  color: var(--brass);
+}
+
+/* Griglia a 4 colonne: Città + Fronte + Centro + Retroguardia (§9.2) */
+.city-and-lines {
+  display: grid;
+  grid-template-columns: minmax(145px, 1.05fr) repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.board-zone {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  background-color: rgba(20, 30, 39, 0.56);
+  border: 1px solid rgba(181, 142, 72, 0.26);
+  border-radius: 6px;
+  padding: 6px;
+  overflow: hidden;
+}
+
+.board-zone--city {
+  background-color: rgba(34, 52, 68, 0.52);
+  border-style: dashed;
+}
+
+.board-zone--droppable-active {
+  border-color: var(--brass);
+  box-shadow: 0 0 0 2px var(--brass-glow);
+}
+
+.board-zone__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(233, 229, 214, 0.12);
+  font-family: var(--font-display);
+  font-size: 0.84rem;
+  color: var(--chalk);
+  flex-shrink: 0;
+}
+
+.board-zone__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.board-zone__count {
+  font-family: var(--font-numeric);
+  font-size: 0.82rem;
+  color: var(--chalk-muted);
+}
+
+.board-zone__content {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.board-zone__empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--chalk-muted);
+  padding: 4px;
+}
+
+/* Dorsi impilati per la Città coperta dell'avversario (§9.2 riga 795) */
+.covered-stack {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px;
+}
+
+.covered-stack__cards {
+  position: relative;
+  width: 54px;
+  height: 74px;
+  flex-shrink: 0;
+}
+
+.covered-stack__card-back {
+  position: absolute;
+  width: 46px;
+  height: 64px;
+  border-radius: 5px;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      var(--surface-card),
+      var(--surface-card) 5px,
+      var(--table-deep) 5px,
+      var(--table-deep) 10px
+    );
+  border: 1.5px solid var(--brass);
+  box-shadow: var(--shadow-card);
+}
+
+.covered-stack__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.covered-stack__number {
+  font-family: var(--font-numeric);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--brass);
+  line-height: 1.1;
+}
+
+.covered-stack__label {
+  font-size: 0.78rem;
+  color: var(--chalk-muted);
+}
+
+/* Slot unità sulle linee e animazione di rivelazione a cascata (§9.1 riga 772) */
+.board-unit-slot {
+  position: relative;
+  transition:
+    transform var(--motion-normal) ease,
+    opacity var(--motion-normal) ease;
+}
+
+.board-unit-slot--revealing {
+  opacity: 0.25;
+  transform: scale(0.95);
+}
+
+.board-unit-slot--revealed {
+  animation: unitCascadeReveal var(--motion-slow) cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+  animation-delay: var(--cascade-delay, 0ms);
+}
+
+/* Su Desktop (>= 1100px) mostra le carte in formato Card; su Mobile mostra CardToken (§9.6) */
+.board-unit-card--desktop {
+  width: 96px;
+}
+
+.board-unit-token--mobile {
+  display: none;
+}
+
+.board-city-card--desktop {
+  width: 90px;
+}
+
+.board-city-token--mobile {
+  display: none;
+}
+
+.board-mobile-drawer-btn {
+  display: none;
+}
+
+.board-hand-dock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 64px;
+  padding: 4px 8px;
+  background-color: rgba(20, 30, 39, 0.9);
+  border: 1px solid var(--brass-subtle);
+  border-radius: 6px;
+}
+
+/* Viewport Mobile & Tablet (< 1100px): CardToken compatti e Drawer laterale (§9.2, §9.6) */
+@media (max-width: 1099px) {
+  .battlefield-board {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .battlefield-board__sidebar {
+    display: none;
+  }
+
+  .battlefield-board__sidebar--drawer-open {
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(320px, 86vw);
+    z-index: 60;
+    box-shadow: var(--shadow-modal);
+  }
+
+  .board-mobile-drawer-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    background-color: var(--surface-card);
+    border: 1px solid var(--brass);
+    color: var(--chalk);
+    font-family: var(--font-numeric);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .board-unit-card--desktop {
+    display: none;
+  }
+
+  .board-unit-token--mobile {
+    display: flex;
+  }
+
+  .board-city-card--desktop {
+    display: none;
+  }
+
+  .board-city-token--mobile {
+    display: flex;
+  }
+}
+
+/* Mobile Portrait (< 640px): compattazione barra e griglia 2x2 per Città + 3 Linee */
+@media (max-width: 640px) {
+  .city-and-lines {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board-unit-slot--revealed {
+    animation: unitFadeReveal 80ms linear both;
+    animation-delay: 0ms;
+  }
+}
