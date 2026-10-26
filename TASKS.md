@@ -1147,8 +1147,9 @@
 
 ---
 
-## Task M6-01: Store e persistenza del Deck Builder (validazione live, import/export JSON, sync)
+## Task M6-01: Store e persistenza del Deck Builder (validazione live, import/export JSON, sync) [COMPLETATO]
 
+* **Stato:** [COMPLETATO] — Implementato lo store Zustand con gestione dei tre sotto-mazzi, limiti 3×20 e massimo 3 copie, validazione live tramite `validateDeck`, statistiche per Era/tipo e curve Cibo/Legno/Metallo, import/export JSON con Zod, persistenza locale di bozze e mazzi validi e sincronizzazione REST opzionale con precedenza locale e protezione dei salvataggi concorrenti, verificato con 33 test dedicati verdi, typecheck web ed ESLint.
 * **Tier:** [TIER: STANDARD]
 * **Dipendenze:** M1-04, M5-07
 * **File target:**
