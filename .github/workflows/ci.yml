@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Quality gates and PWA offline
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Validate content
+        run: pnpm content:validate
+      - name: Check card generator idempotence
+        run: |
+          pnpm exec tsx tools/gdd-to-cards.ts --check
+          pnpm gdd:cards
+          git diff --exit-code -- data/cards.rules.json
+          pnpm exec tsx tools/gdd-to-cards.ts --check
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Unit and integration tests
+        run: pnpm test
+      - name: Validate deterministic scenarios
+        run: pnpm validate:scenarios
+      - name: Generate card illustrations
+        run: |
+          pnpm art:placeholders
+          pnpm art:build
+      - name: Build workspace and PWA
+        run: pnpm build
+      - name: Check initial JavaScript budget
+        run: pnpm exec tsx tools/check-bundle-budget.ts
+      - name: Install Chromium and system dependencies
+        run: pnpm --filter @epochs/web exec playwright install --with-deps chromium
+      - name: Browser tests including complete offline matches
+        run: pnpm test:e2e
+      - name: Upload browser failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7

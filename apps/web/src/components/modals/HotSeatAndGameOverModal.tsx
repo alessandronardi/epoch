@@ -99,7 +99,7 @@ export function HotSeatHandoverModal({
       data-testid="hotseat-handover-backdrop"
       style={{
         backgroundColor: 'rgba(12, 18, 24, 0.98)',
-        zIndex: 95,
+        zIndex: 1100,
       }}
     >
       <div

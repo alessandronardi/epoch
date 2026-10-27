@@ -29,6 +29,7 @@ import {
 import { OnlineLobbyScreen } from './screens/OnlineLobbyScreen.js';
 import { QuickRulesScreen } from './screens/QuickRulesScreen.js';
 import { ReplayViewerScreen } from './screens/ReplayViewerScreen.js';
+import { TutorialScreen } from './screens/TutorialScreen.js';
 import { useGameStore } from './state/game-store.js';
 import { useDeckBuilderStore } from './state/deck-builder-store.js';
 
@@ -256,6 +257,15 @@ export function App(): ReactElement {
           cardId={inspectedCardId}
           onClose={() => setInspectedCardId(null)}
         />
+      </>
+    );
+  }
+
+  if (activeScreen === 'tutorial') {
+    return (
+      <>
+        <style>{A11Y_CONTRAST_OVERRIDES_CSS}</style>
+        <TutorialScreen onBackHome={handleReturnHome} />
       </>
     );
   }

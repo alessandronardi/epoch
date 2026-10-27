@@ -258,8 +258,8 @@
     },
     "i2_mor": {
       "id": "i2_mor",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -283,8 +283,8 @@
     },
     "i2_sab": {
       "id": "i2_sab",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -308,8 +308,8 @@
     },
     "i3_fir": {
       "id": "i3_fir",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -333,8 +333,8 @@
     },
     "i3_ral": {
       "id": "i3_ral",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -608,8 +608,8 @@
     },
     "u2_arc_h": {
       "id": "u2_arc_h",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -633,8 +633,8 @@
     },
     "u2_arc_l": {
       "id": "u2_arc_l",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -658,8 +658,8 @@
     },
     "u2_cav_h": {
       "id": "u2_cav_h",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -683,8 +683,8 @@
     },
     "u2_cav_l": {
       "id": "u2_cav_l",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -708,8 +708,8 @@
     },
     "u2_inf_h": {
       "id": "u2_inf_h",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -758,8 +758,8 @@
     },
     "u2_sig_h": {
       "id": "u2_sig_h",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -783,8 +783,8 @@
     },
     "u2_sig_l": {
       "id": "u2_sig_l",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -808,8 +808,8 @@
     },
     "u2_spr_h": {
       "id": "u2_spr_h",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -833,8 +833,8 @@
     },
     "u2_spr_l": {
       "id": "u2_spr_l",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -858,8 +858,8 @@
     },
     "u3_arc_h": {
       "id": "u3_arc_h",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -883,8 +883,8 @@
     },
     "u3_arc_l": {
       "id": "u3_arc_l",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -908,8 +908,8 @@
     },
     "u3_cav_h": {
       "id": "u3_cav_h",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -933,8 +933,8 @@
     },
     "u3_cav_l": {
       "id": "u3_cav_l",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -958,8 +958,8 @@
     },
     "u3_inf_h": {
       "id": "u3_inf_h",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -983,8 +983,8 @@
     },
     "u3_inf_l": {
       "id": "u3_inf_l",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -1033,8 +1033,8 @@
     },
     "u3_sig_l": {
       "id": "u3_sig_l",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -1058,8 +1058,8 @@
     },
     "u3_sig_m": {
       "id": "u3_sig_m",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -1083,8 +1083,8 @@
     },
     "u3_spr_h": {
       "id": "u3_spr_h",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,
@@ -1108,8 +1108,8 @@
     },
     "u3_spr_l": {
       "id": "u3_spr_l",
-      "source": "placeholder",
-      "status": "placeholder",
+      "source": "master",
+      "status": "final",
       "aspectRatio": "4:3",
       "widths": [
         256,

@@ -130,16 +130,19 @@ export async function buildSingleCardArt(
       const webpOutPath = path.join(outCardsDir, `${cardId}-${width}.webp`);
       const avifOutPath = path.join(outCardsDir, `${cardId}-${width}.avif`);
 
-      await Promise.all([
+      const [webpBuffer, avifBuffer] = await Promise.all([
         resizedPipeline
           .clone()
           .webp({ quality: 80, effort: 1 })
-          .toFile(webpOutPath),
+          .toBuffer(),
         resizedPipeline
           .clone()
           .avif({ quality: 65, effort: 0 })
-          .toFile(avifOutPath),
+          .toBuffer(),
       ]);
+
+      fs.writeFileSync(webpOutPath, webpBuffer);
+      fs.writeFileSync(avifOutPath, avifBuffer);
     }),
   );
 

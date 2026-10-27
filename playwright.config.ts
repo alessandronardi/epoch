@@ -7,6 +7,7 @@ export default defineConfig({
     timeout: 10_000,
   },
   fullyParallel: true,
+  workers: process.env['CI'] ? 2 : undefined,
   forbidOnly: Boolean(process.env['CI']),
   retries: process.env['CI'] ? 1 : 0,
   reporter: 'list',
@@ -41,10 +42,21 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: 'pnpm --filter @epochs/web dev --host 127.0.0.1 --port 5173',
-    url: 'http://127.0.0.1:5173',
-    reuseExistingServer: !process.env['CI'],
-    timeout: 60_000,
-  },
+  webServer: [
+    {
+      command: 'pnpm --filter @epochs/web dev --host 127.0.0.1 --port 5173 --strictPort',
+      url: 'http://127.0.0.1:5173',
+      reuseExistingServer: !process.env['CI'],
+      timeout: 60_000,
+    },
+    {
+      // In CI la build è già stata prodotta dal gate precedente.
+      command:
+        (process.env['CI'] ? '' : 'pnpm --filter @epochs/web build && ') +
+        'pnpm --filter @epochs/web preview --host 127.0.0.1 --port 4173 --strictPort',
+      url: 'http://127.0.0.1:4173',
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+  ],
 });

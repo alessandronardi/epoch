@@ -1,0 +1,196 @@
+.tutorial-screen {
+  display: grid;
+  grid-template-columns: minmax(280px, 330px) minmax(0, 1fr);
+  height: 100dvh;
+  overflow: auto;
+  color: var(--chalk, #e9e5d6);
+  background: var(--table-deep, #141e27);
+}
+
+.tutorial-guide {
+  padding: 24px 20px;
+  overflow-y: auto;
+  border-right: 1px solid var(--brass, #b58e48);
+  line-height: 1.55;
+}
+
+.tutorial-guide__eyebrow,
+.tutorial-guide__lesson {
+  color: var(--brass, #b58e48);
+  font-weight: 700;
+}
+
+.tutorial-guide h1 {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  line-height: 1.2;
+  margin: 10px 0;
+}
+.tutorial-guide h1:focus {
+  outline: none;
+}
+.tutorial-guide__lesson {
+  margin: 16px 0 0;
+  font-size: 0.85rem;
+}
+.tutorial-guide__hint {
+  font-size: 0.82rem;
+}
+.tutorial-progress {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  gap: 8px;
+  margin: 16px 0;
+}
+.tutorial-progress .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.tutorial-progress li {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--brass, #b58e48);
+  border-radius: 50%;
+}
+.tutorial-progress [aria-current='step'],
+.tutorial-progress__done {
+  background: #b58e48;
+  color: #141e27;
+  font-weight: 800;
+}
+.tutorial-progress [aria-current='step'] {
+  outline: 2px solid #e9e5d6;
+  outline-offset: 3px;
+}
+.tutorial-guide__actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
+}
+.tutorial-guide__navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.tutorial-screen button {
+  min-height: 44px;
+  min-width: 44px;
+}
+.tutorial-screen .battlefield-board__main {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+.tutorial-screen .board-mobile-drawer-btn {
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--brass, #b58e48);
+  background: var(--surface-card, #223444);
+  color: var(--chalk, #e9e5d6);
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  cursor: pointer;
+}
+.tutorial-guide button,
+.tutorial-hand button {
+  border: 1px solid var(--brass, #b58e48);
+  border-radius: 6px;
+  background: var(--surface-card, #223444);
+  color: var(--chalk, #e9e5d6);
+  padding: 8px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+.tutorial-guide .tutorial-primary {
+  background: #b58e48;
+  color: #141e27;
+  font-weight: 800;
+}
+.tutorial-guide button:disabled {
+  background: #223444;
+  color: #e9e5d6;
+  cursor: wait;
+}
+.tutorial-guide .tutorial-target-link {
+  text-align: left;
+  font-size: 0.86rem;
+}
+.tutorial-screen [data-tutorial-focus='true'] {
+  outline: 3px solid #f4cc78;
+  outline-offset: -3px;
+}
+.tutorial-hand {
+  min-width: 0;
+  width: 100%;
+  font-size: 0.8rem;
+}
+.tutorial-hand__cards {
+  display: flex;
+  gap: 6px;
+  padding-top: 6px;
+  overflow-x: auto;
+}
+.tutorial-hand button {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+}
+.tutorial-hand .tutorial-hand__suggested {
+  background: #b58e48;
+  color: #141e27;
+  font-weight: 700;
+}
+
+/* Il registro resta nel drawer: una guida sempre leggibile ha priorità sul desktop compatto. */
+@media (min-width: 1100px) and (max-width: 1499px) {
+  .tutorial-screen .battlefield-board {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tutorial-screen .battlefield-board__sidebar:not(.battlefield-board__sidebar--drawer-open) {
+    display: none;
+  }
+  .tutorial-screen .battlefield-board__sidebar--drawer-open {
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 320px;
+    z-index: 60;
+  }
+  .tutorial-screen .board-mobile-drawer-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+@media (max-width: 899px) {
+  .tutorial-screen {
+    display: block;
+  }
+  .tutorial-guide {
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid #b58e48;
+    padding: 16px;
+  }
+  .tutorial-guide__actions {
+    margin-top: 12px;
+  }
+  .tutorial-guide__navigation {
+    margin-top: 12px;
+  }
+  .tutorial-screen .battlefield-board {
+    height: max(700px, 100dvh);
+    max-height: none;
+  }
+}

@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { CARD_CATALOG, KEYWORD_TOOLTIPS_IT } from '@epochs/content';
+import { CARD_CATALOG, KEYWORD_TOOLTIPS_IT, getCard } from '@epochs/content';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CardArtPicture } from '../src/components/card/CardArtPicture.js';
@@ -169,8 +169,15 @@ describe('<CardArchiveScreen> and <QuickRulesScreen>', () => {
     const picFinal = screen.getByTestId('card-art-picture-u3_sig_h');
     expect(picFinal.getAttribute('data-card-art-status')).toBe('final');
 
-    rerender(<CardArtPicture cardId="u2_inf_h" />);
-    const picPlaceholder = screen.getByTestId('card-art-picture-u2_inf_h');
+    const cardWithPlaceholder = {
+      ...getCard('u3_sig_h'),
+      art: {
+        ...getCard('u3_sig_h').art,
+        status: 'placeholder' as const,
+      },
+    };
+    rerender(<CardArtPicture card={cardWithPlaceholder} />);
+    const picPlaceholder = screen.getByTestId('card-art-picture-u3_sig_h');
     expect(picPlaceholder.getAttribute('data-card-art-status')).toBe('placeholder');
   });
 });

@@ -227,6 +227,9 @@ importers:
       fastify:
         specifier: 5.12.7
         version: 5.12.7
+      immer:
+        specifier: 11.1.21
+        version: 11.1.21
       pino:
         specifier: 10.4.0
         version: 10.4.0
@@ -237,6 +240,9 @@ importers:
       '@types/better-sqlite3':
         specifier: 9.6.0
         version: 9.6.0
+      esbuild:
+        specifier: 0.28.2
+        version: 0.28.2
 
   apps/web:
     dependencies:

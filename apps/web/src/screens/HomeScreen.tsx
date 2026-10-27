@@ -12,6 +12,7 @@ export type AppScreenId =
   | 'online'
   | 'deck-builder'
   | 'archive'
+  | 'tutorial'
   | 'rules';
 
 export interface PresetDeckOption {
@@ -632,6 +633,31 @@ export function HomeScreen({
             gap: '12px',
           }}
         >
+          <button
+            type="button"
+            className="touch-target"
+            data-testid="nav-tutorial-btn"
+            onClick={() => onNavigate('tutorial')}
+            style={{
+              padding: '14px 16px',
+              borderRadius: '10px',
+              border: '1px solid var(--brass)',
+              backgroundColor: 'var(--table-deep, #141E27)',
+              color: 'var(--chalk)',
+              textAlign: 'left',
+              cursor: 'pointer',
+            }}
+          >
+            <strong
+              className="font-display"
+              style={{ display: 'block', color: 'var(--brass)', marginBottom: '4px' }}
+            >
+              Tutorial guidato
+            </strong>
+            <span style={{ fontSize: '0.82rem' }}>
+              Impara giocando: 6 passi dal Mulligan alla Breccia, attraverso le tre Ere.
+            </span>
+          </button>
           <button
             type="button"
             className="touch-target"

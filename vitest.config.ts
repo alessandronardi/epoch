@@ -6,6 +6,7 @@ export interface CoverageThreshold {
 export interface VitestRootConfig {
   readonly test: {
     readonly globals: boolean;
+    readonly maxWorkers: number;
     readonly environment: 'node';
     readonly include: readonly string[];
     readonly coverage: {
@@ -21,6 +22,8 @@ export interface VitestRootConfig {
 const config: VitestRootConfig = {
   test: {
     globals: false,
+    // I test jsdom montano il tavolo completo: limita la contesa di CPU e memoria.
+    maxWorkers: 2,
     environment: 'node',
     include: [
       'packages/**/tests/**/*.test.ts',

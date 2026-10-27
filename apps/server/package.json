@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "./src/server.ts",
+  "main": "./dist/server.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "start": "tsx src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc --noEmit && esbuild src/server.ts --bundle --platform=node --target=node24 --format=esm --packages=external --alias:@epochs/content=../../packages/content/src/index.ts --alias:@epochs/engine=../../packages/engine/src/index.ts --alias:@epochs/protocol=../../packages/protocol/src/index.ts --outdir=dist --sourcemap",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
@@ -17,10 +21,12 @@
     "@fastify/websocket": "11.3.4",
     "better-sqlite3": "13.0.3",
     "fastify": "5.12.7",
+    "immer": "11.1.21",
     "pino": "10.4.0",
     "zod": "3.25.76"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "9.6.0"
+    "@types/better-sqlite3": "9.6.0",
+    "esbuild": "0.28.2"
   }
 }

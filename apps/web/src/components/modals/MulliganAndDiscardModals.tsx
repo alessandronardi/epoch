@@ -639,6 +639,9 @@ export function MulliganAndDiscardModals({
   onSubmitDiscard,
   onInspectCard,
 }: MulliganAndDiscardModalsProps): ReactElement | null {
+  const awaitingHandover = useGameStore((s) => s.awaitingHotSeatHandover);
+  if (awaitingHandover) return null;
+
   return (
     <>
       <MulliganModal
