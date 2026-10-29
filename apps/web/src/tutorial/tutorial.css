@@ -101,8 +101,7 @@
   font-weight: 700;
   cursor: pointer;
 }
-.tutorial-guide button,
-.tutorial-hand button {
+.tutorial-guide button {
   border: 1px solid var(--brass, #b58e48);
   border-radius: 6px;
   background: var(--surface-card, #223444);
@@ -129,25 +128,8 @@
   outline: 3px solid #f4cc78;
   outline-offset: -3px;
 }
-.tutorial-hand {
-  min-width: 0;
-  width: 100%;
-  font-size: 0.8rem;
-}
-.tutorial-hand__cards {
-  display: flex;
-  gap: 6px;
-  padding-top: 6px;
-  overflow-x: auto;
-}
-.tutorial-hand button {
-  flex-shrink: 0;
-  font-size: 0.8rem;
-}
-.tutorial-hand .tutorial-hand__suggested {
-  background: #b58e48;
-  color: #141e27;
-  font-weight: 700;
+.tutorial-screen .player-hand__slot--suggested {
+  filter: drop-shadow(0 0 5px #f4cc78);
 }
 
 /* Il registro resta nel drawer: una guida sempre leggibile ha priorità sul desktop compatto. */
@@ -193,4 +175,96 @@
     height: max(700px, 100dvh);
     max-height: none;
   }
+}
+
+/* La guida contestuale scorre con i contenuti della finestra reale. */
+.tutorial-modal-guidance {
+  border-left: 3px solid #f4cc78;
+  padding: 10px 12px;
+  background: #223444;
+  color: #e9e5d6;
+  line-height: 1.45;
+}
+.tutorial-modal-guidance p {
+  margin: 6px 0;
+}
+.tutorial-modal-guidance .tutorial-guide__navigation {
+  margin-top: 8px;
+}
+.tutorial-modal-guidance button {
+  border: 1px solid #b58e48;
+  border-radius: 6px;
+  background: #141e27;
+  color: #e9e5d6;
+  padding: 6px 10px;
+}
+
+@media (max-width: 599px) {
+  .tutorial-screen .battlefield-board {
+    height: max(1100px, 100dvh);
+  }
+}
+
+.tutorial-hub {
+  min-height: 100dvh;
+  height: 100dvh;
+  overflow: auto;
+  padding: clamp(16px, 4vw, 48px);
+  color: var(--chalk, #e9e5d6);
+  background: var(--table-deep, #141e27);
+}
+.tutorial-hub h1 {
+  font-family: var(--font-display);
+}
+.tutorial-hub__modules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.tutorial-hub button {
+  min-height: 44px;
+  padding: 16px;
+  border: 1px solid var(--brass, #b58e48);
+  border-radius: 8px;
+  color: inherit;
+  background: var(--surface-card, #223444);
+  cursor: pointer;
+  font: inherit;
+}
+.tutorial-hub__modules button {
+  display: grid;
+  gap: 10px;
+  text-align: left;
+}
+.tutorial-hub__modules strong {
+  color: #f4cc78;
+  font-size: 1.1rem;
+}
+.tutorial-hub__modules small {
+  color: #c5dfbf;
+}
+.tutorial-checklist {
+  padding-left: 20px;
+}
+.tutorial-checklist li {
+  margin-bottom: 12px;
+}
+.tutorial-checklist [data-completed='true'] {
+  color: #c5dfbf;
+}
+.tutorial-tools > main {
+  min-width: 0;
+}
+.tutorial-tools textarea {
+  width: 100%;
+  max-width: 100%;
+}
+.tutorial-tools .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

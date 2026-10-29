@@ -8,7 +8,7 @@ import {
   type Line,
   type UnitCategory,
 } from '@epochs/content';
-import { useMemo, useState, type ReactElement } from 'react';
+import { useEffect, useMemo, useState, type ReactElement } from 'react';
 import { Card } from '../components/card/Card.js';
 import { CardInspectModal } from '../components/card/CardInspectModal.js';
 import {
@@ -17,13 +17,12 @@ import {
   UNIT_CATEGORY_LABELS_IT,
 } from '../components/icons/DomainIcons.js';
 
-export const CARD_TYPE_LABELS_IT: Readonly<Record<CardType, string>> =
-  Object.freeze({
-    economy: 'Economia',
-    unit: 'Unità',
-    instant: 'Istantanea',
-    conversion: 'Riconversione',
-  });
+export const CARD_TYPE_LABELS_IT: Readonly<Record<CardType, string>> = Object.freeze({
+  economy: 'Economia',
+  unit: 'Unità',
+  instant: 'Istantanea',
+  conversion: 'Riconversione',
+});
 
 export type ArchiveEraFilter = 'all' | EraNo;
 export type ArchiveTypeFilter = 'all' | CardType;
@@ -51,10 +50,7 @@ export function filterCatalogCards(
     if (filters.type !== 'all' && card.rules.type !== filters.type) {
       return false;
     }
-    if (
-      filters.category !== 'all' &&
-      card.rules.category !== filters.category
-    ) {
+    if (filters.category !== 'all' && card.rules.category !== filters.category) {
       return false;
     }
     if (filters.line !== 'all' && card.rules.line !== filters.line) {
@@ -80,6 +76,7 @@ export function filterCatalogCards(
 }
 
 export interface CardArchiveScreenProps {
+  readonly onFiltersChange?: ((filters: CardArchiveFilterState) => void) | undefined;
   readonly onBackHome?: (() => void) | undefined;
   readonly onInspectCard?: ((cardId: string) => void) | undefined;
 }
@@ -123,16 +120,24 @@ const ALL_KEYWORDS = Object.keys(KEYWORD_TOOLTIPS_IT) as KeywordName[];
 export function CardArchiveScreen({
   onBackHome,
   onInspectCard,
+  onFiltersChange,
 }: CardArchiveScreenProps): ReactElement {
   const [eraFilter, setEraFilter] = useState<ArchiveEraFilter>('all');
   const [typeFilter, setTypeFilter] = useState<ArchiveTypeFilter>('all');
-  const [categoryFilter, setCategoryFilter] =
-    useState<ArchiveCategoryFilter>('all');
+  const [categoryFilter, setCategoryFilter] = useState<ArchiveCategoryFilter>('all');
   const [lineFilter, setLineFilter] = useState<ArchiveLineFilter>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [localInspectedCardId, setLocalInspectedCardId] = useState<
-    string | null
-  >(null);
+  const [localInspectedCardId, setLocalInspectedCardId] = useState<string | null>(null);
+
+  useEffect(() => {
+    onFiltersChange?.({
+      era: eraFilter,
+      type: typeFilter,
+      category: categoryFilter,
+      line: lineFilter,
+      searchQuery,
+    });
+  }, [eraFilter, typeFilter, categoryFilter, lineFilter, searchQuery, onFiltersChange]);
 
   const filteredCards = useMemo(
     () =>
@@ -219,8 +224,8 @@ export function CardArchiveScreen({
                 color: 'var(--chalk-muted, #A7B4C2)',
               }}
             >
-              Tocca una carta (o premi a lungo 250ms / doppio tap) per aprire la
-              vista ingrandita con i promemoria delle parole chiave.
+              Tocca una carta (o premi a lungo 250ms / doppio tap) per aprire la vista ingrandita
+              con i promemoria delle parole chiave.
             </p>
           </div>
 
@@ -414,9 +419,7 @@ export function CardArchiveScreen({
                 className="touch-target"
                 data-testid="archive-filter-type"
                 value={typeFilter}
-                onChange={(ev) =>
-                  setTypeFilter(ev.target.value as ArchiveTypeFilter)
-                }
+                onChange={(ev) => setTypeFilter(ev.target.value as ArchiveTypeFilter)}
                 style={{
                   padding: '8px 10px',
                   borderRadius: '6px',
@@ -452,9 +455,7 @@ export function CardArchiveScreen({
                 className="touch-target"
                 data-testid="archive-filter-category"
                 value={categoryFilter}
-                onChange={(ev) =>
-                  setCategoryFilter(ev.target.value as ArchiveCategoryFilter)
-                }
+                onChange={(ev) => setCategoryFilter(ev.target.value as ArchiveCategoryFilter)}
                 style={{
                   padding: '8px 10px',
                   borderRadius: '6px',
@@ -490,9 +491,7 @@ export function CardArchiveScreen({
                 className="touch-target"
                 data-testid="archive-filter-line"
                 value={lineFilter}
-                onChange={(ev) =>
-                  setLineFilter(ev.target.value as ArchiveLineFilter)
-                }
+                onChange={(ev) => setLineFilter(ev.target.value as ArchiveLineFilter)}
                 style={{
                   padding: '8px 10px',
                   borderRadius: '6px',

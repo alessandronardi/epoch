@@ -21,6 +21,13 @@ import { LAST_FINISHED_GAME_STORAGE_KEY } from '../controllers/remote-controller
 import { describeEvent } from '../state/event-describer.js';
 
 export interface ReplayViewerScreenProps {
+  readonly loadReplay?:
+    ((id: string, perspective: ReplayPerspective) => Promise<ReplayPayload>) | undefined;
+  readonly onInteraction?:
+    | ((
+        action: ReplayPerspective | 'play' | 'pause' | 'forward' | 'back' | 'end' | 'reset',
+      ) => void)
+    | undefined;
   readonly initialGameId?: string | undefined;
   readonly initialPerspective?: ReplayPerspective | undefined;
   readonly httpBaseUrl?: string | undefined;
@@ -47,16 +54,13 @@ export function ReplayViewerScreen({
   initialReplayPayload = null,
   onInspectCard,
   onBack,
+  loadReplay,
+  onInteraction,
 }: ReplayViewerScreenProps): ReactElement {
-  const [gameIdInput, setGameIdInput] = useState<string>(
-    () => initialGameId ?? readStoredGameId(),
-  );
+  const [gameIdInput, setGameIdInput] = useState<string>(() => initialGameId ?? readStoredGameId());
   const [serverUrlInput, setServerUrlInput] = useState<string>(httpBaseUrl);
-  const [perspective, setPerspective] =
-    useState<ReplayPerspective>(initialPerspective);
-  const [replay, setReplay] = useState<ReplayPayload | null>(
-    initialReplayPayload,
-  );
+  const [perspective, setPerspective] = useState<ReplayPerspective>(initialPerspective);
+  const [replay, setReplay] = useState<ReplayPayload | null>(initialReplayPayload);
   const [stepIndex, setStepIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -77,6 +81,12 @@ export function ReplayViewerScreen({
     setIsPlaying(false);
 
     try {
+      if (loadReplay) {
+        const parsed = ReplayPayloadSchema.parse(await loadReplay(trimmedId, targetPerspective));
+        setReplay(parsed);
+        setStepIndex((previous) => Math.min(previous, parsed.steps.length));
+        return;
+      }
       const base = serverUrlInput.trim().replace(/\/+$/, '');
       const url = `${base}/api/v1/games/${encodeURIComponent(
         trimmedId,
@@ -103,9 +113,7 @@ export function ReplayViewerScreen({
       setStepIndex((prev) => Math.min(prev, parsed.steps.length));
     } catch (err) {
       setErrorMessage(
-        err instanceof Error
-          ? err.message
-          : 'Impossibile caricare il replay dal server.',
+        err instanceof Error ? err.message : 'Impossibile caricare il replay dal server.',
       );
     } finally {
       setIsLoading(false);
@@ -148,6 +156,7 @@ export function ReplayViewerScreen({
 
   const handleSelectPerspective = (nextPerspective: ReplayPerspective): void => {
     setPerspective(nextPerspective);
+    onInteraction?.(nextPerspective);
     if (gameIdInput.trim().length > 0) {
       void loadReplayFromServer(gameIdInput, nextPerspective);
     }
@@ -155,19 +164,11 @@ export function ReplayViewerScreen({
 
   const totalSteps = replay?.steps.length ?? 0;
   const activeStep =
-    replay !== null && stepIndex > 0 ? replay.steps[stepIndex - 1] ?? null : null;
+    replay !== null && stepIndex > 0 ? (replay.steps[stepIndex - 1] ?? null) : null;
   const currentView: PlayerView | null =
-    replay === null
-      ? null
-      : activeStep !== null
-        ? activeStep.view
-        : replay.initialView;
+    replay === null ? null : activeStep !== null ? activeStep.view : replay.initialView;
   const currentStepEvents: readonly GameEvent[] =
-    replay === null
-      ? []
-      : activeStep !== null
-        ? activeStep.events
-        : replay.initialEvents;
+    replay === null ? [] : activeStep !== null ? activeStep.events : replay.initialEvents;
 
   const selfId = currentView?.me ?? 'P1';
   const opponentId = getOpponent(selfId);
@@ -438,6 +439,7 @@ export function ReplayViewerScreen({
                   data-testid="replay-reset-btn"
                   disabled={stepIndex === 0}
                   onClick={() => {
+                    onInteraction?.('reset');
                     setIsPlaying(false);
                     setStepIndex(0);
                   }}
@@ -461,6 +463,7 @@ export function ReplayViewerScreen({
                   data-testid="replay-prev-step-btn"
                   disabled={stepIndex === 0}
                   onClick={() => {
+                    onInteraction?.('back');
                     setIsPlaying(false);
                     setStepIndex((s) => Math.max(0, s - 1));
                   }}
@@ -482,7 +485,10 @@ export function ReplayViewerScreen({
                   type="button"
                   className="touch-target"
                   data-testid="replay-play-pause-btn"
-                  onClick={() => setIsPlaying((p) => !p)}
+                  onClick={() => {
+                    onInteraction?.(isPlaying ? 'pause' : 'play');
+                    setIsPlaying((p) => !p);
+                  }}
                   style={{
                     padding: '7px 16px',
                     borderRadius: '6px',
@@ -490,9 +496,7 @@ export function ReplayViewerScreen({
                     backgroundColor: isPlaying
                       ? 'rgba(181, 142, 72, 0.28)'
                       : 'var(--brass, #B58E48)',
-                    color: isPlaying
-                      ? 'var(--chalk, #E9E5D6)'
-                      : 'var(--table-deep, #141E27)',
+                    color: isPlaying ? 'var(--chalk, #E9E5D6)' : 'var(--table-deep, #141E27)',
                     fontFamily: 'var(--font-numeric)',
                     fontWeight: 700,
                     cursor: 'pointer',
@@ -507,6 +511,7 @@ export function ReplayViewerScreen({
                   data-testid="replay-step-forward-btn"
                   disabled={stepIndex >= totalSteps}
                   onClick={() => {
+                    onInteraction?.('forward');
                     setIsPlaying(false);
                     setStepIndex((s) => Math.min(totalSteps, s + 1));
                   }}
@@ -530,6 +535,7 @@ export function ReplayViewerScreen({
                   data-testid="replay-jump-end-btn"
                   disabled={stepIndex >= totalSteps}
                   onClick={() => {
+                    onInteraction?.('end');
                     setIsPlaying(false);
                     setStepIndex(totalSteps);
                   }}
@@ -564,10 +570,7 @@ export function ReplayViewerScreen({
                   Passo {stepIndex} / {totalSteps}
                 </span>
 
-                <span
-                  className="board-badge"
-                  data-testid="replay-state-version-badge"
-                >
+                <span className="board-badge" data-testid="replay-state-version-badge">
                   Versione Stato: {currentView.stateVersion}
                 </span>
 
@@ -623,8 +626,7 @@ export function ReplayViewerScreen({
                     className="board-badge board-badge--brass"
                     data-testid="replay-final-result-badge"
                   >
-                    Esito Partita: {replay.result.kind} (Vincitore:{' '}
-                    {replay.result.winner})
+                    Esito Partita: {replay.result.kind} (Vincitore: {replay.result.winner})
                   </span>
                 </div>
 
@@ -652,8 +654,7 @@ export function ReplayViewerScreen({
                       Vista Principale ({selfId} — Prospettiva: {replay.perspective})
                     </strong>
                     <span>
-                      <StatIcon stat="walls" size={13} /> Mura{' '}
-                      {currentView.self.walls} ·{' '}
+                      <StatIcon stat="walls" size={13} /> Mura {currentView.self.walls} ·{' '}
                       <StatIcon stat="cityCenter" size={13} /> Centro Città{' '}
                       {currentView.self.cityHp}/{currentView.self.cityMax}
                     </span>
@@ -682,12 +683,8 @@ export function ReplayViewerScreen({
                       </span>
                     ))}
                     <span>· Mano visibile: {currentView.self.hand.length}</span>
-                    <span>
-                      · Edifici visibili: {currentView.self.buildings.length}
-                    </span>
-                    <span>
-                      · Unità visibili: {currentView.self.units.length}
-                    </span>
+                    <span>· Edifici visibili: {currentView.self.buildings.length}</span>
+                    <span>· Unità visibili: {currentView.self.units.length}</span>
                   </div>
 
                   {currentView.self.hand.length > 0 && (
@@ -744,8 +741,7 @@ export function ReplayViewerScreen({
                   >
                     <strong>Avversario ({opponentId})</strong>
                     <span>
-                      <StatIcon stat="walls" size={13} /> Mura{' '}
-                      {currentView.opponent.walls} ·{' '}
+                      <StatIcon stat="walls" size={13} /> Mura {currentView.opponent.walls} ·{' '}
                       <StatIcon stat="cityCenter" size={13} /> Centro Città{' '}
                       {currentView.opponent.cityHp}/{currentView.opponent.cityMax}
                     </span>
@@ -758,9 +754,9 @@ export function ReplayViewerScreen({
                       color: 'var(--chalk-muted)',
                     }}
                   >
-                    Carte in mano: {currentView.opponent.handCount} · Carte
-                    coperte in Città: {currentView.opponent.coveredCount} ·
-                    Unita rivelate: {currentView.opponent.units?.length ?? 0}
+                    Carte in mano: {currentView.opponent.handCount} · Carte coperte in Città:{' '}
+                    {currentView.opponent.coveredCount} · Unita rivelate:{' '}
+                    {currentView.opponent.units?.length ?? 0}
                   </div>
                 </div>
               </section>
@@ -791,9 +787,7 @@ export function ReplayViewerScreen({
                       ? 'Apertura Partita (Passo 0)'
                       : `Passo ${activeStep.idx + 1}: ${activeStep.player} → ${activeStep.command.type}`}
                   </strong>
-                  <span className="board-badge">
-                    {currentStepEvents.length} eventi proiettati
-                  </span>
+                  <span className="board-badge">{currentStepEvents.length} eventi proiettati</span>
                 </header>
 
                 <div
@@ -814,8 +808,7 @@ export function ReplayViewerScreen({
                         fontStyle: 'italic',
                       }}
                     >
-                      Nessun evento visibile per questa prospettiva in questo
-                      passo.
+                      Nessun evento visibile per questa prospettiva in questo passo.
                     </div>
                   ) : (
                     currentStepEvents.map((ev) => (

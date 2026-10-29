@@ -1,34 +1,26 @@
-import {
-  getOpponent,
-  type GameResultKind,
-  type PlayerId,
-  type PlayerView,
-} from '@epochs/engine';
+import { MatchGuidance } from './MatchGuidance.js';
+import { getOpponent, type GameResultKind, type PlayerId, type PlayerView } from '@epochs/engine';
 import { useState, type ReactElement } from 'react';
 import type { GameController } from '../../controllers/types.js';
 import { useGameStore } from '../../state/game-store.js';
 import { ERA_ROMAN_LABELS, StatIcon } from '../icons/DomainIcons.js';
 
-export const GAME_RESULT_TITLES_IT: Readonly<Record<GameResultKind, string>> =
-  Object.freeze({
-    annihilation: 'Annientamento del Centro Città',
-    points: 'Verdetto ai Punti (Fine Era III)',
-    draw: 'Pareggio Perfetto',
-    concession: 'Resa del Giocatore',
-    timeout: 'Abbandono per Timeout Consecutivi',
-  });
+export const GAME_RESULT_TITLES_IT: Readonly<Record<GameResultKind, string>> = Object.freeze({
+  annihilation: 'Annientamento del Centro Città',
+  points: 'Verdetto ai Punti (Fine Era III)',
+  draw: 'Pareggio Perfetto',
+  concession: 'Resa del Giocatore',
+  timeout: 'Abbandono per Timeout Consecutivi',
+});
 
-export const GAME_RESULT_DESCRIPTIONS_IT: Readonly<
-  Record<GameResultKind, string>
-> = Object.freeze({
+export const GAME_RESULT_DESCRIPTIONS_IT: Readonly<Record<GameResultKind, string>> = Object.freeze({
   annihilation:
     'Il Centro Città del difensore è stato ridotto a 0 HP durante la Fase 4 di Assedio.',
   points:
-    "Al termine dell'Era III la vittoria è stata assegnata confrontando gli HP residui del Centro Città (e i criteri di spareggio GDD §6.2).",
-  draw: 'Entrambi i giocatori hanno concluso l’Era III in perfetta parità su Centro Città, Mura, Risorse totali ed Edifici.',
+    "Al termine dell'Era III la vittoria è stata assegnata confrontando gli HP residui del Centro Città.",
+  draw: 'Entrambi i Centri Città hanno gli stessi HP residui alla fine dell’Era III.',
   concession: 'Un giocatore ha dichiarato la resa sul Tavolo del Cartografo.',
-  timeout:
-    'La partita è terminata per il superamento della soglia di 3 timeout consecutivi (D2).',
+  timeout: 'La partita è terminata per il superamento della soglia di 3 timeout consecutivi (D2).',
 });
 
 export interface HotSeatHandoverModalProps {
@@ -64,16 +56,14 @@ export function HotSeatHandoverModal({
   onAcknowledge,
 }: HotSeatHandoverModalProps): ReactElement | null {
   const storeAwaiting = useGameStore((s) => s.awaitingHotSeatHandover);
+  const handoverBusy = useGameStore((state) => state.isPlaying);
   const storeNextPlayer = useGameStore((s) => s.hotSeatNextPlayer);
   const storeView = useGameStore((s) => s.view);
   const setHotSeatHandover = useGameStore((s) => s.setHotSeatHandover);
 
-  const awaiting =
-    propAwaiting !== undefined ? propAwaiting : storeAwaiting;
+  const awaiting = propAwaiting !== undefined ? propAwaiting : storeAwaiting;
   const nextPlayer =
-    propNextPlayer !== undefined
-      ? propNextPlayer
-      : storeNextPlayer ?? storeView?.me ?? 'P2';
+    propNextPlayer !== undefined ? propNextPlayer : (storeNextPlayer ?? storeView?.me ?? 'P2');
 
   if (!awaiting || storeView?.phase === 'finished') {
     return null;
@@ -82,6 +72,7 @@ export function HotSeatHandoverModal({
   const playerNumber = nextPlayer === 'P1' ? '1' : '2';
 
   const handleRevealHand = (): void => {
+    if (useGameStore.getState().isPlaying) return;
     if (onAcknowledge) {
       onAcknowledge();
       return;
@@ -123,6 +114,7 @@ export function HotSeatHandoverModal({
           color: 'var(--chalk, #E9E5D6)',
         }}
       >
+        <MatchGuidance />
         <span className="board-badge board-badge--brass">
           Modalità Locale Hot-Seat · Protezione Privacy
         </span>
@@ -138,8 +130,8 @@ export function HotSeatHandoverModal({
             color: 'var(--brass, #B58E48)',
           }}
         >
-          Passa il dispositivo al Giocatore {playerNumber} ({nextPlayer}) — Tocca
-          per svelare la tua mano
+          Passa il dispositivo al Giocatore {playerNumber} ({nextPlayer}) — Tocca per svelare la tua
+          mano
         </h2>
 
         <p
@@ -149,15 +141,15 @@ export function HotSeatHandoverModal({
             color: 'var(--chalk-muted, #A7B4C2)',
           }}
         >
-          La mano, le risorse segrete e gli Edifici Economici coperti sono stati
-          oscurati per impedire la visione accidentale durante il passaggio del
-          dispositivo.
+          La mano, le risorse segrete e gli Edifici Economici coperti sono stati oscurati per
+          impedire la visione accidentale durante il passaggio del dispositivo.
         </p>
 
         <button
           type="button"
           className="touch-target"
           data-testid="hotseat-reveal-hand-btn"
+          disabled={handoverBusy}
           onClick={handleRevealHand}
           style={{
             width: '100%',
@@ -192,9 +184,7 @@ export function GameOverModal({
   const storeView = useGameStore((s) => s.view);
   const skipToEnd = useGameStore((s) => s.skipToEnd);
   const isPlaying = useGameStore((s) => s.isPlaying);
-  const [dismissedForStateVersion, setDismissedForStateVersion] = useState<
-    number | null
-  >(null);
+  const [dismissedForStateVersion, setDismissedForStateVersion] = useState<number | null>(null);
 
   const view = propView !== undefined ? propView : storeView;
   if (view === null || view.phase !== 'finished' || view.result === null) {
@@ -250,21 +240,14 @@ export function GameOverModal({
       : `Vittoria di ${winner} (${opponentId})`;
 
   const selfTotalResources =
-    view.self.resources.food +
-    view.self.resources.wood +
-    view.self.resources.metal;
+    view.self.resources.food + view.self.resources.wood + view.self.resources.metal;
   const opponentTotalResources =
     view.opponent.resources !== null
-      ? view.opponent.resources.food +
-        view.opponent.resources.wood +
-        view.opponent.resources.metal
+      ? view.opponent.resources.food + view.opponent.resources.wood + view.opponent.resources.metal
       : null;
 
   return (
-    <div
-      className="epochs-inspect-backdrop"
-      data-testid="game-over-modal-backdrop"
-    >
+    <div className="epochs-inspect-backdrop" data-testid="game-over-modal-backdrop">
       <div
         role="dialog"
         aria-modal="true"
@@ -287,6 +270,7 @@ export function GameOverModal({
           color: 'var(--chalk, #E9E5D6)',
         }}
       >
+        <MatchGuidance />
         <header
           style={{
             display: 'flex',
@@ -307,11 +291,7 @@ export function GameOverModal({
           >
             <span
               className={`board-badge ${
-                isDraw
-                  ? ''
-                  : isSelfWinner
-                    ? 'board-badge--brass'
-                    : 'board-badge--crimson'
+                isDraw ? '' : isSelfWinner ? 'board-badge--brass' : 'board-badge--crimson'
               }`}
               data-testid="game-over-result-badge"
             >
@@ -406,9 +386,7 @@ export function GameOverModal({
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 <StatIcon stat="walls" size={14} /> Mura finali:
               </span>
-              <strong data-testid="game-over-self-walls">
-                {view.self.walls} HP
-              </strong>
+              <strong data-testid="game-over-self-walls">{view.self.walls} HP</strong>
             </div>
             <div
               style={{
@@ -470,9 +448,7 @@ export function GameOverModal({
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 <StatIcon stat="walls" size={14} /> Mura finali:
               </span>
-              <strong data-testid="game-over-opponent-walls">
-                {view.opponent.walls} HP
-              </strong>
+              <strong data-testid="game-over-opponent-walls">{view.opponent.walls} HP</strong>
             </div>
             <div
               style={{
@@ -486,9 +462,7 @@ export function GameOverModal({
             >
               <span>Risorse in magazzino:</span>
               <span>
-                {opponentTotalResources !== null
-                  ? `${opponentTotalResources} totali`
-                  : 'Nascoste'}
+                {opponentTotalResources !== null ? `${opponentTotalResources} totali` : 'Nascoste'}
               </span>
             </div>
           </div>
@@ -592,15 +566,8 @@ export function HotSeatAndGameOverModal({
 }: HotSeatAndGameOverModalProps): ReactElement {
   return (
     <>
-      <HotSeatHandoverModal
-        controller={controller}
-        onAcknowledge={onAcknowledgeHandover}
-      />
-      <GameOverModal
-        view={view}
-        onRematch={onRematch}
-        onReturnHome={onReturnHome}
-      />
+      <HotSeatHandoverModal controller={controller} onAcknowledge={onAcknowledgeHandover} />
+      <GameOverModal view={view} onRematch={onRematch} onReturnHome={onReturnHome} />
     </>
   );
 }

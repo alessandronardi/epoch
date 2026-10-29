@@ -1,3 +1,4 @@
+import { MatchGuidance } from '../modals/MatchGuidance.js';
 import {
   DndContext,
   DragOverlay,
@@ -13,18 +14,11 @@ import {
 } from '@dnd-kit/core';
 import { getCard } from '@epochs/content';
 import type { PlayerView } from '@epochs/engine';
-import {
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
+import { useState, type ReactElement, type ReactNode } from 'react';
 import type { GameController } from '../../controllers/types.js';
 import { useGameStore } from '../../state/game-store.js';
 import { Card } from '../card/Card.js';
-import {
-  buildUnplayableBannerMessage,
-  type DraggedHandCardData,
-} from './PlayerHand.js';
+import { buildUnplayableBannerMessage, type DraggedHandCardData } from './PlayerHand.js';
 
 export const PLAY_FIELD_DROPZONE_ID = 'epochs-play-field-dropzone';
 export const ACTION_CONTROLS_DROPZONE_ID = 'epochs-action-controls-dropzone';
@@ -58,6 +52,7 @@ export interface ActionControlsProps {
   readonly confirmPassEnabled?: boolean | undefined;
   readonly onPlayFieldCard?: ((cardUid: string) => void) | undefined;
   readonly onOpenConversionModal?: ((conversionUid: string) => void) | undefined;
+  readonly onCancelPass?: (() => void) | undefined;
   readonly onPassTurn?: (() => void) | undefined;
   readonly onInspectCard?: ((cardId: string) => void) | undefined;
 }
@@ -174,8 +169,7 @@ export function DevelopmentPlayDndProvider({
   const setActiveConversionUid = useGameStore((s) => s.setActiveConversionUid);
   const setUnplayableBanner = useGameStore((s) => s.setUnplayableBanner);
 
-  const [activeDragData, setActiveDragData] =
-    useState<DraggedHandCardData | null>(null);
+  const [activeDragData, setActiveDragData] = useState<DraggedHandCardData | null>(null);
 
   const view = propView !== undefined ? propView : storeView;
 
@@ -201,8 +195,7 @@ export function DevelopmentPlayDndProvider({
   const handleDragOver = (event: DragOverEvent): void => {
     const overId = event.over?.id ? String(event.over.id) : null;
     const isOverDropzone =
-      overId === PLAY_FIELD_DROPZONE_ID ||
-      overId === ACTION_CONTROLS_DROPZONE_ID;
+      overId === PLAY_FIELD_DROPZONE_ID || overId === ACTION_CONTROLS_DROPZONE_ID;
     onDropzoneOverChange?.(isOverDropzone);
   };
 
@@ -211,15 +204,12 @@ export function DevelopmentPlayDndProvider({
     setActiveDragData(null);
     onDropzoneOverChange?.(false);
 
-    if (data === null || event.over === null) {
+    if (useGameStore.getState().isPlaying || data === null || event.over === null) {
       return;
     }
 
     const overId = String(event.over.id);
-    if (
-      overId === PLAY_FIELD_DROPZONE_ID ||
-      overId === ACTION_CONTROLS_DROPZONE_ID
-    ) {
+    if (overId === PLAY_FIELD_DROPZONE_ID || overId === ACTION_CONTROLS_DROPZONE_ID) {
       triggerPlayHandCardByUid(data.uid, {
         view,
         controller,
@@ -252,11 +242,7 @@ export function DevelopmentPlayDndProvider({
             style={{ width: '116px', pointerEvents: 'none', opacity: 0.92 }}
             data-testid="hand-drag-overlay-card"
           >
-            <Card
-              cardId={activeDragData.cardId}
-              playable={activeDragData.playable}
-              selected
-            />
+            <Card cardId={activeDragData.cardId} playable={activeDragData.playable} selected />
           </div>
         ) : null}
       </DragOverlay>
@@ -267,21 +253,15 @@ export function DevelopmentPlayDndProvider({
 export function ActionControls({
   view: propView,
   controller,
-  selectedHandUid: propSelectedHandUid,
   confirmPassEnabled: propConfirmPassEnabled,
-  onPlayFieldCard,
-  onOpenConversionModal,
   onPassTurn,
-  onInspectCard,
+  onCancelPass,
 }: ActionControlsProps): ReactElement {
   const storeView = useGameStore((s) => s.view);
-  const storeSelectedHandUid = useGameStore((s) => s.selectedHandUid);
   const storeConfirmPassEnabled = useGameStore((s) => s.confirmPassEnabled);
   const setSelectedHandUid = useGameStore((s) => s.setSelectedHandUid);
-  const setActiveConversionUid = useGameStore((s) => s.setActiveConversionUid);
   const setUnplayableBanner = useGameStore((s) => s.setUnplayableBanner);
   const setConfirmPassEnabled = useGameStore((s) => s.setConfirmPassEnabled);
-  const setInspectedCardId = useGameStore((s) => s.setInspectedCardId);
 
   const [isPassDialogOpen, setIsPassDialogOpen] = useState(false);
 
@@ -290,56 +270,16 @@ export function ActionControls({
   });
 
   const view = propView !== undefined ? propView : storeView;
-  const selectedHandUid =
-    propSelectedHandUid !== undefined
-      ? propSelectedHandUid
-      : storeSelectedHandUid;
   const confirmPassEnabled =
-    propConfirmPassEnabled !== undefined
-      ? propConfirmPassEnabled
-      : storeConfirmPassEnabled;
+    propConfirmPassEnabled !== undefined ? propConfirmPassEnabled : storeConfirmPassEnabled;
 
   if (view === null) {
     return (
-      <div
-        className="action-controls action-controls--empty"
-        data-testid="action-controls-empty"
-      />
+      <div className="action-controls action-controls--empty" data-testid="action-controls-empty" />
     );
   }
 
-  const selectedInstance =
-    selectedHandUid !== null
-      ? view.self.hand.find((c) => c.uid === selectedHandUid) ?? null
-      : null;
-  const selectedCatalogCard =
-    selectedInstance !== null ? getCard(selectedInstance.cardId) : null;
-  const selectedPlayability =
-    selectedInstance !== null
-      ? view.self.legal.handPlayability[selectedInstance.uid]
-      : undefined;
-  const canPlaySelected =
-    view.phase === 'development' &&
-    view.self.legal.canAct &&
-    selectedInstance !== null &&
-    Boolean(selectedPlayability?.playable);
-
   const canPass = view.phase === 'development' && view.self.legal.canPass;
-
-  const handlePlaySelectedClick = (): void => {
-    if (selectedInstance === null) {
-      return;
-    }
-    triggerPlayHandCardByUid(selectedInstance.uid, {
-      view,
-      controller,
-      onPlayFieldCard,
-      onOpenConversionModal,
-      setSelectedHandUid,
-      setActiveConversionUid,
-      setUnplayableBanner,
-    });
-  };
 
   const executePass = (): void => {
     setIsPassDialogOpen(false);
@@ -364,17 +304,6 @@ export function ActionControls({
     executePass();
   };
 
-  const handleInspectSelected = (): void => {
-    if (selectedInstance === null) {
-      return;
-    }
-    if (onInspectCard) {
-      onInspectCard(selectedInstance.cardId);
-      return;
-    }
-    setInspectedCardId(selectedInstance.cardId);
-  };
-
   return (
     <section
       ref={setDropzoneRef}
@@ -384,134 +313,40 @@ export function ActionControls({
       aria-label="Controlli d'azione di sviluppo"
       style={{
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
         gap: '8px',
         padding: '8px 10px',
         borderRadius: '6px',
-        backgroundColor: isDropzoneOver
-          ? 'rgba(181, 142, 72, 0.2)'
-          : 'rgba(20, 30, 39, 0.92)',
+        backgroundColor: isDropzoneOver ? 'rgba(181, 142, 72, 0.2)' : 'rgba(20, 30, 39, 0.92)',
         border: isDropzoneOver
           ? '1.5px dashed var(--brass, #B58E48)'
           : '1px solid rgba(181, 142, 72, 0.35)',
         minWidth: '220px',
       }}
     >
-      {/* Riepilogo carta selezionata o suggerimento Drag & Drop / Tap-to-Play (§9.4 riga 814) */}
-      <div
-        data-testid="action-controls-selection-info"
+      <button
+        type="button"
+        className="touch-target"
+        data-testid="pass-turn-btn"
+        disabled={!canPass}
+        onClick={handlePassButtonClick}
         style={{
-          fontSize: '0.82rem',
-          color:
-            selectedCatalogCard !== null
-              ? 'var(--chalk, #E9E5D6)'
-              : 'var(--chalk-muted, #A7B4C2)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '6px',
+          padding: '8px 16px',
+          borderRadius: '6px',
+          border: '1.5px solid var(--crimson, #A8404D)',
+          backgroundColor: canPass ? 'rgba(168, 64, 77, 0.28)' : 'var(--surface-card, #223444)',
+          color: canPass ? 'var(--chalk, #E9E5D6)' : 'var(--chalk-muted, #A7B4C2)',
+          fontFamily: 'var(--font-display)',
+          fontSize: '0.92rem',
+          fontWeight: 700,
+          cursor: canPass ? 'pointer' : 'not-allowed',
+          opacity: canPass ? 1 : 0.6,
         }}
       >
-        {selectedCatalogCard !== null ? (
-          <span>
-            Selezionata:{' '}
-            <strong className="font-display" style={{ color: 'var(--brass)' }}>
-              {selectedCatalogCard.text.name}
-            </strong>{' '}
-            ({selectedCatalogCard.rules.type === 'conversion' ? '0 Slot' : '1 Slot'})
-          </span>
-        ) : (
-          <span>
-            Tocca una carta e premi &ldquo;Gioca Carta&rdquo; o trascinala sul campo
-          </span>
-        )}
-
-        {selectedInstance !== null && (
-          <button
-            type="button"
-            className="touch-target"
-            data-testid="inspect-selected-card-btn"
-            onClick={handleInspectSelected}
-            style={{
-              padding: '3px 8px',
-              borderRadius: '4px',
-              border: '1px solid rgba(233, 229, 214, 0.25)',
-              backgroundColor: 'var(--surface-card, #223444)',
-              color: 'var(--chalk, #E9E5D6)',
-              fontFamily: 'var(--font-numeric)',
-              fontSize: '0.8rem',
-              cursor: 'pointer',
-            }}
-          >
-            Ispeziona
-          </button>
-        )}
-      </div>
-
-      {/* Pulsanti primari: "Gioca Carta" (Tap-to-Play) e "Passo" (§9.4 righe 814-816) */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          flexWrap: 'wrap',
-        }}
-      >
-        <button
-          type="button"
-          className="touch-target"
-          data-testid="play-selected-card-btn"
-          disabled={!canPlaySelected}
-          onClick={handlePlaySelectedClick}
-          style={{
-            flex: 1,
-            padding: '8px 14px',
-            borderRadius: '6px',
-            border: '1.5px solid var(--brass, #B58E48)',
-            backgroundColor: canPlaySelected
-              ? 'var(--brass, #B58E48)'
-              : 'var(--surface-card, #223444)',
-            color: canPlaySelected
-              ? 'var(--table-deep, #141E27)'
-              : 'var(--chalk-muted, #A7B4C2)',
-            fontFamily: 'var(--font-numeric)',
-            fontSize: '0.96rem',
-            fontWeight: 700,
-            cursor: canPlaySelected ? 'pointer' : 'not-allowed',
-            opacity: canPlaySelected ? 1 : 0.65,
-          }}
-        >
-          {selectedCatalogCard?.rules.type === 'conversion'
-            ? 'Gioca Carta (Riconverti)'
-            : 'Gioca Carta'}
-        </button>
-
-        <button
-          type="button"
-          className="touch-target"
-          data-testid="pass-turn-btn"
-          disabled={!canPass}
-          onClick={handlePassButtonClick}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '6px',
-            border: '1.5px solid var(--crimson, #A8404D)',
-            backgroundColor: canPass
-              ? 'rgba(168, 64, 77, 0.28)'
-              : 'var(--surface-card, #223444)',
-            color: canPass
-              ? 'var(--chalk, #E9E5D6)'
-              : 'var(--chalk-muted, #A7B4C2)',
-            fontFamily: 'var(--font-display)',
-            fontSize: '0.92rem',
-            fontWeight: 700,
-            cursor: canPass ? 'pointer' : 'not-allowed',
-            opacity: canPass ? 1 : 0.6,
-          }}
-        >
-          Passo
-        </button>
-      </div>
+        Passo
+      </button>
 
       {/* Impostazione rapida per attivare/disattivare la conferma del Passo (§9.4 riga 816) */}
       <label
@@ -538,7 +373,10 @@ export function ActionControls({
         <div
           className="epochs-inspect-backdrop"
           data-testid="pass-confirm-backdrop"
-          onClick={() => setIsPassDialogOpen(false)}
+          onClick={() => {
+            setIsPassDialogOpen(false);
+            onCancelPass?.();
+          }}
         >
           <div
             role="dialog"
@@ -556,9 +394,12 @@ export function ActionControls({
               display: 'flex',
               flexDirection: 'column',
               gap: '14px',
+              maxHeight: '92dvh',
+              overflowY: 'auto',
               color: 'var(--chalk, #E9E5D6)',
             }}
           >
+            <MatchGuidance />
             <h2
               id="pass-confirm-dialog-title"
               className="font-display"
@@ -568,8 +409,7 @@ export function ActionControls({
             </h2>
 
             <p style={{ margin: 0, fontSize: '0.96rem' }}>
-              Passare il turno per il resto dell&apos;Era? L&apos;azione è
-              irrevocabile
+              Passare il turno per il resto dell&apos;Era? L&apos;azione è irrevocabile
             </p>
 
             <label
@@ -602,7 +442,10 @@ export function ActionControls({
                 type="button"
                 className="touch-target"
                 data-testid="cancel-pass-btn"
-                onClick={() => setIsPassDialogOpen(false)}
+                onClick={() => {
+                  setIsPassDialogOpen(false);
+                  onCancelPass?.();
+                }}
                 style={{
                   padding: '8px 14px',
                   borderRadius: '6px',

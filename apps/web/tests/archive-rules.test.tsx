@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CardArtPicture } from '../src/components/card/CardArtPicture.js';
 import { CardArchiveScreen } from '../src/screens/CardArchiveScreen.js';
 import { QuickRulesScreen } from '../src/screens/QuickRulesScreen.js';
+import { HomeScreen } from '../src/screens/HomeScreen.js';
 
 afterEach(() => {
   cleanup();
@@ -133,11 +134,26 @@ describe('<CardArchiveScreen> and <QuickRulesScreen>', () => {
     expect(screen.queryByTestId('card-inspect-modal')).toBeNull();
   });
 
+  it('opens the rules from the home menu', () => {
+    const onNavigate = vi.fn();
+    render(<HomeScreen onNavigate={onNavigate} onStartBotMatch={vi.fn()} onStartHotSeatMatch={vi.fn()} />);
+    const button = screen.getByTestId('nav-full-rules-btn');
+    expect(button.getAttribute('aria-label')).toBe('Regolamento');
+    expect(button.getAttribute('aria-disabled')).toBeNull();
+    fireEvent.click(button);
+    expect(onNavigate).toHaveBeenCalledWith('rules');
+  });
+
   it('renders <QuickRulesScreen> with all 6 normative sections and all 6 keyword tooltips', () => {
     const onBackHome = vi.fn();
     render(<QuickRulesScreen onBackHome={onBackHome} />);
 
     expect(screen.getByTestId('screen-rules')).toBeDefined();
+    expect(screen.getByRole('heading', { name: 'Regolamento', level: 1 })).toBeDefined();
+    expect(screen.getByRole('navigation', { name: 'Indice del regolamento' })).toBeDefined();
+    expect(screen.getByTestId('rules-section-eras').textContent).toContain('scegliendo le carte da scartare');
+    expect(screen.getByTestId('rules-section-settings').textContent).toContain('partita locale Hot-Seat');
+    expect(screen.getByTestId('rules-section-settings').textContent).toContain('partite online');
     expect(
       screen.getByTestId('rules-section-eras').textContent,
     ).toContain('20 carte per Era');

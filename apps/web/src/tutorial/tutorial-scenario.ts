@@ -1,6 +1,6 @@
 import type { Bot } from '@epochs/bots';
 import { CARDS_RULES } from '@epochs/content';
-import { autoDiscard, type ClientCommand, type EraNo, type PlayerView } from '@epochs/engine';
+import { autoDiscard, type EraNo, type PlayerView } from '@epochs/engine';
 import { LocalGameController } from '../controllers/local-controller.js';
 import type { ProjectionNotification } from '../controllers/types.js';
 import type { GameStoreApi } from '../state/game-store.js';
@@ -9,7 +9,7 @@ export const TUTORIAL_SEED = 'epochs-tutorial-v1';
 
 // Completa ciascun ordine didattico fino a un sotto-mazzo legale di 20 carte.
 // Anche le carte non pescate rispettano Era e limite di tre copie.
-function completeDeck(era: EraNo, opening: readonly string[]): string[] {
+export function completeTutorialDeck(era: EraNo, opening: readonly string[]): string[] {
   const cards = [...opening];
   for (const card of Object.values(CARDS_RULES).filter((card) => card.era === era)) {
     while (cards.length < 20 && cards.filter((id) => id === card.id).length < 3) {
@@ -22,7 +22,7 @@ function completeDeck(era: EraNo, opening: readonly string[]): string[] {
 export function createTutorialDecks() {
   return {
     P1: {
-      1: completeDeck(1, [
+      1: completeTutorialDeck(1, [
         'u1_inf_l',
         'u1_spr_l',
         'u1_arc_l',
@@ -33,11 +33,11 @@ export function createTutorialDecks() {
         'i1_arr',
         'e1_mine',
       ]),
-      2: completeDeck(2, ['e2_fnd', 'u2_cav_h', 'u2_inf_h', 'u2_arc_l', 'u2_sig_l']),
-      3: completeDeck(3, ['e3_frn', 'e3_gld', 'u3_inf_l', 'u3_sig_l', 'i3_fir']),
+      2: completeTutorialDeck(2, ['e2_fnd', 'u2_cav_h', 'u2_inf_h', 'u2_arc_l', 'u2_sig_l']),
+      3: completeTutorialDeck(3, ['e3_frn', 'e3_gld', 'u3_inf_l', 'u3_sig_l', 'i3_fir']),
     },
     P2: {
-      1: completeDeck(1, [
+      1: completeTutorialDeck(1, [
         'e1_farm',
         'u1_spr_l',
         'u1_inf_h',
@@ -47,8 +47,8 @@ export function createTutorialDecks() {
         'e1_lumb',
         'e1_mine',
       ]),
-      2: completeDeck(2, ['u2_inf_h', 'u2_arc_l', 'e2_fnd', 'i2_sab', 'i2_mor']),
-      3: completeDeck(3, ['u3_inf_h', 'u3_arc_l', 'u3_sig_l', 'e3_gld', 'e3_frn']),
+      2: completeTutorialDeck(2, ['u2_inf_h', 'u2_arc_l', 'e2_fnd', 'i2_sab', 'i2_mor']),
+      3: completeTutorialDeck(3, ['u3_inf_h', 'u3_arc_l', 'u3_sig_l', 'e3_gld', 'e3_frn']),
     },
   };
 }
@@ -60,7 +60,7 @@ const opponentPlays: Record<EraNo, readonly string[]> = {
 };
 
 /** L'avversario didattico legge esclusivamente la propria PlayerView. */
-const tutorialOpponent: Bot = {
+export const tutorialOpponent: Bot = {
   name: 'Avversario del tutorial',
   choose(view) {
     const legal = view.self.legal;
@@ -108,6 +108,13 @@ export const TUTORIAL_LESSONS = [
 export type TutorialTarget = 'hand' | 'resources' | 'city' | 'slots' | 'battle' | 'walls';
 type TutorialAction =
   | { readonly kind: 'mulligan'; readonly cardId: string }
+  | { readonly kind: 'keep' }
+  | { readonly kind: 'discard' }
+  | {
+      readonly kind: 'inspect' | 'deselect' | 'unplayable' | 'cancel-conversion';
+      readonly cardId: string;
+    }
+  | { readonly kind: 'cancel-pass' | 'log' | 'concede' | 'handover' | 'timeout' | 'instant-budget' }
   | { readonly kind: 'play'; readonly cardId: string }
   | { readonly kind: 'conversion'; readonly cardId: string; readonly sacrificeId: string }
   | { readonly kind: 'instants'; readonly cardIds: readonly string[] }
@@ -123,9 +130,20 @@ export interface TutorialCue {
   readonly action: TutorialAction;
   readonly era: EraNo;
   readonly phase: PlayerView['phase'];
+  readonly viewer?: 'P1' | 'P2';
 }
 
 export const TUTORIAL_CUES: readonly TutorialCue[] = [
+  {
+    lesson: 1,
+    title: 'Ispeziona una carta',
+    target: 'hand',
+    era: 1,
+    phase: 'mulligan',
+    text: 'Prima di scegliere la mano, ispeziona la Milizia Cittadina con doppio clic, pressione prolungata o tasto I. Leggi costo, statistiche e parole chiave, poi chiudi la carta con Escape o Chiudi.',
+    label: 'Ispeziona e chiudi la Milizia',
+    action: { kind: 'inspect', cardId: 'u1_inf_l' },
+  },
   {
     lesson: 1,
     title: 'Scegli la tua mano iniziale',
@@ -145,6 +163,26 @@ export const TUTORIAL_CUES: readonly TutorialCue[] = [
     text: 'Dotazione iniziale e Raccolto ti danno 4 Cibo, 4 Legno e 0 Metallo. In Era I puoi conservare al massimo 7 di ogni risorsa; le eccedenze vanno perdute. Il cap sale a 11 in Era II e a 16 in Era III.',
     label: 'Passa agli edifici',
     action: { kind: 'read' },
+  },
+  {
+    lesson: 2,
+    title: 'Annulla la selezione',
+    target: 'hand',
+    era: 1,
+    phase: 'development',
+    text: 'Seleziona la Cava Grezza nella mano. Prima di giocarla, premi Escape oppure selezionala di nuovo: annullare la selezione non costa risorse e non consuma il turno.',
+    label: 'Seleziona e deseleziona la Cava',
+    action: { kind: 'deselect', cardId: 'e1_mine' },
+  },
+  {
+    lesson: 2,
+    title: 'Leggi perché una carta non è disponibile',
+    target: 'hand',
+    era: 1,
+    phase: 'development',
+    text: 'Tocca Palizzata Extra: il messaggio spiega che le Istantanee si usano soltanto in Pre-Battaglia. Consultare una carta non disponibile lascia invariati risorse e turno.',
+    label: 'Tocca Palizzata Extra',
+    action: { kind: 'unplayable', cardId: 'i1_wall' },
   },
   {
     lesson: 2,
@@ -198,6 +236,16 @@ export const TUTORIAL_CUES: readonly TutorialCue[] = [
   },
   {
     lesson: 4,
+    title: 'Prova la conferma del Passo',
+    target: 'slots',
+    era: 1,
+    phase: 'development',
+    text: 'Premi Passo e poi Annulla nella finestra di conferma. Il Passo confermato vale per il resto dell’Era; annullare questa finestra permette di continuare lo Sviluppo.',
+    label: 'Apri Passo e annulla',
+    action: { kind: 'cancel-pass' },
+  },
+  {
+    lesson: 4,
     title: 'Passa e rivela gli eserciti',
     target: 'slots',
     era: 1,
@@ -235,6 +283,16 @@ export const TUTORIAL_CUES: readonly TutorialCue[] = [
     text: 'Hai vinto il campo: i superstiti hanno inflitto 1 DEM alle Mura, senza Breccia. Le unità vengono scartate, la Cava resta e il Cap Logistico riparte da zero. In Era II mostreremo l’Accerchiamento contro gli Arcieri.',
     label: 'Prepara la seconda Era',
     action: { kind: 'read' },
+  },
+  {
+    lesson: 5,
+    title: 'Consulta il registro della battaglia',
+    target: 'battle',
+    era: 2,
+    phase: 'development',
+    text: 'Apri il Registro dal pulsante del tavolo; se è già visibile, fai clic al suo interno o raggiungilo con Tab. Ritrovi Tiro, Impalamento, Impatto e Mischia, con danni e cadute. Durante le animazioni puoi usare pausa, ripresa, velocità 1×/2× e completamento; gli attacchi sono automatici.',
+    label: 'Apri il Registro',
+    action: { kind: 'log' },
   },
   {
     lesson: 5,
@@ -295,6 +353,16 @@ export const TUTORIAL_CUES: readonly TutorialCue[] = [
     text: 'Il Cavaliere Corazzato infliggerà 6 ATK + 2 di bonus contro gli Arcieri, iniziando dalla Retroguardia. Questa volta conferma senza Istantanee: anche scegliere zero carte è valido.',
     label: 'Combatti senza Istantanee',
     action: { kind: 'instants', cardIds: [] },
+  },
+  {
+    lesson: 6,
+    title: 'Esplora la Riconversione',
+    target: 'hand',
+    era: 3,
+    phase: 'development',
+    text: 'Fai doppio clic su Altoforno Reale, oppure selezionalo e usa Gioca Carta nella mano. Nella finestra puoi cambiare edificio e leggere guadagni, eccedenze e DEM. Per questa prova chiudi con Annulla: nessun edificio viene sacrificato.',
+    label: 'Apri Altoforno e annulla',
+    action: { kind: 'cancel-conversion', cardId: 'e3_frn' },
   },
   {
     lesson: 6,
@@ -362,56 +430,62 @@ export const TUTORIAL_CUES: readonly TutorialCue[] = [
     target: 'walls',
     era: 3,
     phase: 'finished',
-    text: 'Hai attraversato tutte le tre Ere: economia, schieramento coperto, Istantanee, combattimento e assedio. Il registro mostra Breccia, danno al Centro Città e Razzia. Ora puoi provare una partita libera contro un Bot.',
+    text: 'Hai attraversato tutte le tre Ere: economia, schieramento coperto, Istantanee, combattimento e assedio. Il registro mostra Breccia, danno al Centro Città e Razzia. Leggi il riepilogo: Nuova Partita avvia una partita libera contro un Bot. Con Esplora Tavolo e Registro puoi rivedere il campo e accedere alla prova sul limite di mano.',
     label: 'Torna alla Home',
     action: { kind: 'read' },
   },
 ];
 
-/** Risolve gli UID dalla vista corrente e impedisce di saltare una precondizione. */
-export function resolveTutorialCommand(cue: TutorialCue, view: PlayerView): ClientCommand | null {
-  if (view.era !== cue.era || view.phase !== cue.phase) {
-    throw new Error('La partita non è nella fase prevista. Riavvia il tutorial.');
-  }
-  const action = cue.action;
-  const legal = view.self.legal;
-  const handUid = (id: string): string => {
-    const card = view.self.hand.find((item) => item.cardId === id);
-    if (!card) throw new Error('La carta guidata non è disponibile. Riavvia il tutorial.');
-    return card.uid;
-  };
-  const requireLegal = (condition: boolean): void => {
-    if (!condition) throw new Error('L’azione guidata non è disponibile. Riavvia il tutorial.');
-  };
-  switch (action.kind) {
-    case 'read':
-      return null;
-    case 'mulligan':
-      requireLegal(legal.canSubmitMulligan);
-      return { type: 'SubmitMulligan', cardUids: [handUid(action.cardId)] };
-    case 'play': {
-      const uid = handUid(action.cardId);
-      requireLegal(legal.canAct && legal.playableFieldCardUids.includes(uid));
-      return { type: 'PlayCard', cardUid: uid };
-    }
-    case 'conversion': {
-      const uid = handUid(action.cardId);
-      const building = view.self.buildings.find((item) => item.cardId === action.sacrificeId);
-      requireLegal(legal.canAct && legal.playableConversionUids.includes(uid));
-      if (!building || !legal.sacrificableBuildingUids.includes(building.uid)) {
-        throw new Error('L’edificio da riconvertire non è disponibile. Riavvia il tutorial.');
-      }
-      return { type: 'PlayConversion', cardUid: uid, sacrificeUid: building.uid };
-    }
-    case 'pass':
-      requireLegal(legal.canPass);
-      return { type: 'Pass' };
-    case 'instants': {
-      const uids = action.cardIds.map(handUid);
-      requireLegal(
-        legal.canLockInstants && uids.every((uid) => legal.playableInstantUids.includes(uid)),
-      );
-      return { type: 'LockInstants', cardUids: uids };
-    }
-  }
-}
+/** Esercitazione breve: conservando la mano si arriva legalmente a 13 carte in Era II. */
+export const DISCARD_TUTORIAL_CUES: readonly TutorialCue[] = [
+  {
+    lesson: 1,
+    title: 'Conserva tutta la mano',
+    target: 'hand',
+    era: 1,
+    phase: 'mulligan',
+    text: 'Questa esercitazione insegna il limite di mano. Premi Mantieni mano nel Mulligan: conserverai tutte le otto carte iniziali.',
+    label: 'Mantieni mano',
+    action: { kind: 'keep' },
+  },
+  {
+    lesson: 4,
+    title: 'Conserva le carte per la prossima Era',
+    target: 'hand',
+    era: 1,
+    phase: 'development',
+    text: 'Dichiara Passo dai controlli del tavolo. Non giocando carte, le conserverai per l’Era successiva. Il nemico risolverà le proprie opportunità.',
+    label: 'Passa',
+    action: { kind: 'pass' },
+  },
+  {
+    lesson: 4,
+    title: 'Conferma senza Istantanee',
+    target: 'battle',
+    era: 1,
+    phase: 'prebattle',
+    text: 'Lascia vuota la selezione e conferma dalla barra di Pre-Battaglia. Dopo il combattimento pescherai cinque carte: otto più cinque supera il limite di dieci.',
+    label: 'Conferma senza Istantanee',
+    action: { kind: 'instants', cardIds: [] },
+  },
+  {
+    lesson: 5,
+    title: 'Scarta fino al limite di dieci',
+    target: 'hand',
+    era: 2,
+    phase: 'hand_limit',
+    text: 'Scegli tre carte nella finestra Scarto. Puoi selezionare, deselezionare e ispezionare ogni carta. Prova Suggerisci FIFO per selezionare le più vecchie, modifica la selezione se vuoi, poi conferma esattamente tre scarti.',
+    label: 'Conferma tre scarti',
+    action: { kind: 'discard' },
+  },
+  {
+    lesson: 6,
+    title: 'Esercitazione scarto completata',
+    target: 'hand',
+    era: 2,
+    phase: 'development',
+    text: 'Ora hai dieci carte: la nuova Era prosegue con le carte conservate e quelle appena pescate. Lo scarto è stato risolto dalle regole normali, senza modificare artificialmente la mano.',
+    label: 'Torna alla Home',
+    action: { kind: 'read' },
+  },
+];

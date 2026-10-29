@@ -1,19 +1,10 @@
+import { ConcedeButton } from './components/board/ConcedeButton.js';
 import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { AudioControls } from './audio/AudioControls.js';
 import { connectGameAudio, soundEffects } from './audio/sound-effects.js';
-import {
-  ActionControls,
-  DevelopmentPlayDndProvider,
-  triggerPlayHandCardByUid,
-} from './components/board/ActionControls.js';
 import { BattlePlaybackAndLog } from './components/board/BattlePlaybackAndLog.js';
-import { BattlefieldBoard } from './components/board/BattlefieldBoard.js';
-import { PlayerHand } from './components/board/PlayerHand.js';
-import { PrebattleInstantsBar } from './components/board/PrebattleInstantsBar.js';
+import { MatchTable } from './components/board/MatchTable.js';
 import { CardInspectModal } from './components/card/CardInspectModal.js';
-import { ConversionModal } from './components/modals/ConversionModal.js';
-import { HotSeatAndGameOverModal } from './components/modals/HotSeatAndGameOverModal.js';
-import { MulliganAndDiscardModals } from './components/modals/MulliganAndDiscardModals.js';
 import { LocalGameController } from './controllers/local-controller.js';
 import type { RemoteGameController } from './controllers/remote-controller.js';
 import type { GameController } from './controllers/types.js';
@@ -61,16 +52,9 @@ const A11Y_CONTRAST_OVERRIDES_CSS = `
 export function App(): ReactElement {
   const [activeScreen, setActiveScreen] = useState<ExtendedScreenId>('home');
   const [controller, setController] = useState<GameController | null>(null);
-  const [isDropzoneOver, setIsDropzoneOver] = useState(false);
-  const [lastMatchSetup, setLastMatchSetup] = useState<LastMatchSetup | null>(
-    null,
-  );
-  const [replayTargetGameId, setReplayTargetGameId] = useState<
-    string | undefined
-  >(undefined);
-  const [replayHttpBaseUrl, setReplayHttpBaseUrl] = useState<
-    string | undefined
-  >(undefined);
+  const [lastMatchSetup, setLastMatchSetup] = useState<LastMatchSetup | null>(null);
+  const [replayTargetGameId, setReplayTargetGameId] = useState<string | undefined>(undefined);
+  const [replayHttpBaseUrl, setReplayHttpBaseUrl] = useState<string | undefined>(undefined);
   const matchCounterRef = useRef<number>(1);
   const savedDecks = useDeckBuilderStore((state) => state.savedDecks);
   const availableDecks = [
@@ -78,21 +62,20 @@ export function App(): ReactElement {
     ...savedDecks.flatMap((deck) =>
       deck.id === undefined
         ? []
-        : [{
-            id: `custom:${deck.id}`,
-            name: `${deck.name} · Personale`,
-            description: deck.description ?? 'Mazzo personale da 60 carte.',
-            payload: deck,
-          }],
+        : [
+            {
+              id: `custom:${deck.id}`,
+              name: `${deck.name} · Personale`,
+              description: deck.description ?? 'Mazzo personale da 60 carte.',
+              payload: deck,
+            },
+          ],
     ),
   ];
 
   const view = useGameStore((s) => s.view);
   const inspectedCardId = useGameStore((s) => s.inspectedCardId);
   const setInspectedCardId = useGameStore((s) => s.setInspectedCardId);
-  const setSelectedHandUid = useGameStore((s) => s.setSelectedHandUid);
-  const setActiveConversionUid = useGameStore((s) => s.setActiveConversionUid);
-  const setUnplayableBanner = useGameStore((s) => s.setUnplayableBanner);
   const resetStore = useGameStore((s) => s.resetStore);
 
   useEffect(() => {
@@ -155,10 +138,7 @@ export function App(): ReactElement {
     setActiveScreen('match');
   };
 
-  const startRemoteMatch = (
-    remoteController: RemoteGameController,
-    gameId: string,
-  ): void => {
+  const startRemoteMatch = (remoteController: RemoteGameController, gameId: string): void => {
     if (controller !== null && controller !== remoteController) {
       controller.dispose();
     }
@@ -173,10 +153,7 @@ export function App(): ReactElement {
     setActiveScreen('match');
   };
 
-  const handleOpenReplayViewer = (
-    gameId?: string,
-    httpBaseUrl?: string,
-  ): void => {
+  const handleOpenReplayViewer = (gameId?: string, httpBaseUrl?: string): void => {
     if (gameId !== undefined) {
       setReplayTargetGameId(gameId);
     }
@@ -232,31 +209,17 @@ export function App(): ReactElement {
     });
   };
 
-  const handlePlayHandCard = (cardUid: string): void => {
-    triggerPlayHandCardByUid(cardUid, {
-      view,
-      controller,
-      setSelectedHandUid,
-      setActiveConversionUid,
-      setUnplayableBanner,
-    });
-  };
-
   if (activeScreen === 'home') {
     return (
       <>
         <style>{A11Y_CONTRAST_OVERRIDES_CSS}</style>
         <HomeScreen
-          audioControls={<AudioControls />}
           availableDecks={availableDecks}
           onStartBotMatch={startBotMatch}
           onStartHotSeatMatch={startHotSeatMatch}
           onNavigate={(screen) => setActiveScreen(screen)}
         />
-        <CardInspectModal
-          cardId={inspectedCardId}
-          onClose={() => setInspectedCardId(null)}
-        />
+        <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
       </>
     );
   }
@@ -265,51 +228,32 @@ export function App(): ReactElement {
     return (
       <>
         <style>{A11Y_CONTRAST_OVERRIDES_CSS}</style>
-        <TutorialScreen onBackHome={handleReturnHome} />
+        <TutorialScreen
+          onBackHome={handleReturnHome}
+          onStartFreeMatch={() => {
+            const deck = PRESET_DECK_OPTIONS[0]!.payload;
+            startBotMatch({
+              botKind: 'greedy',
+              playerDeck: deck,
+              botDeck: PRESET_DECK_OPTIONS[1]?.payload ?? deck,
+              seed: `epochs-after-tutorial-${Date.now()}`,
+            });
+          }}
+        />
       </>
     );
   }
 
   if (activeScreen === 'match') {
-    const isPrebattle = view?.phase === 'prebattle';
-
     return (
       <>
         <style>{A11Y_CONTRAST_OVERRIDES_CSS}</style>
-        <DevelopmentPlayDndProvider
-        view={view}
-        controller={controller}
-        onDropzoneOverChange={setIsDropzoneOver}
-      >
-        <BattlefieldBoard
+        <MatchTable
           view={view}
-          isDroppableOverSelfCity={isDropzoneOver}
-          onInspectCard={(cardId) => setInspectedCardId(cardId)}
-          handSlot={
-            isPrebattle ? (
-              <PrebattleInstantsBar
-                view={view}
-                controller={controller}
-                onInspectCard={(cardId) => setInspectedCardId(cardId)}
-              />
-            ) : (
-              <PlayerHand
-                view={view}
-                onPlayCard={handlePlayHandCard}
-                onInspectCard={(cardId) => setInspectedCardId(cardId)}
-              />
-            )
-          }
-          actionControlsSlot={
-            isPrebattle ? undefined : (
-              <ActionControls
-                view={view}
-                controller={controller}
-                onInspectCard={(cardId) => setInspectedCardId(cardId)}
-              />
-            )
-          }
-          sidebarSlot={
+          controller={controller}
+          onRematch={handleRematch}
+          onReturnHome={handleReturnHome}
+          sidebar={
             <div
               style={{
                 display: 'flex',
@@ -350,25 +294,7 @@ export function App(): ReactElement {
                 </button>
 
                 {view !== null && view.phase !== 'finished' && (
-                  <button
-                    type="button"
-                    className="touch-target"
-                    data-testid="match-concede-btn"
-                    onClick={() => controller?.concede()}
-                    style={{
-                      padding: '6px 10px',
-                      borderRadius: '6px',
-                      border: '1px solid var(--crimson, #A8404D)',
-                      backgroundColor: 'rgba(168, 64, 77, 0.22)',
-                      color: 'var(--chalk, #E9E5D6)',
-                      fontFamily: 'var(--font-numeric)',
-                      fontSize: '0.84rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Resa
-                  </button>
+                  <ConcedeButton controller={controller} />
                 )}
 
                 {view !== null &&
@@ -407,31 +333,10 @@ export function App(): ReactElement {
                   onInspectCard={(cardId) => setInspectedCardId(cardId)}
                 />
               </div>
-              <AudioControls />
+              <details className="match-audio-settings"><summary>Impostazioni audio</summary><AudioControls /></details>
             </div>
           }
-          overlaySlot={
-            <>
-              <MulliganAndDiscardModals
-                view={view}
-                controller={controller}
-                onInspectCard={(cardId) => setInspectedCardId(cardId)}
-              />
-              <ConversionModal
-                view={view}
-                controller={controller}
-                onInspectCard={(cardId) => setInspectedCardId(cardId)}
-              />
-              <HotSeatAndGameOverModal
-                view={view}
-                controller={controller}
-                onRematch={handleRematch}
-                onReturnHome={handleReturnHome}
-              />
-            </>
-          }
         />
-      </DevelopmentPlayDndProvider>
       </>
     );
   }
@@ -446,10 +351,7 @@ export function App(): ReactElement {
           onOpenReplayViewer={handleOpenReplayViewer}
           onBackHome={handleReturnHome}
         />
-        <CardInspectModal
-          cardId={inspectedCardId}
-          onClose={() => setInspectedCardId(null)}
-        />
+        <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
       </>
     );
   }
@@ -464,10 +366,7 @@ export function App(): ReactElement {
           onInspectCard={(cardId) => setInspectedCardId(cardId)}
           onBack={() => setActiveScreen('online')}
         />
-        <CardInspectModal
-          cardId={inspectedCardId}
-          onClose={() => setInspectedCardId(null)}
-        />
+        <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
       </>
     );
   }
@@ -480,10 +379,7 @@ export function App(): ReactElement {
           onBackHome={handleReturnHome}
           onInspectCard={(cardId) => setInspectedCardId(cardId)}
         />
-        <CardInspectModal
-          cardId={inspectedCardId}
-          onClose={() => setInspectedCardId(null)}
-        />
+        <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
       </>
     );
   }
@@ -493,10 +389,7 @@ export function App(): ReactElement {
       <>
         <style>{A11Y_CONTRAST_OVERRIDES_CSS}</style>
         <QuickRulesScreen onBackHome={handleReturnHome} />
-        <CardInspectModal
-          cardId={inspectedCardId}
-          onClose={() => setInspectedCardId(null)}
-        />
+        <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
       </>
     );
   }
@@ -507,10 +400,7 @@ export function App(): ReactElement {
         onBackHome={handleReturnHome}
         onInspectCard={(cardId) => setInspectedCardId(cardId)}
       />
-      <CardInspectModal
-        cardId={inspectedCardId}
-        onClose={() => setInspectedCardId(null)}
-      />
+      <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
     </>
   );
 }

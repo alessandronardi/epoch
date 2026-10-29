@@ -1,3 +1,4 @@
+import { useBoardCardInspection } from './BoardCardInspection.js';
 import { getCard, type CatalogCard } from '@epochs/content';
 import type { Resource, UnplayableReason } from '@epochs/engine';
 import {
@@ -20,10 +21,7 @@ import {
   StatIcon,
   UnitCategoryIcon,
 } from '../icons/DomainIcons.js';
-import {
-  CardArtPicture,
-  getCardPlaceholderUrl,
-} from './CardArtPicture.js';
+import { CardArtPicture, getCardPlaceholderUrl } from './CardArtPicture.js';
 import './card.css';
 
 export { CardArtPicture, getCardPlaceholderUrl };
@@ -43,6 +41,7 @@ export interface CardProps {
   readonly unplayableReason?: UnplayableReason | undefined;
   readonly coveredForOpponent?: boolean | undefined;
   readonly onSelect?: ((cardId: string) => void) | undefined;
+  readonly onDoubleActivate?: (() => void) | undefined;
   readonly onInspect?: ((cardId: string) => void) | undefined;
   readonly artSlot?: ReactNode | undefined;
   readonly className?: string | undefined;
@@ -73,11 +72,18 @@ export function Card({
   coveredForOpponent = false,
   onSelect,
   onInspect,
+  onDoubleActivate,
   artSlot,
   className,
 }: CardProps): ReactElement {
   const resolved = resolveCatalogCard(cardId, card);
   const { rules, text, rulesText } = resolved;
+
+  const inspection = useBoardCardInspection(
+    { cardId: resolved.id, atkMod, demBonus, currentHp },
+    onInspect,
+  );
+  const inspect = inspection?.inspect ?? onInspect;
 
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longPressTriggeredRef = useRef(false);
@@ -99,13 +105,13 @@ export function Card({
 
   const handlePointerDown = (): void => {
     longPressTriggeredRef.current = false;
-    if (!onInspect) {
+    if (!inspect) {
       return;
     }
     clearLongPress();
     longPressTimerRef.current = setTimeout(() => {
       longPressTriggeredRef.current = true;
-      onInspect(resolved.id);
+      inspect(resolved.id);
     }, LONG_PRESS_MS);
   };
 
@@ -125,19 +131,17 @@ export function Card({
   const handleDoubleClick = (event: MouseEvent<HTMLElement>): void => {
     event.stopPropagation();
     clearLongPress();
-    onInspect?.(resolved.id);
+    if (onDoubleActivate) onDoubleActivate();
+    else inspect?.(resolved.id);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       onSelect?.(resolved.id);
-    } else if (
-      (event.key === 'i' || event.key === 'I' || event.key === 'ContextMenu') &&
-      onInspect
-    ) {
+    } else if ((event.key === 'i' || event.key === 'I' || event.key === 'ContextMenu') && inspect) {
       event.preventDefault();
-      onInspect(resolved.id);
+      inspect(resolved.id);
     }
   };
 
@@ -168,6 +172,7 @@ export function Card({
   return (
     <div className="epochs-card-wrapper" data-card-wrapper={resolved.id}>
       <article
+        ref={inspection?.ref}
         className={rootClasses}
         data-testid={`card-${resolved.id}`}
         data-card-id={resolved.id}
@@ -178,10 +183,20 @@ export function Card({
         data-unplayable-reason={unplayableReason}
         tabIndex={0}
         aria-label={`${text.name} — ${text.typeLine} (${ERA_LABELS_IT[rules.era]})`}
-        onPointerDown={handlePointerDown}
+        onPointerEnter={inspection?.onPointerEnter}
+        onFocus={inspection?.onFocus}
+        onBlur={inspection?.onBlur}
+        onPointerDown={(event) => {
+          inspection?.onPointerDown(event);
+          handlePointerDown();
+        }}
         onPointerUp={handlePointerUpOrLeave}
-        onPointerLeave={handlePointerUpOrLeave}
+        onPointerLeave={(event) => {
+          handlePointerUpOrLeave();
+          inspection?.onPointerLeave(event);
+        }}
         onPointerCancel={handlePointerUpOrLeave}
+        onPointerMove={clearLongPress}
         onClick={handleClick}
         onDoubleClick={handleDoubleClick}
         onKeyDown={handleKeyDown}
@@ -230,10 +245,7 @@ export function Card({
             )}
             <span>{text.typeLine}</span>
           </span>
-          <span
-            className="epochs-card__era-badge"
-            aria-label={ERA_LABELS_IT[rules.era]}
-          >
+          <span className="epochs-card__era-badge" aria-label={ERA_LABELS_IT[rules.era]}>
             <EraIcon era={rules.era} size={14} />
             <span>{ERA_ROMAN_LABELS[rules.era]}</span>
           </span>
@@ -245,10 +257,7 @@ export function Card({
             {rulesText}
           </p>
           <hr className="epochs-card__brass-divider" aria-hidden="true" />
-          <p
-            className="epochs-card__flavor-text"
-            data-testid="card-flavor-text"
-          >
+          <p className="epochs-card__flavor-text" data-testid="card-flavor-text">
             {text.flavor}
           </p>
         </div>
@@ -288,22 +297,15 @@ export function Card({
                 aria-label={`${STAT_LABELS_IT.hp}: ${effectiveHp} su ${maxHp}`}
               >
                 <StatIcon stat="hp" size={14} />
-                <span>
-                  {isHpDamaged ? `${effectiveHp}/${maxHp}` : effectiveHp}
-                </span>
+                <span>{isHpDamaged ? `${effectiveHp}/${maxHp}` : effectiveHp}</span>
               </span>
             </>
           ) : rules.type === 'economy' && rules.production !== undefined ? (
             <div className="epochs-card__nonunit-footer" data-stat="production">
               <span>Edificio Economico · 1 Slot</span>
               <span>
-                {RESOURCE_ORDER.filter(
-                  (res) => (rules.production?.[res] ?? 0) > 0,
-                )
-                  .map(
-                    (res) =>
-                      `+${rules.production?.[res]} ${RESOURCE_LABELS_IT[res]}`,
-                  )
+                {RESOURCE_ORDER.filter((res) => (rules.production?.[res] ?? 0) > 0)
+                  .map((res) => `+${rules.production?.[res]} ${RESOURCE_LABELS_IT[res]}`)
                   .join(' ')}
               </span>
             </div>

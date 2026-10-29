@@ -1,3 +1,5 @@
+import { BoardCardInspection } from '../card/BoardCardInspection.js';
+import { useBattlePresentation } from './use-battle-presentation.js';
 import {
   LOGISTICS_CAP_BY_ERA,
   STORAGE_CAP_BY_ERA,
@@ -12,7 +14,6 @@ import { useGameStore } from '../../state/game-store.js';
 import { CardInspectModal } from '../card/CardInspectModal.js';
 import {
   ERA_LABELS_IT,
-  ERA_ROMAN_LABELS,
   EraIcon,
   RESOURCE_LABELS_IT,
   ResourceIcon,
@@ -80,12 +81,11 @@ export function BattlefieldBoard({
     setInspectedCardId(cardId);
   };
 
+  const battleScene = useBattlePresentation(view);
+
   if (view === null) {
     return (
-      <main
-        className="cartographer-table battlefield-board"
-        data-testid="battlefield-board-empty"
-      >
+      <main className="cartographer-table battlefield-board" data-testid="battlefield-board-empty">
         <div className="board-zone__empty">
           In attesa dell&apos;avvio della partita sul Tavolo del Cartografo...
         </div>
@@ -97,447 +97,415 @@ export function BattlefieldBoard({
   const opponentId = getOpponent(selfId);
   const storageCap = STORAGE_CAP_BY_ERA[view.era];
   const logisticsCap = LOGISTICS_CAP_BY_ERA[view.era];
-  const isBattlePlaybackActive = isPlaying && activeBattleStage !== null;
+  const isBattlePlaybackActive = isPlaying && battleScene;
 
   const selfCityDamaged = view.self.cityHp < view.self.cityMax;
   const opponentCityDamaged = view.opponent.cityHp < view.opponent.cityMax;
 
   return (
-    <main
-      className="cartographer-table battlefield-board"
-      data-testid="battlefield-board"
-      data-era={String(view.era)}
-      data-phase={view.phase}
-    >
-      {/* Annunciatore screen-reader sincronizzato con gli eventi (§9.5 riga 828) */}
-      <div
-        className="sr-only"
-        aria-live="polite"
-        aria-atomic="true"
-        data-testid="board-live-announcer"
-        style={{
-          position: 'absolute',
-          width: '1px',
-          height: '1px',
-          padding: 0,
-          margin: '-1px',
-          overflow: 'hidden',
-          clip: 'rect(0, 0, 0, 0)',
-          whiteSpace: 'nowrap',
-          border: 0,
-        }}
+    <BoardCardInspection>
+      <main
+        className="cartographer-table battlefield-board"
+        data-testid="battlefield-board"
+        data-scene={battleScene ? 'battle' : 'economy'}
+        data-era={String(view.era)}
+        data-phase={view.phase}
       >
-        {latestAnnouncement}
-      </div>
-
-      <div className="battlefield-board__main">
-        {/* 1. Barra Stato Avversario (§9.2 riga 780) */}
-        <header
-          className="board-status-bar board-status-bar--opponent"
-          data-testid="opponent-status-bar"
-          aria-label={`Stato Avversario (${opponentId})`}
-        >
-          <div className="board-status-bar__group">
-            <span className="board-status-bar__identity">
-              <span>Avversario ({opponentId})</span>
-              {view.initiative === opponentId && (
-                <span
-                  className="board-badge board-badge--brass"
-                  data-testid="opponent-initiative-badge"
-                >
-                  Iniziativa
-                </span>
-              )}
-            </span>
-
-            <span
-              className="board-badge"
-              data-testid="opponent-walls"
-              aria-label={`Mura avversario: ${view.opponent.walls}`}
-            >
-              <StatIcon stat="walls" size={14} />
-              <span>Mura {view.opponent.walls}</span>
-            </span>
-
-            <span
-              className={`board-badge ${
-                opponentCityDamaged ? 'board-badge--crimson' : ''
-              }`.trim()}
-              data-testid="opponent-city-hp"
-              aria-label={`Centro Città avversario: ${view.opponent.cityHp} su ${view.opponent.cityMax}`}
-            >
-              <StatIcon stat="cityCenter" size={14} />
-              <span>
-                Centro Città {view.opponent.cityHp}/{view.opponent.cityMax}
-              </span>
-            </span>
-
-            <span
-              className="board-badge"
-              data-testid="opponent-slots"
-              aria-label={`Slot logistici avversario: ${view.opponent.slotsUsed} su ${logisticsCap}`}
-            >
-              Slot {view.opponent.slotsUsed}/{logisticsCap}
-            </span>
-
-            {view.opponent.demBonus > 0 && (
-              <span
-                className="board-badge board-badge--brass"
-                data-testid="opponent-dem-bonus"
-              >
-                <StatIcon stat="dem" size={13} />
-                <span>+{view.opponent.demBonus} DEM</span>
-              </span>
-            )}
-          </div>
-
-          <div className="board-status-bar__group">
+        <div className="board-scenery" aria-hidden="true">
+          {['economy1', 'economy2', 'economy3', 'battle'].map((scene) => (
             <div
-              className="board-status-bar__group"
-              data-testid="opponent-resources"
-              aria-label="Risorse avversario"
-            >
-              {view.opponent.resources === null ? (
-                <span
-                  className="board-badge board-badge--muted"
-                  data-testid="opponent-resources-hidden"
-                >
-                  Risorse nascoste
-                </span>
-              ) : (
-                RESOURCE_ORDER.map((res) => (
+              key={scene}
+              className="board-scenery__layer"
+              data-active={scene === (battleScene ? 'battle' : `economy${view.era}`)}
+              style={{ backgroundImage: `url(/board-art/${scene}.webp)` }}
+            />
+          ))}
+        </div>
+        {/* Annunciatore screen-reader sincronizzato con gli eventi (§9.5 riga 828) */}
+        <div
+          className="sr-only"
+          aria-live="polite"
+          aria-atomic="true"
+          data-testid="board-live-announcer"
+          style={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            border: 0,
+          }}
+        >
+          {latestAnnouncement}
+        </div>
+
+        <div className="battlefield-board__main">
+          {/* 1. Barra Stato Avversario (§9.2 riga 780) */}
+          <header
+            className="board-status-bar board-status-bar--opponent"
+            data-testid="opponent-status-bar"
+            aria-label={`Stato Avversario (${opponentId})`}
+          >
+            <div className="board-status-bar__group">
+              <span className="board-status-bar__identity">
+                <span>Avversario ({opponentId})</span>
+                {view.initiative === opponentId && (
                   <span
-                    key={res}
-                    className={`board-resource-pip board-resource-pip--${res}`}
-                    data-testid={`opponent-resource-${res}`}
-                    aria-label={`${RESOURCE_LABELS_IT[res]} avversario: ${view.opponent.resources?.[res] ?? 0} su ${storageCap}`}
+                    className="board-badge board-badge--brass"
+                    data-testid="opponent-initiative-badge"
                   >
-                    <ResourceIcon resource={res} size={13} />
-                    <span>
-                      {view.opponent.resources?.[res] ?? 0}/{storageCap}
-                    </span>
+                    Iniziativa
                   </span>
-                ))
+                )}
+              </span>
+
+              <span
+                className="board-badge"
+                data-testid="opponent-walls"
+                aria-label={`Mura avversario: ${view.opponent.walls}`}
+              >
+                <StatIcon stat="walls" size={24} />
+                <span className="board-vital-value">
+                  <small>Mura</small>
+                  <strong>{view.opponent.walls}</strong>
+                </span>
+              </span>
+
+              <span
+                className={`board-badge ${opponentCityDamaged ? 'board-badge--crimson' : ''}`.trim()}
+                data-testid="opponent-city-hp"
+                aria-label={`Centro Città avversario: ${view.opponent.cityHp} su ${view.opponent.cityMax}`}
+              >
+                <StatIcon stat="cityCenter" size={24} />
+                <span className="board-vital-value">
+                  <small>Centro Città</small>
+                  <strong>
+                    {view.opponent.cityHp}
+                    <small> / {view.opponent.cityMax}</small>
+                  </strong>
+                </span>
+              </span>
+
+              <span
+                className="board-badge"
+                data-testid="opponent-slots"
+                aria-label={`Slot logistici avversario: ${view.opponent.slotsUsed} su ${logisticsCap}`}
+              >
+                Slot {view.opponent.slotsUsed}/{logisticsCap}
+              </span>
+
+              {view.opponent.demBonus > 0 && (
+                <span className="board-badge board-badge--brass" data-testid="opponent-dem-bonus">
+                  <StatIcon stat="dem" size={13} />
+                  <span>+{view.opponent.demBonus} DEM</span>
+                </span>
               )}
             </div>
 
-            <span
-              className="board-badge board-badge--muted"
-              data-testid="opponent-counts"
-            >
-              Mano: {view.opponent.handCount} · Mazzi:{' '}
-              {view.opponent.subdeckCounts[1]}/{view.opponent.subdeckCounts[2]}/
-              {view.opponent.subdeckCounts[3]} · Scarti:{' '}
-              {view.opponent.discardCount}
-            </span>
-
-            {view.opponent.passed && (
-              <span
-                className="board-badge board-badge--brass"
-                data-testid="opponent-passed-badge"
+            <div className="board-status-bar__group">
+              <div
+                className="board-status-bar__group"
+                data-testid="opponent-resources"
+                aria-label="Risorse avversario"
               >
-                Ha passato
-              </span>
-            )}
-
-            {view.opponent.committed && (
-              <span
-                className="board-badge board-badge--brass"
-                data-testid="opponent-committed-badge"
-              >
-                Scelta bloccata
-              </span>
-            )}
-
-            <button
-              type="button"
-              className="board-mobile-drawer-btn touch-target"
-              data-testid="mobile-drawer-toggle"
-              aria-expanded={mobileDrawerOpen}
-              aria-label="Apri Registro di Battaglia e contatori mazzi"
-              onClick={toggleMobileDrawer}
-            >
-              Registro ({battleLog.length})
-            </button>
-          </div>
-        </header>
-
-        {/* 2. Metà Campo Avversario: Città Coperta + 3 Linee (§9.2 righe 781-784) */}
-        <CityAndLines
-          side="opponent"
-          view={view}
-          revealedUnitUids={revealedUnitUids}
-          isRevealingUnits={isRevealingUnits}
-          playbackUnits={playbackUnits[opponentId]}
-          isBattlePlaybackActive={isBattlePlaybackActive}
-          onInspectCard={handleInspect}
-          onSelectUnit={onSelectUnit}
-        />
-
-        {/* 3. Fascia Divisoria Centrale: Era, Ciclo/Fase, Iniziativa e Turno (§9.2 riga 785) */}
-        <section
-          className="board-center-divider"
-          data-testid="board-center-divider"
-          aria-label="Stato Era e Turno"
-        >
-          <div className="board-center-divider__era">
-            <EraIcon era={view.era} size={18} />
-            <span data-testid="board-era-label">
-              {ERA_LABELS_IT[view.era]}
-            </span>
-            <span>·</span>
-            <span data-testid="board-phase-label">
-              {activeBattleStage !== null
-                ? activeBattleStage
-                : view.phase === 'development'
-                  ? `Ciclo ${view.cycle}`
-                  : PHASE_LABELS_IT[view.phase]}
-            </span>
-          </div>
-
-          <div
-            className={`board-center-divider__turn ${
-              view.self.legal.canAct
-                ? 'board-center-divider__turn--active'
-                : ''
-            }`.trim()}
-            data-testid="board-turn-indicator"
-          >
-            {view.phase === 'finished'
-              ? 'Partita terminata'
-              : view.self.legal.canAct
-                ? 'Tocca a te'
-                : `In attesa di ${opponentId}`}
-          </div>
-        </section>
-
-        {/* 4. Metà Campo Giocatore: Città + 3 Linee (§9.2 righe 786-789) */}
-        <CityAndLines
-          side="self"
-          view={view}
-          revealedUnitUids={revealedUnitUids}
-          isRevealingUnits={isRevealingUnits}
-          playbackUnits={playbackUnits[selfId]}
-          isBattlePlaybackActive={isBattlePlaybackActive}
-          selectedBuildingUid={selectedBuildingUid}
-          isDroppableOver={isDroppableOverSelfCity}
-          onInspectCard={handleInspect}
-          onSelectBuilding={onSelectBuilding}
-          onSelectUnit={onSelectUnit}
-        />
-
-        {/* 5. Barra Stato Giocatore (§9.2 riga 790) */}
-        <section
-          className="board-status-bar board-status-bar--self"
-          data-testid="self-status-bar"
-          aria-label={`Il tuo stato (${selfId})`}
-        >
-          <div className="board-status-bar__group">
-            <span className="board-status-bar__identity">
-              <span>Tu ({selfId})</span>
-              {view.initiative === selfId && (
-                <span
-                  className="board-badge board-badge--brass"
-                  data-testid="self-initiative-badge"
-                >
-                  Iniziativa
-                </span>
-              )}
-            </span>
-
-            <div
-              className="board-status-bar__group"
-              data-testid="self-resources"
-              aria-label="Le tue risorse"
-            >
-              {RESOURCE_ORDER.map((res) => (
-                <span
-                  key={res}
-                  className={`board-resource-pip board-resource-pip--${res}`}
-                  data-testid={`self-resource-${res}`}
-                  aria-label={`${RESOURCE_LABELS_IT[res]}: ${view.self.resources[res]} su ${storageCap}`}
-                >
-                  <ResourceIcon resource={res} size={14} />
-                  <span>
-                    {RESOURCE_LABELS_IT[res]} {view.self.resources[res]}/
-                    {storageCap}
+                {view.opponent.resources === null ? (
+                  <span
+                    className="board-badge board-badge--muted"
+                    data-testid="opponent-resources-hidden"
+                  >
+                    Risorse nascoste
                   </span>
-                </span>
-              ))}
-            </div>
-
-            <span
-              className="board-badge"
-              data-testid="self-slots"
-              aria-label={`Slot logistici usati: ${view.self.slotsUsed} su ${logisticsCap}`}
-            >
-              Slot {view.self.slotsUsed}/{logisticsCap}
-            </span>
-          </div>
-
-          <div className="board-status-bar__group">
-            <span
-              className="board-badge"
-              data-testid="self-walls"
-              aria-label={`Le tue Mura: ${view.self.walls}`}
-            >
-              <StatIcon stat="walls" size={14} />
-              <span>Mura {view.self.walls}</span>
-            </span>
-
-            <span
-              className={`board-badge ${
-                selfCityDamaged ? 'board-badge--crimson' : ''
-              }`.trim()}
-              data-testid="self-city-hp"
-              aria-label={`Il tuo Centro Città: ${view.self.cityHp} su ${view.self.cityMax}`}
-            >
-              <StatIcon stat="cityCenter" size={14} />
-              <span>
-                Centro Città {view.self.cityHp}/{view.self.cityMax}
-              </span>
-            </span>
-
-            {view.self.demBonus > 0 && (
-              <span
-                className="board-badge board-badge--brass"
-                data-testid="self-dem-bonus"
-              >
-                <StatIcon stat="dem" size={13} />
-                <span>+{view.self.demBonus} DEM</span>
-              </span>
-            )}
-
-            <span
-              className="board-badge board-badge--muted"
-              data-testid="self-counts"
-            >
-              Mano: {view.self.hand.length}/10 · Mazzi:{' '}
-              {view.self.subdeckCounts[1]}/{view.self.subdeckCounts[2]}/
-              {view.self.subdeckCounts[3]} · Scarti: {view.self.discard.length}
-            </span>
-
-            {view.self.passed && (
-              <span
-                className="board-badge board-badge--brass"
-                data-testid="self-passed-badge"
-              >
-                Hai passato
-              </span>
-            )}
-          </div>
-        </section>
-
-        {/* 6. Dock Mano a Ventaglio e Controlli Azione (§9.2 riga 791) */}
-        <footer className="board-hand-dock" data-testid="board-hand-dock">
-          <div style={{ flex: 1, minWidth: 0 }}>{handSlot}</div>
-          {actionControlsSlot !== undefined && (
-            <div style={{ flexShrink: 0 }}>{actionControlsSlot}</div>
-          )}
-        </footer>
-      </div>
-
-      {/* Colonna Laterale / Cassetto Mobile per Controlli, Registro e Sotto-Mazzi (§9.2, §9.6) */}
-      <aside
-        className={`battlefield-board__sidebar ${
-          mobileDrawerOpen ? 'battlefield-board__sidebar--drawer-open' : ''
-        }`.trim()}
-        data-testid="board-sidebar"
-        aria-label="Registro di Battaglia e Mazzi"
-      >
-        {mobileDrawerOpen && (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <strong className="font-display">Registro &amp; Mazzi</strong>
-            <button
-              type="button"
-              className="board-mobile-drawer-btn touch-target"
-              data-testid="mobile-drawer-close"
-              onClick={() => setMobileDrawerOpen(false)}
-            >
-              Chiudi
-            </button>
-          </div>
-        )}
-
-        {sidebarSlot ?? (
-          <>
-            <div className="board-zone" style={{ height: 'auto' }}>
-              <header className="board-zone__header">
-                <span className="board-zone__title">Sotto-mazzi e Scarti</span>
-              </header>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '4px',
-                  fontSize: '0.86rem',
-                }}
-              >
-                <span>
-                  Era {ERA_ROMAN_LABELS[1]}: {view.self.subdeckCounts[1]} carte
-                </span>
-                <span>
-                  Era {ERA_ROMAN_LABELS[2]}: {view.self.subdeckCounts[2]} carte
-                </span>
-                <span>
-                  Era {ERA_ROMAN_LABELS[3]}: {view.self.subdeckCounts[3]} carte
-                </span>
-                <span>Scarti personali: {view.self.discard.length}</span>
-                <span>
-                  Scarti pubblici avversario: {view.opponent.publicDiscard.length}
-                </span>
-              </div>
-            </div>
-
-            <div className="board-zone" style={{ flex: 1 }}>
-              <header className="board-zone__header">
-                <span className="board-zone__title">Registro di Battaglia</span>
-                <span className="board-zone__count">
-                  {battleLog.length} eventi
-                </span>
-              </header>
-              <div
-                className="board-zone__content"
-                style={{ flexDirection: 'column', alignItems: 'stretch' }}
-                data-testid="board-default-log-list"
-              >
-                {battleLog.length === 0 ? (
-                  <div className="board-zone__empty">
-                    Nessun evento registrato.
-                  </div>
                 ) : (
-                  battleLog.map((entry) => (
-                    <div
-                      key={entry.id}
-                      style={{
-                        fontSize: '0.82rem',
-                        padding: '3px 0',
-                        borderBottom: '1px solid rgba(233, 229, 214, 0.08)',
-                      }}
+                  RESOURCE_ORDER.map((res) => (
+                    <span
+                      key={res}
+                      className={`board-resource-pip board-resource-pip--${res}`}
+                      data-testid={`opponent-resource-${res}`}
+                      aria-label={`${RESOURCE_LABELS_IT[res]} avversario: ${view.opponent.resources?.[res] ?? 0} su ${storageCap}`}
                     >
-                      {entry.text}
-                    </div>
+                      <ResourceIcon resource={res} size={13} />
+                      <span>
+                        {view.opponent.resources?.[res] ?? 0}/{storageCap}
+                      </span>
+                    </span>
                   ))
                 )}
               </div>
+
+              <span className="board-badge board-badge--muted" data-testid="opponent-counts">
+                Mano: {view.opponent.handCount}
+              </span>
+
+              {view.opponent.passed && (
+                <span
+                  className="board-badge board-badge--brass"
+                  data-testid="opponent-passed-badge"
+                >
+                  Ha passato
+                </span>
+              )}
+
+              {view.opponent.committed && (
+                <span
+                  className="board-badge board-badge--brass"
+                  data-testid="opponent-committed-badge"
+                >
+                  Scelta bloccata
+                </span>
+              )}
+
+              <button
+                type="button"
+                className="board-mobile-drawer-btn touch-target"
+                data-testid="mobile-drawer-toggle"
+                aria-expanded={mobileDrawerOpen}
+                aria-label={battleScene ? 'Apri Registro e menu partita' : 'Apri menu partita'}
+                onClick={toggleMobileDrawer}
+              >
+                {battleScene ? `Registro (${battleLog.length})` : 'Menu partita'}
+              </button>
             </div>
-          </>
-        )}
-      </aside>
+          </header>
 
-      {overlaySlot}
+          {/* 2. Metà Campo Avversario: Città Coperta + 3 Linee (§9.2 righe 781-784) */}
+          <CityAndLines
+            side="opponent"
+            view={view}
+            revealedUnitUids={revealedUnitUids}
+            isRevealingUnits={isRevealingUnits}
+            playbackUnits={playbackUnits[opponentId]}
+            isBattlePlaybackActive={isBattlePlaybackActive}
+            onInspectCard={handleInspect}
+            onSelectUnit={onSelectUnit}
+          />
 
-      {/* Modale globale di ispezione carta con tooltip parole chiave (§9.3, §9.6) */}
-      <CardInspectModal
-        cardId={inspectedCardId}
-        onClose={() => setInspectedCardId(null)}
-      />
-    </main>
+          {/* 3. Fascia Divisoria Centrale: Era, Ciclo/Fase, Iniziativa e Turno (§9.2 riga 785) */}
+          <section
+            className="board-center-divider"
+            data-testid="board-center-divider"
+            aria-label="Stato Era e Turno"
+          >
+            <div className="board-center-divider__era">
+              <EraIcon era={view.era} size={18} />
+              <span data-testid="board-era-label">{ERA_LABELS_IT[view.era]}</span>
+              <span>·</span>
+              <span data-testid="board-phase-label">
+                {activeBattleStage !== null
+                  ? activeBattleStage
+                  : view.phase === 'development'
+                    ? `Ciclo ${view.cycle}`
+                    : PHASE_LABELS_IT[view.phase]}
+              </span>
+            </div>
+
+            <div
+              className={`board-center-divider__turn ${
+                view.self.legal.canAct ? 'board-center-divider__turn--active' : ''
+              }`.trim()}
+              data-testid="board-turn-indicator"
+            >
+              {view.phase === 'finished'
+                ? 'Partita terminata'
+                : view.self.legal.canAct
+                  ? 'Tocca a te'
+                  : `In attesa di ${opponentId}`}
+            </div>
+          </section>
+
+          {/* 4. Metà Campo Giocatore: Città + 3 Linee (§9.2 righe 786-789) */}
+          <CityAndLines
+            side="self"
+            view={view}
+            revealedUnitUids={revealedUnitUids}
+            isRevealingUnits={isRevealingUnits}
+            playbackUnits={playbackUnits[selfId]}
+            isBattlePlaybackActive={isBattlePlaybackActive}
+            selectedBuildingUid={selectedBuildingUid}
+            isDroppableOver={isDroppableOverSelfCity}
+            onInspectCard={handleInspect}
+            onSelectBuilding={onSelectBuilding}
+            onSelectUnit={onSelectUnit}
+          />
+
+          {/* 5. Barra Stato Giocatore (§9.2 riga 790) */}
+          <section
+            className="board-status-bar board-status-bar--self"
+            data-testid="self-status-bar"
+            aria-label={`Il tuo stato (${selfId})`}
+          >
+            <div className="board-status-bar__group">
+              <span className="board-status-bar__identity">
+                <span>Tu ({selfId})</span>
+                {view.initiative === selfId && (
+                  <span
+                    className="board-badge board-badge--brass"
+                    data-testid="self-initiative-badge"
+                  >
+                    Iniziativa
+                  </span>
+                )}
+              </span>
+
+              <div
+                className="board-status-bar__group"
+                data-testid="self-resources"
+                aria-label="Le tue risorse"
+              >
+                {RESOURCE_ORDER.map((res) => (
+                  <span
+                    key={res}
+                    className={`board-resource-pip board-resource-pip--${res}`}
+                    data-testid={`self-resource-${res}`}
+                    aria-label={`${RESOURCE_LABELS_IT[res]}: ${view.self.resources[res]} su ${storageCap}`}
+                  >
+                    <ResourceIcon resource={res} size={28} />
+                    <span className="board-resource-value">
+                      <small>{RESOURCE_LABELS_IT[res]}</small>
+                      <strong>
+                        {view.self.resources[res]}
+                        <small> / {storageCap}</small>
+                      </strong>
+                    </span>
+                  </span>
+                ))}
+              </div>
+
+              <span
+                className="board-badge"
+                data-testid="self-slots"
+                aria-label={`Slot logistici usati: ${view.self.slotsUsed} su ${logisticsCap}`}
+              >
+                Slot {view.self.slotsUsed}/{logisticsCap}
+              </span>
+            </div>
+
+            <div className="board-status-bar__group">
+              <span
+                className="board-badge"
+                data-testid="self-walls"
+                aria-label={`Le tue Mura: ${view.self.walls}`}
+              >
+                <StatIcon stat="walls" size={24} />
+                <span className="board-vital-value">
+                  <small>Mura</small>
+                  <strong>{view.self.walls}</strong>
+                </span>
+              </span>
+
+              <span
+                className={`board-badge ${selfCityDamaged ? 'board-badge--crimson' : ''}`.trim()}
+                data-testid="self-city-hp"
+                aria-label={`Il tuo Centro Città: ${view.self.cityHp} su ${view.self.cityMax}`}
+              >
+                <StatIcon stat="cityCenter" size={24} />
+                <span className="board-vital-value">
+                  <small>Centro Città</small>
+                  <strong>
+                    {view.self.cityHp}
+                    <small> / {view.self.cityMax}</small>
+                  </strong>
+                </span>
+              </span>
+
+              {view.self.demBonus > 0 && (
+                <span className="board-badge board-badge--brass" data-testid="self-dem-bonus">
+                  <StatIcon stat="dem" size={13} />
+                  <span>+{view.self.demBonus} DEM</span>
+                </span>
+              )}
+
+              <span className="board-badge board-badge--muted" data-testid="self-counts">
+                Mano: {view.self.hand.length}/10
+              </span>
+
+              {view.self.passed && (
+                <span className="board-badge board-badge--brass" data-testid="self-passed-badge">
+                  Hai passato
+                </span>
+              )}
+            </div>
+          </section>
+
+          {/* 6. Dock Mano a Ventaglio e Controlli Azione (§9.2 riga 791) */}
+          <footer className="board-hand-dock" data-testid="board-hand-dock">
+            <div style={{ flex: 1, minWidth: 0 }}>{handSlot}</div>
+            {actionControlsSlot !== undefined && (
+              <div style={{ flexShrink: 0 }}>{actionControlsSlot}</div>
+            )}
+          </footer>
+        </div>
+
+        {/* Colonna Laterale / Cassetto Mobile per Controlli, Registro e Sotto-Mazzi (§9.2, §9.6) */}
+        <aside
+          className={`battlefield-board__sidebar ${
+            mobileDrawerOpen ? 'battlefield-board__sidebar--drawer-open' : ''
+          }`.trim()}
+          data-testid="board-sidebar"
+          aria-label="Menu partita e Registro"
+        >
+          {(mobileDrawerOpen || !battleScene) && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <strong className="font-display">Menu partita</strong>
+              <button
+                type="button"
+                className="board-mobile-drawer-btn touch-target"
+                data-testid="mobile-drawer-close"
+                onClick={() => setMobileDrawerOpen(false)}
+              >
+                Chiudi
+              </button>
+            </div>
+          )}
+
+          {sidebarSlot ??
+            (battleScene && (
+              <>
+                <div className="board-zone" style={{ flex: 1 }}>
+                  <header className="board-zone__header">
+                    <span className="board-zone__title">Registro di Battaglia</span>
+                    <span className="board-zone__count">{battleLog.length} eventi</span>
+                  </header>
+                  <div
+                    className="board-zone__content"
+                    style={{ flexDirection: 'column', alignItems: 'stretch' }}
+                    data-testid="board-default-log-list"
+                  >
+                    {battleLog.length === 0 ? (
+                      <div className="board-zone__empty">Nessun evento registrato.</div>
+                    ) : (
+                      battleLog.map((entry) => (
+                        <div
+                          key={entry.id}
+                          style={{
+                            fontSize: '0.82rem',
+                            padding: '3px 0',
+                            borderBottom: '1px solid rgba(233, 229, 214, 0.08)',
+                          }}
+                        >
+                          {entry.text}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </>
+            ))}
+        </aside>
+
+        {overlaySlot}
+
+        {/* Modale globale di ispezione carta con tooltip parole chiave (§9.3, §9.6) */}
+        <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
+      </main>
+    </BoardCardInspection>
   );
 }

@@ -1,3 +1,4 @@
+import { useStore } from 'zustand';
 import { CARD_CATALOG } from '@epochs/content';
 import type { CardType, EraNo, Resource } from '@epochs/engine';
 import { useState, type ReactElement } from 'react';
@@ -7,7 +8,7 @@ import {
   RESOURCE_LABELS_IT,
   ResourceIcon,
 } from '../components/icons/DomainIcons.js';
-import { deckBuilderStore, useDeckBuilderStore } from '../state/deck-builder-store.js';
+import { deckBuilderStore, type DeckBuilderStoreApi } from '../state/deck-builder-store.js';
 import { PRESET_DECK_OPTIONS } from './HomeScreen.js';
 import './deck-builder.css';
 
@@ -62,6 +63,9 @@ function CostCurve({
 }
 
 export interface DeckBuilderScreenProps {
+  readonly store?: DeckBuilderStoreApi | undefined;
+  readonly onJsonExport?: ((json: string) => void) | undefined;
+  readonly onJsonImport?: ((success: boolean) => void) | undefined;
   onBackHome: () => void;
   onInspectCard: (cardId: string) => void;
 }
@@ -69,8 +73,11 @@ export interface DeckBuilderScreenProps {
 export function DeckBuilderScreen({
   onBackHome,
   onInspectCard,
+  store = deckBuilderStore,
+  onJsonExport,
+  onJsonImport,
 }: DeckBuilderScreenProps): ReactElement {
-  const state = useDeckBuilderStore((state) => state);
+  const state = useStore(store, (state) => state);
   const [era, setEra] = useState<EraNo>(1);
   const [type, setType] = useState<CardType | 'all'>('all');
   const [search, setSearch] = useState('');
@@ -89,7 +96,9 @@ export function DeckBuilderScreen({
   );
 
   const importJson = (input: string): void => {
-    setNotice(state.importJson(input) ? 'Mazzo importato. Salvalo per usarlo in partita.' : '');
+    const success = state.importJson(input);
+    setNotice(success ? 'Mazzo importato. Salvalo per usarlo in partita.' : '');
+    onJsonImport?.(success);
   };
 
   const exportJson = (): void => {
@@ -103,6 +112,7 @@ export function DeckBuilderScreen({
     // Rilascia l'URL dopo che il browser ha avviato il download.
     setTimeout(() => URL.revokeObjectURL(url), 0);
     setNotice('Mazzo esportato in JSON.');
+    onJsonExport?.(output);
   };
 
   return (
@@ -145,7 +155,7 @@ export function DeckBuilderScreen({
                   state.importJson(
                     JSON.stringify({
                       ...preset.payload,
-                      id: deckBuilderStore.getState().draft.id,
+                      id: store.getState().draft.id,
                       name: `Copia di ${preset.name}`.slice(0, 60),
                     }),
                   );

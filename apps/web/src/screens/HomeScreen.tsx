@@ -1,19 +1,13 @@
 import type { BotKind } from '@epochs/bots';
 import type { DeckPayload } from '@epochs/engine';
-import { useState, type ReactElement, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactElement, type ReactNode } from 'react';
+import { X } from 'lucide-react';
 import aggroBreachJson from '../../../../data/decks/aggro-breach.json' with { type: 'json' };
 import balancedTacticalJson from '../../../../data/decks/balanced-tactical.json' with { type: 'json' };
 import boomEconomyJson from '../../../../data/decks/boom-economy.json' with { type: 'json' };
-import { EraIcon, StatIcon } from '../components/icons/DomainIcons.js';
 
 export type AppScreenId =
-  | 'home'
-  | 'match'
-  | 'online'
-  | 'deck-builder'
-  | 'archive'
-  | 'tutorial'
-  | 'rules';
+  'home' | 'match' | 'online' | 'deck-builder' | 'archive' | 'tutorial' | 'rules';
 
 export interface PresetDeckOption {
   readonly id: string;
@@ -57,7 +51,6 @@ export interface StartHotSeatMatchRequest {
 }
 
 export interface HomeScreenProps {
-  readonly audioControls?: ReactNode;
   readonly availableDecks?: readonly PresetDeckOption[] | undefined;
   readonly defaultSeed?: string | undefined;
   readonly onStartBotMatch: (request: StartBotMatchRequest) => void;
@@ -66,7 +59,6 @@ export interface HomeScreenProps {
 }
 
 export function HomeScreen({
-  audioControls,
   availableDecks = PRESET_DECK_OPTIONS,
   defaultSeed = 'epochs-cartographer-seed-1',
   onStartBotMatch,
@@ -74,19 +66,15 @@ export function HomeScreen({
   onNavigate,
 }: HomeScreenProps): ReactElement {
   const fallbackDeck = availableDecks[0] ?? PRESET_DECK_OPTIONS[0]!;
-  const secondFallbackDeck =
-    availableDecks[1] ?? availableDecks[0] ?? PRESET_DECK_OPTIONS[1]!;
+  const secondFallbackDeck = availableDecks[1] ?? availableDecks[0] ?? PRESET_DECK_OPTIONS[1]!;
 
   const [botKind, setBotKind] = useState<BotKind>('greedy');
   const [playerDeckId, setPlayerDeckId] = useState<string>(fallbackDeck.id);
   const [botDeckId, setBotDeckId] = useState<string>(secondFallbackDeck.id);
-  const [hotSeatP1DeckId, setHotSeatP1DeckId] = useState<string>(
-    fallbackDeck.id,
-  );
-  const [hotSeatP2DeckId, setHotSeatP2DeckId] = useState<string>(
-    secondFallbackDeck.id,
-  );
+  const [hotSeatP1DeckId, setHotSeatP1DeckId] = useState<string>(fallbackDeck.id);
+  const [hotSeatP2DeckId, setHotSeatP2DeckId] = useState<string>(secondFallbackDeck.id);
   const [seedInput, setSeedInput] = useState<string>(defaultSeed);
+  const [activePanel, setActivePanel] = useState<'bot' | 'hotseat' | 'settings' | null>(null);
 
   const resolveDeckById = (id: string): DeckPayload => {
     const found = availableDecks.find((d) => d.id === id);
@@ -98,9 +86,7 @@ export function HomeScreen({
 
   const handleStartBot = (): void => {
     const normalizedSeed =
-      seedInput.trim().length > 0
-        ? seedInput.trim()
-        : 'epochs-cartographer-seed-1';
+      seedInput.trim().length > 0 ? seedInput.trim() : 'epochs-cartographer-seed-1';
     onStartBotMatch({
       botKind,
       playerDeck: resolveDeckById(playerDeckId),
@@ -111,9 +97,7 @@ export function HomeScreen({
 
   const handleStartHotSeat = (): void => {
     const normalizedSeed =
-      seedInput.trim().length > 0
-        ? seedInput.trim()
-        : 'epochs-cartographer-hotseat-1';
+      seedInput.trim().length > 0 ? seedInput.trim() : 'epochs-cartographer-hotseat-1';
     onStartHotSeatMatch({
       p1Deck: resolveDeckById(hotSeatP1DeckId),
       p2Deck: resolveDeckById(hotSeatP2DeckId),
@@ -122,150 +106,94 @@ export function HomeScreen({
   };
 
   return (
-    <main
-      className="cartographer-table home-screen"
-      data-testid="home-screen"
-      style={{
-        width: '100%',
-        height: '100dvh',
-        maxHeight: '100dvh',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        padding: 'clamp(12px, 2.5vw, 28px)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '20px',
-      }}
-    >
-      <div
-        style={{
-          width: 'min(1080px, 100%)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '18px',
-        }}
-      >
-        {/* Intestazione "Il Tavolo del Cartografo" */}
-        {audioControls}
-        <header
-          data-testid="home-header"
-          style={{
-            padding: '18px 22px',
-            borderRadius: '12px',
-            backgroundColor: 'rgba(20, 30, 39, 0.9)',
-            border: '1.5px solid var(--brass, #B58E48)',
-            boxShadow: 'var(--shadow-card)',
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '12px',
-          }}
-        >
-          <div>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                marginBottom: '4px',
-              }}
-            >
-              <EraIcon era={1} size={18} />
-              <EraIcon era={2} size={18} />
-              <EraIcon era={3} size={18} />
-              <span
-                className="font-numeric"
-                style={{
-                  fontSize: '0.84rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.06em',
-                  textTransform: 'uppercase',
-                  color: 'var(--brass, #B58E48)',
-                }}
-              >
-                Regolamento Ufficiale v1.0 · 3 Ere · 45 Carte
-              </span>
-            </div>
-
-            <h1
-              className="font-display"
-              style={{
-                margin: 0,
-                fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',
-                color: 'var(--chalk, #E9E5D6)',
-              }}
-            >
-              The Epochs — Il Tavolo del Cartografo
-            </h1>
-
-            <p
-              style={{
-                margin: '4px 0 0 0',
-                fontSize: '0.96rem',
-                color: 'var(--chalk-muted, #A7B4C2)',
-              }}
-            >
-              Pianificazione economica, posizionamento coperto, rivelazione
-              simultanea e assedio su tre Ere storiche.
-            </p>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '4px',
-              minWidth: '210px',
-            }}
-          >
-            <label
-              htmlFor="home-seed-input"
-              className="font-numeric"
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                color: 'var(--chalk-muted)',
-              }}
-            >
-              Seed deterministico partita
-            </label>
-            <input
-              id="home-seed-input"
-              type="text"
-              data-testid="home-seed-input"
-              value={seedInput}
-              onChange={(ev) => setSeedInput(ev.target.value)}
-              style={{
-                padding: '7px 10px',
-                borderRadius: '6px',
-                border: '1px solid rgba(181, 142, 72, 0.45)',
-                backgroundColor: 'var(--surface-card, #223444)',
-                color: 'var(--chalk, #E9E5D6)',
-                fontFamily: 'var(--font-numeric)',
-                fontSize: '0.9rem',
-              }}
-            />
-          </div>
+    <main className="cartographer-table home-screen" data-testid="home-screen">
+      <div className="home-launcher">
+        <header className="home-brand" data-testid="home-header">
+          <span className="home-brand__ornament" aria-hidden="true">
+            ✦
+          </span>
+          <h1 className="home-brand__title">Epochs</h1>
+          <span className="home-brand__rule" aria-hidden="true" />
         </header>
 
-        {/* Griglia principale: 1. Partita vs Bot, 2. Partita Locale Hot-Seat */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
-            gap: '16px',
-          }}
+        <nav
+          className="home-icon-grid"
+          aria-label="Menu principale"
+          data-testid="home-secondary-nav"
         >
-          {/* Card 1: Gioca contro Bot (§9.7 punto 1) */}
+          <HomeAction
+            art="bot"
+            label="Partita contro Bot"
+            description="Scegli difficoltà e mazzi, poi sfida un avversario controllato dal gioco."
+            testId="open-bot-setup-btn"
+            primary
+            onClick={() => setActivePanel('bot')}
+            dialog
+          />
+          <HomeAction
+            art="hotseat"
+            label="Partita Locale Hot-Seat"
+            description="Due giocatori sullo stesso dispositivo, con passaggi di turno riservati."
+            testId="open-hotseat-setup-btn"
+            onClick={() => setActivePanel('hotseat')}
+            dialog
+          />
+          <HomeAction
+            art="online"
+            label="Multiplayer Online"
+            description="Entra in coda, crea una stanza privata o guarda un replay."
+            testId="nav-online-lobby-btn"
+            onClick={() => onNavigate('online')}
+          />
+          <HomeAction
+            art="tutorial"
+            label="Tutorial guidato"
+            description="Impara a giocare attraverso le tre Ere, dal Mulligan alla Breccia."
+            testId="nav-tutorial-btn"
+            onClick={() => onNavigate('tutorial')}
+          />
+          <HomeAction
+            art="archive"
+            label="Archivio Carte"
+            description="Esplora le carte per Era, tipo, categoria e parole chiave."
+            testId="nav-card-archive-btn"
+            onClick={() => onNavigate('archive')}
+          />
+          <HomeAction
+            art="deck-builder"
+            label="Deck Builder"
+            description="Componi i tuoi mazzi e importa o esporta le tue creazioni."
+            testId="nav-deck-builder-btn"
+            onClick={() => onNavigate('deck-builder')}
+          />
+          <HomeAction
+            art="rules"
+            label="Regolamento"
+            description="Consulta le regole, dalla preparazione alla vittoria."
+            testId="nav-full-rules-btn"
+            onClick={() => onNavigate('rules')}
+          />
+          <HomeAction
+            art="settings"
+            label="Impostazioni partita"
+            description="Personalizza il seed delle partite locali."
+            testId="open-match-settings-btn"
+            onClick={() => setActivePanel('settings')}
+            dialog
+          />
+        </nav>
+      </div>
+
+      {activePanel === 'bot' && (
+        <HomeDialog labelledBy="home-bot-section-title" onClose={() => setActivePanel(null)}>
           <section
+            className="home-mode"
             aria-labelledby="home-bot-section-title"
             data-testid="home-bot-section"
             style={{
               padding: '18px 20px',
               borderRadius: '12px',
-              backgroundColor: 'rgba(20, 30, 39, 0.88)',
+              backgroundColor: 'rgba(20, 30, 39, 0.97)',
               border: '1.5px solid var(--brass, #B58E48)',
               display: 'flex',
               flexDirection: 'column',
@@ -286,6 +214,7 @@ export function HomeScreen({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    flexWrap: 'wrap',
                     gap: '8px',
                   }}
                 >
@@ -300,9 +229,7 @@ export function HomeScreen({
                   >
                     Partita contro Bot
                   </h2>
-                  <span className="board-badge board-badge--brass">
-                    Giocatore Singolo
-                  </span>
+                  <span className="board-badge board-badge--brass">Giocatore Singolo</span>
                 </div>
                 <p
                   style={{
@@ -311,8 +238,7 @@ export function HomeScreen({
                     color: 'var(--chalk-muted)',
                   }}
                 >
-                  Sfida un automa locale che opera esclusivamente sulla propria
-                  vista filtrata (RandomBot o GreedyBot).
+                  Affronta un avversario controllato dal gioco e scegli la tua sfida.
                 </p>
               </header>
 
@@ -459,7 +385,7 @@ export function HomeScreen({
 
             <button
               type="button"
-              className="touch-target"
+              className="touch-target home-mode__start"
               data-testid="start-bot-match-btn"
               onClick={handleStartBot}
               style={{
@@ -478,15 +404,19 @@ export function HomeScreen({
               Avvia Partita contro Bot
             </button>
           </section>
+        </HomeDialog>
+      )}
 
-          {/* Card 2: Partita Locale Hot-Seat (§9.7 punto 1, §9.8) */}
+      {activePanel === 'hotseat' && (
+        <HomeDialog labelledBy="home-hotseat-section-title" onClose={() => setActivePanel(null)}>
           <section
+            className="home-mode"
             aria-labelledby="home-hotseat-section-title"
             data-testid="home-hotseat-section"
             style={{
               padding: '18px 20px',
               borderRadius: '12px',
-              backgroundColor: 'rgba(20, 30, 39, 0.88)',
+              backgroundColor: 'rgba(20, 30, 39, 0.97)',
               border: '1px solid rgba(181, 142, 72, 0.45)',
               display: 'flex',
               flexDirection: 'column',
@@ -507,6 +437,7 @@ export function HomeScreen({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    flexWrap: 'wrap',
                     gap: '8px',
                   }}
                 >
@@ -530,8 +461,8 @@ export function HomeScreen({
                     color: 'var(--chalk-muted)',
                   }}
                 >
-                  Due comandanti sullo stesso dispositivo con schermata di blocco
-                  privacy automatica a ogni cambio di turno o finestra segreta.
+                  Sfida un altro giocatore sullo stesso dispositivo, con passaggi di turno
+                  riservati.
                 </p>
               </header>
 
@@ -602,7 +533,7 @@ export function HomeScreen({
 
             <button
               type="button"
-              className="touch-target"
+              className="touch-target home-mode__start"
               data-testid="start-hotseat-match-btn"
               onClick={handleStartHotSeat}
               style={{
@@ -621,187 +552,135 @@ export function HomeScreen({
               Avvia Partita Hot-Seat
             </button>
           </section>
-        </div>
+        </HomeDialog>
+      )}
 
-        {/* Sezione Navigazione: Multiplayer Online, Deck Builder, Archivio Carte, Regolamento Rapido (§9.7) */}
-        <nav
-          aria-label="Sezioni del Tavolo del Cartografo"
-          data-testid="home-secondary-nav"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '12px',
-          }}
-        >
-          <button
-            type="button"
-            className="touch-target"
-            data-testid="nav-tutorial-btn"
-            onClick={() => onNavigate('tutorial')}
-            style={{
-              padding: '14px 16px',
-              borderRadius: '10px',
-              border: '1px solid var(--brass)',
-              backgroundColor: 'var(--table-deep, #141E27)',
-              color: 'var(--chalk)',
-              textAlign: 'left',
-              cursor: 'pointer',
-            }}
-          >
-            <strong
-              className="font-display"
-              style={{ display: 'block', color: 'var(--brass)', marginBottom: '4px' }}
-            >
-              Tutorial guidato
-            </strong>
-            <span style={{ fontSize: '0.82rem' }}>
-              Impara giocando: 6 passi dal Mulligan alla Breccia, attraverso le tre Ere.
-            </span>
-          </button>
-          <button
-            type="button"
-            className="touch-target"
-            data-testid="nav-online-lobby-btn"
-            onClick={() => onNavigate('online')}
-            style={{
-              padding: '14px 16px',
-              borderRadius: '10px',
-              border: '1px solid rgba(181, 142, 72, 0.45)',
-              backgroundColor: 'rgba(20, 30, 39, 0.86)',
-              color: 'var(--chalk, #E9E5D6)',
-              textAlign: 'left',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '4px',
-              cursor: 'pointer',
-            }}
-          >
-            <strong
-              className="font-display"
-              style={{ fontSize: '1rem', color: 'var(--brass)' }}
-            >
-              Multiplayer Online
-            </strong>
-            <span style={{ fontSize: '0.82rem', color: 'var(--chalk-muted)' }}>
-              Coda Veloce, Stanze Private con codice e Visualizzatore Replay.
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className="touch-target"
-            data-testid="nav-deck-builder-btn"
-            onClick={() => onNavigate('deck-builder')}
-            style={{
-              padding: '14px 16px',
-              borderRadius: '10px',
-              border: '1px solid rgba(181, 142, 72, 0.45)',
-              backgroundColor: 'rgba(20, 30, 39, 0.86)',
-              color: 'var(--chalk, #E9E5D6)',
-              textAlign: 'left',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '4px',
-              cursor: 'pointer',
-            }}
-          >
-            <strong
-              className="font-display"
-              style={{ fontSize: '1rem', color: 'var(--brass)' }}
-            >
-              Deck Builder
-            </strong>
-            <span style={{ fontSize: '0.82rem', color: 'var(--chalk-muted)' }}>
-              Componi i 3 sotto-mazzi da 20 carte (max 3 copie) e importa/esporta
-              JSON.
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className="touch-target"
-            data-testid="nav-card-archive-btn"
-            onClick={() => onNavigate('archive')}
-            style={{
-              padding: '14px 16px',
-              borderRadius: '10px',
-              border: '1px solid rgba(181, 142, 72, 0.45)',
-              backgroundColor: 'rgba(20, 30, 39, 0.86)',
-              color: 'var(--chalk, #E9E5D6)',
-              textAlign: 'left',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '4px',
-              cursor: 'pointer',
-            }}
-          >
-            <strong
-              className="font-display"
-              style={{ fontSize: '1rem', color: 'var(--brass)' }}
-            >
-              Archivio Carte
-            </strong>
-            <span style={{ fontSize: '0.82rem', color: 'var(--chalk-muted)' }}>
-              Esplora tutte le 45 carte per Era, Tipo, Categoria, Linea e
-              parole chiave.
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className="touch-target"
-            data-testid="nav-quick-rules-btn"
-            onClick={() => onNavigate('rules')}
-            style={{
-              padding: '14px 16px',
-              borderRadius: '10px',
-              border: '1px solid rgba(181, 142, 72, 0.45)',
-              backgroundColor: 'rgba(20, 30, 39, 0.86)',
-              color: 'var(--chalk, #E9E5D6)',
-              textAlign: 'left',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '4px',
-              cursor: 'pointer',
-            }}
-          >
-            <strong
-              className="font-display"
-              style={{ fontSize: '1rem', color: 'var(--brass)' }}
-            >
-              Regolamento Rapido
-            </strong>
-            <span style={{ fontSize: '0.82rem', color: 'var(--chalk-muted)' }}>
-              Sintesi di Raccolto, Rendite, Cap Logistico, 4 Fasi di Battaglia e
-              Assedio.
-            </span>
-          </button>
-        </nav>
-
-        {/* Footer informativo */}
-        <footer
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '8px',
-            fontSize: '0.8rem',
-            color: 'var(--chalk-muted)',
-            padding: '4px 6px',
-          }}
-        >
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <StatIcon stat="walls" size={14} /> Mura Base: 6 / 9 / 12 ·{' '}
-            <StatIcon stat="cityCenter" size={14} /> Centro Città: 10 / 12 / 14
-            HP
-          </span>
-          <span>
-            Tocca a lungo (250ms) o fai doppio tap su qualsiasi carta per
-            ispezionare regole e tooltip.
-          </span>
-        </footer>
-      </div>
+      {activePanel === 'settings' && (
+        <HomeDialog labelledBy="home-settings-title" onClose={() => setActivePanel(null)}>
+          <section className="home-settings">
+            <h2 id="home-settings-title">Impostazioni partita</h2>
+            <label htmlFor="home-seed-input">Seed deterministico partita</label>
+            <input
+              id="home-seed-input"
+              type="text"
+              data-testid="home-seed-input"
+              value={seedInput}
+              onChange={(ev) => setSeedInput(ev.target.value)}
+            />
+            <p>
+              Lo stesso seed e gli stessi mazzi permettono di riprodurre la medesima partita
+              iniziale.
+            </p>
+          </section>
+        </HomeDialog>
+      )}
     </main>
+  );
+}
+
+function HomeAction({
+  art,
+  label,
+  description,
+  testId,
+  onClick,
+  primary = false,
+  unavailable = false,
+  dialog = false,
+}: {
+  readonly art:
+    'bot' | 'hotseat' | 'online' | 'tutorial' | 'archive' | 'deck-builder' | 'rules' | 'settings';
+  readonly label: string;
+  readonly description: string;
+  readonly testId: string;
+  readonly onClick?: () => void;
+  readonly primary?: boolean;
+  readonly unavailable?: boolean;
+  readonly dialog?: boolean;
+}): ReactElement {
+  const [dismissed, setDismissed] = useState(false);
+  return (
+    <div
+      className="home-action"
+      onMouseEnter={() => setDismissed(false)}
+      onMouseLeave={() => setDismissed(false)}
+      onFocus={() => setDismissed(false)}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') setDismissed(true);
+      }}
+    >
+      <button
+        type="button"
+        className={`home-action__button${primary ? ' home-action__button--primary' : ''}`}
+        data-testid={testId}
+        aria-label={label}
+        aria-describedby={`${testId}-tooltip`}
+        aria-disabled={unavailable || undefined}
+        aria-haspopup={dialog ? 'dialog' : undefined}
+        onClick={unavailable ? undefined : onClick}
+      >
+        <img
+          className="home-action__art"
+          src={`/menu-art/${art}.webp`}
+          alt=""
+          aria-hidden="true"
+          width={384}
+          height={384}
+          draggable={false}
+        />
+      </button>
+      <span
+        role="tooltip"
+        id={`${testId}-tooltip`}
+        className="home-action__tooltip"
+        data-dismissed={dismissed}
+      >
+        <strong>{label}</strong>
+        <span>{description}</span>
+      </span>
+    </div>
+  );
+}
+
+function HomeDialog({
+  labelledBy,
+  onClose,
+  children,
+}: {
+  readonly labelledBy: string;
+  readonly onClose: () => void;
+  readonly children: ReactNode;
+}): ReactElement {
+  const ref = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const dialog = ref.current;
+    const trigger = document.activeElement;
+    dialog?.showModal();
+    return () => {
+      dialog?.close();
+      if (trigger instanceof HTMLElement && trigger.isConnected) trigger.focus();
+    };
+  }, []);
+  return (
+    <dialog
+      ref={ref}
+      className="home-dialog"
+      aria-labelledby={labelledBy}
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+    >
+      <button
+        type="button"
+        className="home-dialog__close touch-target"
+        aria-label="Chiudi finestra"
+        onClick={onClose}
+        autoFocus
+      >
+        <X size={22} aria-hidden="true" />
+      </button>
+      {children}
+    </dialog>
   );
 }

@@ -1,10 +1,6 @@
+import { MatchGuidance } from './MatchGuidance.js';
 import { CARDS_RULES, getCard } from '@epochs/content';
-import {
-  autoDiscard,
-  getTotalCardCost,
-  type CardInstance,
-  type PlayerView,
-} from '@epochs/engine';
+import { autoDiscard, getTotalCardCost, type CardInstance, type PlayerView } from '@epochs/engine';
 import type { ReactElement } from 'react';
 import type { GameController } from '../../controllers/types.js';
 import { useGameStore } from '../../state/game-store.js';
@@ -25,9 +21,7 @@ export interface HandLimitModalProps {
   readonly controller?: GameController | null | undefined;
   readonly selectedDiscardUids?: readonly string[] | undefined;
   readonly onToggleDiscardUid?: ((uid: string) => void) | undefined;
-  readonly onSetSelectedDiscardUids?:
-    | ((uids: readonly string[]) => void)
-    | undefined;
+  readonly onSetSelectedDiscardUids?: ((uids: readonly string[]) => void) | undefined;
   readonly onSubmitDiscard?: ((cardUids: readonly string[]) => void) | undefined;
   readonly onInspectCard?: ((cardId: string) => void) | undefined;
 }
@@ -56,9 +50,7 @@ export function MulliganModal({
   const storeView = useGameStore((s) => s.view);
   const storeSelectedUids = useGameStore((s) => s.selectedMulliganUids);
   const toggleMulliganUid = useGameStore((s) => s.toggleMulliganUid);
-  const setSelectedMulliganUids = useGameStore(
-    (s) => s.setSelectedMulliganUids,
-  );
+  const setSelectedMulliganUids = useGameStore((s) => s.setSelectedMulliganUids);
   const setInspectedCardId = useGameStore((s) => s.setInspectedCardId);
 
   const view = propView !== undefined ? propView : storeView;
@@ -67,8 +59,7 @@ export function MulliganModal({
   }
 
   const validHandUids = new Set(view.self.hand.map((c) => c.uid));
-  const rawSelectedUids =
-    propSelectedUids !== undefined ? propSelectedUids : storeSelectedUids;
+  const rawSelectedUids = propSelectedUids !== undefined ? propSelectedUids : storeSelectedUids;
   const selectedUids = rawSelectedUids.filter((uid) => validHandUids.has(uid));
   const selectedCount = selectedUids.length;
   const canSubmit = view.self.legal.canSubmitMulligan && !view.self.committed;
@@ -108,15 +99,10 @@ export function MulliganModal({
   };
 
   const primaryButtonLabel =
-    selectedCount === 0
-      ? 'Mantieni mano'
-      : `Conferma Mulligan (${selectedCount} carte)`;
+    selectedCount === 0 ? 'Mantieni mano' : `Conferma Mulligan (${selectedCount} carte)`;
 
   return (
-    <div
-      className="epochs-inspect-backdrop"
-      data-testid="mulligan-modal-backdrop"
-    >
+    <div className="epochs-inspect-backdrop" data-testid="mulligan-modal-backdrop">
       <div
         role="dialog"
         aria-modal="true"
@@ -138,6 +124,7 @@ export function MulliganModal({
           color: 'var(--chalk, #E9E5D6)',
         }}
       >
+        <MatchGuidance />
         <header
           style={{
             display: 'flex',
@@ -165,15 +152,12 @@ export function MulliganModal({
               }}
             >
               Tocca le carte da sostituire dal sotto-mazzo di Era I (massimo{' '}
-              {view.self.legal.maxMulliganCards || view.self.hand.length}). Le carte
-              rese saranno riposte in fondo al mazzo dopo la pesca sostitutiva.
+              {view.self.legal.maxMulliganCards || view.self.hand.length}). Le carte rese saranno
+              riposte in fondo al mazzo dopo la pesca sostitutiva.
             </p>
           </div>
 
-          <span
-            className="board-badge board-badge--brass"
-            data-testid="mulligan-selection-counter"
-          >
+          <span className="board-badge board-badge--brass" data-testid="mulligan-selection-counter">
             Selezionate: {selectedCount}/{view.self.hand.length}
           </span>
         </header>
@@ -308,9 +292,7 @@ export function MulliganModal({
                 backgroundColor: canSubmit
                   ? 'var(--brass, #B58E48)'
                   : 'var(--surface-card, #223444)',
-                color: canSubmit
-                  ? 'var(--table-deep, #141E27)'
-                  : 'var(--chalk-muted, #A7B4C2)',
+                color: canSubmit ? 'var(--table-deep, #141E27)' : 'var(--chalk-muted, #A7B4C2)',
                 fontFamily: 'var(--font-numeric)',
                 fontSize: '0.98rem',
                 fontWeight: 700,
@@ -357,8 +339,7 @@ export function HandLimitModal({
   }
 
   const validHandUids = new Set(view.self.hand.map((c) => c.uid));
-  const rawSelectedUids =
-    propSelectedUids !== undefined ? propSelectedUids : storeSelectedUids;
+  const rawSelectedUids = propSelectedUids !== undefined ? propSelectedUids : storeSelectedUids;
   const selectedUids = rawSelectedUids.filter((uid) => validHandUids.has(uid));
   const selectedCount = selectedUids.length;
   const isExactCount = selectedCount === mustDiscardCount;
@@ -379,10 +360,7 @@ export function HandLimitModal({
     const alreadySelected = selectedUids.includes(instance.uid);
     if (!alreadySelected && selectedCount >= mustDiscardCount) {
       // Sostituisce l'ultima carta selezionata se l'utente tocca una nuova carta a limite già raggiunto
-      const updated = [
-        ...selectedUids.slice(0, Math.max(0, mustDiscardCount - 1)),
-        instance.uid,
-      ];
+      const updated = [...selectedUids.slice(0, Math.max(0, mustDiscardCount - 1)), instance.uid];
       updateSelectedUids(updated);
       return;
     }
@@ -394,11 +372,7 @@ export function HandLimitModal({
   };
 
   const handleSuggestFifo = (): void => {
-    const suggestedUids = autoDiscard(
-      view.self.hand,
-      CARDS_RULES,
-      mustDiscardCount,
-    );
+    const suggestedUids = autoDiscard(view.self.hand, CARDS_RULES, mustDiscardCount);
     updateSelectedUids(suggestedUids);
   };
 
@@ -427,10 +401,7 @@ export function HandLimitModal({
   };
 
   return (
-    <div
-      className="epochs-inspect-backdrop"
-      data-testid="hand-limit-modal-backdrop"
-    >
+    <div className="epochs-inspect-backdrop" data-testid="hand-limit-modal-backdrop">
       <div
         role="dialog"
         aria-modal="true"
@@ -453,6 +424,7 @@ export function HandLimitModal({
           color: 'var(--chalk, #E9E5D6)',
         }}
       >
+        <MatchGuidance />
         <header
           style={{
             display: 'flex',
@@ -471,8 +443,7 @@ export function HandLimitModal({
               data-testid="hand-limit-instruction"
               style={{ margin: '0 0 4px 0', fontSize: '1.28rem', color: 'var(--brass)' }}
             >
-              Seleziona {mustDiscardCount}{' '}
-              {mustDiscardCount === 1 ? 'carta' : 'carte'} da scartare
+              Seleziona {mustDiscardCount} {mustDiscardCount === 1 ? 'carta' : 'carte'} da scartare
             </h2>
             <p
               style={{
@@ -481,8 +452,8 @@ export function HandLimitModal({
                 color: 'var(--chalk-muted)',
               }}
             >
-              Limite massimo di mano: 10 carte (hai {view.self.hand.length}{' '}
-              carte). Le carte scartate restano segrete per l&apos;avversario (D3).
+              Limite massimo di mano: 10 carte (hai {view.self.hand.length} carte). Le carte
+              scartate restano segrete per l&apos;avversario (D3).
             </p>
           </div>
 
@@ -610,9 +581,7 @@ export function HandLimitModal({
               backgroundColor: canConfirm
                 ? 'var(--brass, #B58E48)'
                 : 'var(--surface-card, #223444)',
-              color: canConfirm
-                ? 'var(--table-deep, #141E27)'
-                : 'var(--chalk-muted, #A7B4C2)',
+              color: canConfirm ? 'var(--table-deep, #141E27)' : 'var(--chalk-muted, #A7B4C2)',
               fontFamily: 'var(--font-numeric)',
               fontSize: '0.98rem',
               fontWeight: 700,

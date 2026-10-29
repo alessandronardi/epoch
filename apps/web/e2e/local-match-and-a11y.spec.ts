@@ -38,8 +38,11 @@ test.describe('The Epochs — Partita completa locale vs Bot e Accessibilità (M
     await assertNoCriticalOrSeriousA11yViolations(page, 'HomeScreen');
 
     // Imposta un seed deterministico e avvia la partita contro GreedyBot
+    await page.getByTestId('open-match-settings-btn').click();
     const seedInput = page.getByTestId('home-seed-input');
     await seedInput.fill('e2e-m3-match-seed-42');
+    await page.getByRole('button', { name: 'Chiudi finestra' }).click();
+    await page.getByTestId('open-bot-setup-btn').click();
     await page.getByTestId('start-bot-match-btn').click();
 
     const board = page.getByTestId('battlefield-board');
@@ -72,6 +75,9 @@ test.describe('The Epochs — Partita completa locale vs Bot e Accessibilità (M
     const isMobileViewport = (viewportSize?.width ?? 1280) < 1100;
 
     // Disattiva la conferma rapida del Passo per velocizzare i cicli successivi dopo aver giocato
+    // Leave the hand before using controls on the field.
+    await page.mouse.move(0, 0);
+    if (await page.getByTestId('player-hand').getAttribute('data-expanded') === 'true') await page.getByTestId('hand-reveal-toggle').tap();
     const confirmPassToggle = page.getByTestId('confirm-pass-toggle');
     if (await confirmPassToggle.isChecked()) {
       await confirmPassToggle.uncheck();
@@ -105,8 +111,9 @@ test.describe('The Epochs — Partita completa locale vs Bot e Accessibilità (M
             .locator('[data-testid^="hand-slot-"][data-playable="true"]')
             .first();
           if ((await playableSlot.count()) > 0) {
+            if (await page.getByTestId('player-hand').getAttribute('data-expanded') !== 'true') await page.getByTestId('hand-reveal-toggle').click();
             await playableSlot.click();
-            const playBtn = page.getByTestId('play-selected-card-btn');
+            const playBtn = page.getByTestId('hand-preview-play-btn');
             if (await playBtn.isEnabled()) {
               await playBtn.click();
               const conversionModal = page.getByTestId('conversion-modal');
@@ -119,6 +126,8 @@ test.describe('The Epochs — Partita completa locale vs Bot e Accessibilità (M
           }
         }
 
+        await page.getByTestId('hand-reveal-toggle').press('Escape');
+        await expect(page.getByTestId('player-hand')).toHaveAttribute('data-expanded', 'false');
         const passBtn = page.getByTestId('pass-turn-btn');
         if (await passBtn.isEnabled()) {
           await passBtn.click();
@@ -152,7 +161,10 @@ test.describe('The Epochs — Partita completa locale vs Bot e Accessibilità (M
             await page.getByTestId('playback-speed-2x').click();
             const skipBtn = page.getByTestId('playback-skip-btn');
             if (await skipBtn.isEnabled()) {
-              await skipBtn.click();
+              await skipBtn.click({ timeout: 1000 }).catch(async (error: unknown) => {
+                // Playback can finish between the enabled check and the click.
+                if (await skipBtn.isEnabled()) throw error;
+              });
             }
             const logRegion = page.getByTestId('battle-log-region');
             await logRegion.scrollIntoViewIfNeeded();
@@ -163,7 +175,10 @@ test.describe('The Epochs — Partita completa locale vs Bot e Accessibilità (M
             await page.getByTestId('playback-speed-2x').click();
             const skipBtn = page.getByTestId('playback-skip-btn');
             if (await skipBtn.isEnabled()) {
-              await skipBtn.click();
+              await skipBtn.click({ timeout: 1000 }).catch(async (error: unknown) => {
+                // Playback can finish between the enabled check and the click.
+                if (await skipBtn.isEnabled()) throw error;
+              });
             }
           }
           testedSkipPlayback = true;

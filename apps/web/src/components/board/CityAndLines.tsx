@@ -1,19 +1,11 @@
-import type {
-  CardInstance,
-  Line,
-  PlayerView,
-  PublicUnitView,
-  UnitInstance,
-} from '@epochs/engine';
+import { useDroppable } from '@dnd-kit/core';
+import { PLAY_FIELD_DROPZONE_ID } from './ActionControls.js';
+import type { CardInstance, Line, PlayerView, PublicUnitView, UnitInstance } from '@epochs/engine';
 import type { CSSProperties, ReactElement } from 'react';
 import { UNIT_REVEAL_CASCADE_MS } from '../../state/game-store.js';
 import { Card } from '../card/Card.js';
 import { CardToken } from '../card/CardToken.js';
-import {
-  CardTypeIcon,
-  LINE_LABELS_IT,
-  LineIcon,
-} from '../icons/DomainIcons.js';
+import { CardTypeIcon, LINE_LABELS_IT, LineIcon } from '../icons/DomainIcons.js';
 import './board.css';
 
 export const BATTLE_LINES_ORDER: readonly Line[] = ['front', 'center', 'rear'];
@@ -51,22 +43,20 @@ export function CityAndLines({
   onSelectBuilding,
   onSelectUnit,
 }: CityAndLinesProps): ReactElement {
-  const inBattleStage =
-    isPrebattleOrLater(view.phase) || isBattlePlaybackActive;
+  const { setNodeRef, isOver } = useDroppable({
+    id: side === 'self' ? PLAY_FIELD_DROPZONE_ID : 'epochs-opponent-city',
+    disabled: side !== 'self' || view.phase !== 'development',
+  });
+  const inBattleStage = isPrebattleOrLater(view.phase) || isBattlePlaybackActive;
 
-  const demBonus =
-    side === 'self' ? view.self.demBonus : view.opponent.demBonus;
+  const demBonus = side === 'self' ? view.self.demBonus : view.opponent.demBonus;
 
   // Determina le unità visibili sulle 3 linee di battaglia (§9.2 riga 795)
   const activeLineUnits: readonly DisplayUnit[] = (() => {
-    if (
-      isBattlePlaybackActive &&
-      playbackUnits !== undefined &&
-      playbackUnits.length > 0
-    ) {
+    if (isBattlePlaybackActive && playbackUnits !== undefined) {
       return playbackUnits;
     }
-    if (!isPrebattleOrLater(view.phase)) {
+    if (!inBattleStage) {
       return [];
     }
     if (side === 'self') {
@@ -76,9 +66,7 @@ export function CityAndLines({
   })();
 
   // Assegna un indice progressivo di cascata a ogni unità schierata per l'animazione 120ms (§9.1)
-  const sortedAllLineUnits = [...activeLineUnits].sort(
-    (a, b) => a.seq - b.seq,
-  );
+  const sortedAllLineUnits = [...activeLineUnits].sort((a, b) => a.seq - b.seq);
   const cascadeIndexByUid = new Map<string, number>();
   sortedAllLineUnits.forEach((u, index) => {
     cascadeIndexByUid.set(u.uid, index);
@@ -86,30 +74,31 @@ export function CityAndLines({
 
   // Carte mostrate nella Zona "Città" del proprietario:
   // in development: Edifici + Unità coperte; da prebattle in poi: solo Edifici Economici (§9.2 riga 795)
-  const selfCityBuildings: readonly CardInstance[] =
-    side === 'self' ? view.self.buildings : [];
+  const selfCityBuildings: readonly CardInstance[] = side === 'self' ? view.self.buildings : [];
   const selfCityCoveredUnits: readonly UnitInstance[] =
     side === 'self' && !inBattleStage ? view.self.units : [];
 
-  const opponentStackLayers = Math.min(
-    4,
-    Math.max(0, view.opponent.coveredCount),
-  );
+  const opponentStackLayers = Math.min(4, Math.max(0, view.opponent.coveredCount));
 
   return (
     <section
-      className={`city-and-lines city-and-lines--${side}`}
+      className={`city-and-lines city-and-lines--${side} ${inBattleStage ? '' : 'city-and-lines--economy'}`}
       data-testid={`${side}-city-and-lines`}
       aria-label={
         side === 'self'
-          ? 'Il tuo schieramento: Città e Linee di Battaglia'
-          : 'Schieramento avversario: Città coperta e Linee di Battaglia'
+          ? inBattleStage
+            ? 'Il tuo schieramento: Città e Linee di Battaglia'
+            : 'La tua città'
+          : inBattleStage
+            ? 'Schieramento avversario: Città coperta e Linee di Battaglia'
+            : 'Città coperta avversaria'
       }
     >
       {/* 1. Zona "Città" */}
       <div
+        ref={side === 'self' ? setNodeRef : undefined}
         className={`board-zone board-zone--city ${
-          isDroppableOver ? 'board-zone--droppable-active' : ''
+          isDroppableOver || isOver ? 'board-zone--droppable-active' : ''
         }`.trim()}
         data-testid={`${side}-city-zone`}
         data-covered-count={
@@ -137,9 +126,7 @@ export function CityAndLines({
                 className="covered-stack"
                 data-testid="opponent-covered-stack"
                 aria-label={`Città avversaria: ${view.opponent.coveredCount} ${
-                  view.opponent.coveredCount === 1
-                    ? 'carta coperta'
-                    : 'carte coperte'
+                  view.opponent.coveredCount === 1 ? 'carta coperta' : 'carte coperte'
                 }`}
               >
                 <div className="covered-stack__cards" aria-hidden="true">
@@ -162,19 +149,14 @@ export function CityAndLines({
                     {view.opponent.coveredCount}
                   </span>
                   <span className="covered-stack__label">
-                    {inBattleStage
-                      ? 'Edifici Economici coperti'
-                      : 'Edifici e Unità coperte'}
+                    {inBattleStage ? 'Edifici Economici coperti' : 'Edifici e Unità coperte'}
                   </span>
                 </div>
               </div>
             ) : (
-              <div className="board-zone__empty">
-                Nessuna carta coperta nella Città avversaria
-              </div>
+              <div className="board-zone__empty">Nessuna carta coperta nella Città avversaria</div>
             )
-          ) : selfCityBuildings.length === 0 &&
-            selfCityCoveredUnits.length === 0 ? (
+          ) : selfCityBuildings.length === 0 && selfCityCoveredUnits.length === 0 ? (
             <div className="board-zone__empty">
               {inBattleStage
                 ? 'Nessun Edificio Economico attivo'
@@ -245,104 +227,103 @@ export function CityAndLines({
       </div>
 
       {/* 2. Le 3 Linee di Battaglia: Fronte, Centro, Retroguardia */}
-      {BATTLE_LINES_ORDER.map((line) => {
-        const lineUnits = sortedAllLineUnits.filter((u) => u.line === line);
-        const queuedCoveredUnitsCount =
-          side === 'self' && !inBattleStage
-            ? view.self.units.filter((u) => u.line === line).length
-            : 0;
+      {inBattleStage &&
+        BATTLE_LINES_ORDER.map((line) => {
+          const lineUnits = sortedAllLineUnits.filter((u) => u.line === line);
+          const queuedCoveredUnitsCount =
+            side === 'self' && !inBattleStage
+              ? view.self.units.filter((u) => u.line === line).length
+              : 0;
 
-        return (
-          <div
-            key={line}
-            className={`board-zone board-zone--line board-zone--line-${line}`}
-            data-testid={`${side}-line-${line}`}
-            data-line={line}
-            data-unit-count={String(lineUnits.length)}
-          >
-            <header className="board-zone__header">
-              <span className="board-zone__title">
-                <LineIcon line={line} size={14} />
-                <span>{LINE_LABELS_IT[line]}</span>
-              </span>
-              <span className="board-zone__count">
-                {inBattleStage
-                  ? `${lineUnits.length} unità`
-                  : queuedCoveredUnitsCount > 0
-                    ? `${queuedCoveredUnitsCount} pronte`
-                    : '0 unità'}
-              </span>
-            </header>
-
-            <div className="board-zone__content">
-              {!inBattleStage ? (
-                <div className="board-zone__empty">
-                  {side === 'opponent'
-                    ? 'Coperte fino alla Pre-Battaglia'
+          return (
+            <div
+              key={line}
+              className={`board-zone board-zone--line board-zone--line-${line}`}
+              data-testid={`${side}-line-${line}`}
+              data-line={line}
+              data-unit-count={String(lineUnits.length)}
+            >
+              <header className="board-zone__header">
+                <span className="board-zone__title">
+                  <LineIcon line={line} size={14} />
+                  <span>{LINE_LABELS_IT[line]}</span>
+                </span>
+                <span className="board-zone__count">
+                  {inBattleStage
+                    ? `${lineUnits.length} unità`
                     : queuedCoveredUnitsCount > 0
-                      ? `${queuedCoveredUnitsCount} unità coperte pronte per ${LINE_LABELS_IT[line]}`
-                      : `Nessuna unità su ${LINE_LABELS_IT[line]}`}
-                </div>
-              ) : lineUnits.length === 0 ? (
-                <div className="board-zone__empty">Linea vuota</div>
-              ) : (
-                lineUnits.map((unit) => {
-                  const cascadeIdx = cascadeIndexByUid.get(unit.uid) ?? 0;
-                  const isUnitRevealed =
-                    !isRevealingUnits ||
-                    revealedUnitUids === undefined ||
-                    revealedUnitUids.includes(unit.uid);
+                      ? `${queuedCoveredUnitsCount} pronte`
+                      : '0 unità'}
+                </span>
+              </header>
 
-                  const slotStyle: CSSProperties = {
-                    '--cascade-delay': `${cascadeIdx * UNIT_REVEAL_CASCADE_MS}ms`,
-                  } as CSSProperties;
+              <div className="board-zone__content">
+                {!inBattleStage ? (
+                  <div className="board-zone__empty">
+                    {side === 'opponent'
+                      ? 'Coperte fino alla Pre-Battaglia'
+                      : queuedCoveredUnitsCount > 0
+                        ? `${queuedCoveredUnitsCount} unità coperte pronte per ${LINE_LABELS_IT[line]}`
+                        : `Nessuna unità su ${LINE_LABELS_IT[line]}`}
+                  </div>
+                ) : lineUnits.length === 0 ? (
+                  <div className="board-zone__empty">Linea vuota</div>
+                ) : (
+                  lineUnits.map((unit) => {
+                    const cascadeIdx = cascadeIndexByUid.get(unit.uid) ?? 0;
+                    const isUnitRevealed =
+                      !isRevealingUnits ||
+                      revealedUnitUids === undefined ||
+                      revealedUnitUids.includes(unit.uid);
 
-                  return (
-                    <div
-                      key={unit.uid}
-                      className={`board-unit-slot ${
-                        isUnitRevealed
-                          ? 'board-unit-slot--revealed'
-                          : 'board-unit-slot--revealing'
-                      }`}
-                      style={slotStyle}
-                      data-testid={`board-unit-${unit.uid}`}
-                      data-unit-uid={unit.uid}
-                      data-unit-card-id={unit.cardId}
-                      data-unit-seq={String(unit.seq)}
-                      data-reveal-state={
-                        isUnitRevealed ? 'revealed' : 'revealing'
-                      }
-                      data-cascade-index={String(cascadeIdx)}
-                    >
-                      <div className="board-unit-card--desktop">
-                        <Card
-                          cardId={unit.cardId}
-                          atkMod={unit.atkMod}
-                          demBonus={demBonus}
-                          currentHp={unit.hp}
-                          onSelect={() => onSelectUnit?.(unit)}
-                          onInspect={onInspectCard}
-                        />
+                    const slotStyle: CSSProperties = {
+                      '--cascade-delay': `${cascadeIdx * UNIT_REVEAL_CASCADE_MS}ms`,
+                    } as CSSProperties;
+
+                    return (
+                      <div
+                        key={unit.uid}
+                        className={`board-unit-slot ${
+                          isUnitRevealed
+                            ? 'board-unit-slot--revealed'
+                            : 'board-unit-slot--revealing'
+                        }`}
+                        style={slotStyle}
+                        data-testid={`board-unit-${unit.uid}`}
+                        data-unit-uid={unit.uid}
+                        data-unit-card-id={unit.cardId}
+                        data-unit-seq={String(unit.seq)}
+                        data-reveal-state={isUnitRevealed ? 'revealed' : 'revealing'}
+                        data-cascade-index={String(cascadeIdx)}
+                      >
+                        <div className="board-unit-card--desktop">
+                          <Card
+                            cardId={unit.cardId}
+                            atkMod={unit.atkMod}
+                            demBonus={demBonus}
+                            currentHp={unit.hp}
+                            onSelect={() => onSelectUnit?.(unit)}
+                            onInspect={onInspectCard}
+                          />
+                        </div>
+                        <div className="board-unit-token--mobile">
+                          <CardToken
+                            cardId={unit.cardId}
+                            atkMod={unit.atkMod}
+                            demBonus={demBonus}
+                            currentHp={unit.hp}
+                            onSelect={() => onSelectUnit?.(unit)}
+                            onInspect={onInspectCard}
+                          />
+                        </div>
                       </div>
-                      <div className="board-unit-token--mobile">
-                        <CardToken
-                          cardId={unit.cardId}
-                          atkMod={unit.atkMod}
-                          demBonus={demBonus}
-                          currentHp={unit.hp}
-                          onSelect={() => onSelectUnit?.(unit)}
-                          onInspect={onInspectCard}
-                        />
-                      </div>
-                    </div>
-                  );
-                })
-              )}
+                    );
+                  })
+                )}
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
     </section>
   );
 }

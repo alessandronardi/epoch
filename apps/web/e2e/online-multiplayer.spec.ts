@@ -156,8 +156,9 @@ test.describe('The Epochs — Multiplayer Online E2E (2 BrowserContext, Riconnes
         (await page1.getByTestId('pass-turn-btn').isEnabled()) &&
         (await p1PlayableSlot.count()) > 0
       ) {
+        if (await page1.getByTestId('player-hand').getAttribute('data-expanded') !== 'true') await page1.getByTestId('hand-reveal-toggle').click();
         await p1PlayableSlot.click();
-        const playBtn1 = page1.getByTestId('play-selected-card-btn');
+        const playBtn1 = page1.getByTestId('hand-preview-play-btn');
         if (await playBtn1.isEnabled()) {
           await playBtn1.click();
         }

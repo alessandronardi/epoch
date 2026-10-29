@@ -1,17 +1,21 @@
 // @vitest-environment jsdom
 import { CARDS_RULES } from '@epochs/content';
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { StrictMode } from 'react';
 import { validateDeck, type GameEvent, type PlayerView } from '@epochs/engine';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { createTutorialAdapter } from '../src/tutorial/tutorial-controller.js';
 import { TutorialScreen } from '../src/screens/TutorialScreen.js';
 import { createGameStore, useGameStore } from '../src/state/game-store.js';
 import {
   createTutorialController,
   createTutorialDecks,
-  resolveTutorialCommand,
   TUTORIAL_CUES,
+  DISCARD_TUTORIAL_CUES,
 } from '../src/tutorial/tutorial-scenario.js';
+
+import { performCue } from './tutorial-ui-driver.js';
+import { resolveTutorialCommand } from './tutorial-driver.js';
 
 const stores: ReturnType<typeof createGameStore>[] = [];
 afterEach(() => {
@@ -22,8 +26,22 @@ afterEach(() => {
   stores.length = 0;
 });
 
+function playMainTutorial(): void {
+  for (const cue of TUTORIAL_CUES.slice(0, -1)) {
+    expect(screen.getByTestId('tutorial-title').textContent).toBe(cue.title);
+    expect(document.querySelector('[data-tutorial-focus="true"]')).not.toBeNull();
+    if (cue.action.kind !== 'read') expect(screen.queryByTestId('tutorial-next')).toBeNull();
+    performCue(cue);
+    if (useGameStore.getState().isPlaying) {
+      expect(screen.getByTestId('tutorial-title').textContent).toBe(cue.title);
+      act(() => vi.runAllTimers());
+    }
+    expect(screen.queryByRole('alert')).toBeNull();
+  }
+}
+
 describe('Tutorial interattivo sul tavolo', () => {
-  it('percorre i sei passi con i pulsanti reali, attende le animazioni e torna alla Home', () => {
+  it('usa i controlli reali per tutte le Ere e per lo scarto, avanzando dopo le animazioni', () => {
     vi.useFakeTimers();
     const onBackHome = vi.fn();
     render(
@@ -31,43 +49,62 @@ describe('Tutorial interattivo sul tavolo', () => {
         <TutorialScreen onBackHome={onBackHome} />
       </StrictMode>,
     );
-    for (const cue of TUTORIAL_CUES) {
+    playMainTutorial();
+    expect(useGameStore.getState().view?.result).toEqual({ kind: 'points', winner: 'P1' });
+    expect(screen.getByTestId('game-over-modal').getAttribute('data-result-kind')).toBe('points');
+    const events = useGameStore.getState().playedEvents;
+    expect(events).toContainEqual(
+      expect.objectContaining({ type: 'SiegeResolved', D: 16, breach: true, directDamage: 8 }),
+    );
+    expect(events).toContainEqual(
+      expect.objectContaining({ type: 'RaidResolved', foodTransferred: 1, woodTransferred: 1 }),
+    );
+    fireEvent.click(screen.getByTestId('game-over-inspect-board-btn'));
+    fireEvent.click(screen.getByTestId('reopen-game-over-modal-btn'));
+    expect(screen.getByTestId('game-over-modal')).toBeDefined();
+    fireEvent.click(screen.getByTestId('game-over-inspect-board-btn'));
+    fireEvent.click(screen.getByTestId('tutorial-discard-exercise'));
+    for (const cue of DISCARD_TUTORIAL_CUES.slice(0, -1)) {
       expect(screen.getByTestId('tutorial-title').textContent).toBe(cue.title);
-      expect(screen.getByTestId('tutorial-guide').getAttribute('data-lesson')).toBe(
-        String(cue.lesson),
-      );
-      expect(document.querySelector('[data-tutorial-focus="true"]')).not.toBeNull();
-      expect(document.activeElement).toBe(screen.getByTestId('tutorial-title'));
-      fireEvent.click(screen.getByTestId('tutorial-next'));
-      if (useGameStore.getState().isPlaying) {
-        expect((screen.getByTestId('tutorial-next') as HTMLButtonElement).disabled).toBe(true);
-        const title = screen.getByTestId('tutorial-title').textContent;
-        fireEvent.click(screen.getByTestId('tutorial-next'));
-        expect(screen.getByTestId('tutorial-title').textContent).toBe(title);
-        act(() => vi.runAllTimers());
-      }
+      performCue(cue);
+      if (useGameStore.getState().isPlaying) act(() => vi.runAllTimers());
     }
-    expect(useGameStore.getState().view?.result?.winner).toBe('P1');
+    expect(useGameStore.getState().view?.self.hand).toHaveLength(10);
+    expect(useGameStore.getState().view?.phase).toBe('development');
+    expect(screen.getByTestId('tutorial-title').textContent).toBe(
+      'Esercitazione scarto completata',
+    );
+    fireEvent.click(screen.getByTestId('tutorial-next'));
     expect(onBackHome).toHaveBeenCalledTimes(1);
-    expect(screen.queryByRole('alert')).toBeNull();
-  });
+    expect(useGameStore.getState().view).toBeNull();
+  }, 60000);
 
-  it('salta solo le animazioni, riavvia da capo e pulisce lo stato alla chiusura', () => {
+  it('rifiuta scelte fuori obiettivo, permette di riprovare e pulisce finestre e code al riavvio e uscita', () => {
     vi.useFakeTimers();
     const onBackHome = vi.fn();
     const { unmount } = render(<TutorialScreen onBackHome={onBackHome} />);
     const original = useGameStore.getState().view;
-    fireEvent.click(screen.getByTestId('tutorial-next'));
+    fireEvent.click(screen.getByTestId('mulligan-submit-btn'));
+    expect(useGameStore.getState().view).toEqual(original);
+    expect(screen.getByTestId('tutorial-modal-guidance').textContent).toContain(
+      'Obiettivo attuale',
+    );
+    performCue(TUTORIAL_CUES[0]!);
+    performCue(TUTORIAL_CUES[1]!);
+    const duringPlayback = screen.getByTestId('tutorial-title').textContent;
+    expect(duringPlayback).toBe('Scegli la tua mano iniziale');
     fireEvent.click(screen.getByTestId('tutorial-skip-playback'));
     expect(screen.getByTestId('tutorial-title').textContent).toBe('Il tuo magazzino');
-    expect(useGameStore.getState().view?.phase).toBe('development');
-    fireEvent.click(screen.getByRole('button', { name: 'Ricomincia' }));
+    fireEvent.click(screen.getAllByRole('button', { name: 'Ricomincia' })[0]!);
     expect(useGameStore.getState().view).toEqual(original);
-    expect(screen.getByTestId('tutorial-title').textContent).toBe('Scegli la tua mano iniziale');
-    fireEvent.click(screen.getByRole('button', { name: 'Esci dal tutorial' }));
+    expect(screen.getByTestId('tutorial-title').textContent).toBe('Ispeziona una carta');
+    fireEvent.click(
+      within(screen.getByTestId('mulligan-modal')).getByRole('button', {
+        name: 'Esci dal tutorial',
+      }),
+    );
     expect(onBackHome).toHaveBeenCalledTimes(1);
     unmount();
-    expect(useGameStore.getState().view).toBeNull();
     act(() => vi.runAllTimers());
     expect(useGameStore.getState().view).toBeNull();
     expect(useGameStore.getState().playedEvents).toEqual([]);
@@ -75,7 +112,7 @@ describe('Tutorial interattivo sul tavolo', () => {
   });
 });
 
-function runTutorial() {
+function runTutorial(useAdapter = false) {
   const store = createGameStore();
   stores.push(store);
   const events: GameEvent[] = [];
@@ -86,12 +123,24 @@ function runTutorial() {
   });
   let view = controller.startMatch();
   const snapshots = [];
+  let currentCue = TUTORIAL_CUES[0]!;
+  const adapter = createTutorialAdapter({
+    controller,
+    store,
+    getCue: () => currentCue,
+    isPending: () => false,
+    onAccepted: () => {},
+    onError: (message) => {
+      throw new Error(message);
+    },
+  });
   for (const cue of TUTORIAL_CUES) {
+    currentCue = cue;
     store.getState().skipToEnd();
     snapshots.push({ title: cue.title, view });
     const command = resolveTutorialCommand(cue, view);
     if (command !== null) {
-      const result = controller.dispatch(command);
+      const result = (useAdapter ? adapter : controller).dispatch(command);
       if (!result.ok) throw new Error(`${cue.title}: ${result.error.message}`);
       view = result.value;
     }
@@ -185,7 +234,58 @@ describe('Tutorial M7-02: partita reale e deterministica', () => {
     stores.push(store);
     const controller = createTutorialController(store);
     const view = controller.startMatch();
-    expect(() => resolveTutorialCommand(TUTORIAL_CUES[2]!, view)).toThrow('fase prevista');
+    expect(() =>
+      resolveTutorialCommand(
+        TUTORIAL_CUES.find((cue) => cue.phase === 'development')!,
+        view,
+      ),
+    ).toThrow('fase prevista');
+    controller.dispose();
+  });
+});
+
+describe('Gateway dei comandi del tutorial', () => {
+  it('produce gli stessi stati e gli stessi eventi del controller normale', () => {
+    expect(runTutorial(true)).toEqual(runTutorial());
+  });
+
+  it('rifiuta azioni fuori obiettivo e comandi duplicati anche durante la pausa', () => {
+    const store = createGameStore();
+    stores.push(store);
+    const controller = createTutorialController(store);
+    controller.startMatch();
+    store.getState().skipToEnd();
+    let pending = false;
+    const onError = vi.fn();
+    const gateway = createTutorialAdapter({
+      controller,
+      store,
+      getCue: () => TUTORIAL_CUES[1]!,
+      isPending: () => pending,
+      onAccepted: () => {
+        pending = true;
+      },
+      onError,
+    });
+    const before = store.getState().view;
+    expect(gateway.dispatch({ type: 'SubmitMulligan', cardUids: [] }).ok).toBe(false);
+    expect(gateway.concede().ok).toBe(false);
+    expect(store.getState().view).toEqual(before);
+    const uid = before!.self.hand.find((card) => card.cardId === 'u1_inf_l')!.uid;
+    const command = { type: 'SubmitMulligan' as const, cardUids: [uid] };
+    expect(gateway.dispatch(command).ok).toBe(true);
+    const target = store.getState().pendingView;
+    expect(gateway.dispatch(command).ok).toBe(false);
+    store.getState().pausePlayback();
+    expect(gateway.dispatch(command).ok).toBe(false);
+    expect(store.getState().pendingView).toEqual(target);
+    store.getState().skipToEnd();
+    expect(gateway.dispatch(command).ok).toBe(false); // La transizione attende ancora il commento.
+    expect(
+      store
+        .getState()
+        .playedEvents.filter((event) => event.type === 'MulliganResolved' && event.player === 'P1'),
+    ).toHaveLength(1);
     controller.dispose();
   });
 });

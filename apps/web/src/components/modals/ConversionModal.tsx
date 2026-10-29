@@ -1,3 +1,4 @@
+import { MatchGuidance } from './MatchGuidance.js';
 import { getCard, type CatalogCard } from '@epochs/content';
 import {
   RESOURCE_KEYS,
@@ -11,19 +12,11 @@ import {
   type Resource,
   type Resources,
 } from '@epochs/engine';
-import {
-  useEffect,
-  useState,
-  type ReactElement,
-} from 'react';
+import { useEffect, useState, type ReactElement } from 'react';
 import type { GameController } from '../../controllers/types.js';
 import { useGameStore } from '../../state/game-store.js';
 import { Card } from '../card/Card.js';
-import {
-  RESOURCE_LABELS_IT,
-  ResourceIcon,
-  StatIcon,
-} from '../icons/DomainIcons.js';
+import { RESOURCE_LABELS_IT, ResourceIcon, StatIcon } from '../icons/DomainIcons.js';
 
 export interface ConversionGainPreview {
   readonly card: CatalogCard;
@@ -43,8 +36,7 @@ export interface ConversionModalProps {
   readonly activeConversionUid?: string | null | undefined;
   readonly initialSacrificeUid?: string | null | undefined;
   readonly onConfirmConversion?:
-    | ((conversionUid: string, sacrificeUid: string) => void)
-    | undefined;
+    ((conversionUid: string, sacrificeUid: string) => void) | undefined;
   readonly onClose?: (() => void) | undefined;
   readonly onInspectCard?: ((cardId: string) => void) | undefined;
 }
@@ -72,10 +64,7 @@ export function calculateConversionPreview(
   let demBonusGained = 0;
 
   if (card.rules.effect?.kind === 'gain_per_building') {
-    grossGain = scaleResources(
-      card.rules.effect.perBuilding,
-      buildingCountPreSacrifice,
-    );
+    grossGain = scaleResources(card.rules.effect.perBuilding, buildingCountPreSacrifice);
   } else if (card.rules.effect?.kind === 'gain_and_dem_bonus') {
     grossGain = { ...card.rules.effect.gain };
     demBonusGained = card.rules.effect.demBonus;
@@ -117,13 +106,11 @@ export function ConversionModal({
 
   const view = propView !== undefined ? propView : storeView;
   const activeConversionUid =
-    propActiveConversionUid !== undefined
-      ? propActiveConversionUid
-      : storeActiveConversionUid;
+    propActiveConversionUid !== undefined ? propActiveConversionUid : storeActiveConversionUid;
 
   const conversionInstance: CardInstance | null =
     view !== null && activeConversionUid !== null
-      ? view.self.hand.find((c) => c.uid === activeConversionUid) ?? null
+      ? (view.self.hand.find((c) => c.uid === activeConversionUid) ?? null)
       : null;
 
   useEffect(() => {
@@ -131,7 +118,7 @@ export function ConversionModal({
       return;
     }
     const handleKeyDown = (event: globalThis.KeyboardEvent): void => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && useGameStore.getState().inspectedCardId === null) {
         event.preventDefault();
         setActiveConversionUid(null);
         onClose?.();
@@ -154,26 +141,21 @@ export function ConversionModal({
       : view.self.buildings;
 
   const effectiveSacrificeUid =
-    selectedBuildingUid !== null &&
-    availableBuildings.some((b) => b.uid === selectedBuildingUid)
+    selectedBuildingUid !== null && availableBuildings.some((b) => b.uid === selectedBuildingUid)
       ? selectedBuildingUid
-      : availableBuildings[0]?.uid ?? null;
+      : (availableBuildings[0]?.uid ?? null);
 
   const selectedBuildingInstance =
     effectiveSacrificeUid !== null
-      ? availableBuildings.find((b) => b.uid === effectiveSacrificeUid) ?? null
+      ? (availableBuildings.find((b) => b.uid === effectiveSacrificeUid) ?? null)
       : null;
   const selectedBuildingCard =
-    selectedBuildingInstance !== null
-      ? getCard(selectedBuildingInstance.cardId)
-      : null;
+    selectedBuildingInstance !== null ? getCard(selectedBuildingInstance.cardId) : null;
 
   const preview = calculateConversionPreview(view, conversionInstance.cardId);
   const hasOverflow = hasNonZeroResources(preview.overflow);
   const canConfirm =
-    effectiveSacrificeUid !== null &&
-    view.phase === 'development' &&
-    view.self.legal.canAct;
+    effectiveSacrificeUid !== null && view.phase === 'development' && view.self.legal.canAct;
 
   const handleClose = (): void => {
     setActiveConversionUid(null);
@@ -238,6 +220,7 @@ export function ConversionModal({
           color: 'var(--chalk, #E9E5D6)',
         }}
       >
+        <MatchGuidance />
         {/* Header della modale di Riconversione */}
         <header
           style={{
@@ -264,8 +247,7 @@ export function ConversionModal({
                 color: 'var(--chalk-muted)',
               }}
             >
-              {preview.card.rulesText} Seleziona quale tuo Edificio Economico
-              attivo sacrificare.
+              {preview.card.rulesText} Seleziona quale tuo Edificio Economico attivo sacrificare.
             </p>
           </div>
 
@@ -357,10 +339,7 @@ export function ConversionModal({
                     </span>
                     <span
                       style={{
-                        color:
-                          net > 0
-                            ? 'var(--brass, #B58E48)'
-                            : 'var(--chalk-muted)',
+                        color: net > 0 ? 'var(--brass, #B58E48)' : 'var(--chalk-muted)',
                       }}
                     >
                       Netto: +{net} (Lordo: +{gross})
@@ -409,9 +388,8 @@ export function ConversionModal({
             >
               <StatIcon stat="dem" size={15} />
               <span>
-                Bonus Demolizione permanente Era III: +{preview.demBonusGained}{' '}
-                DEM a ogni tua unità (Totale: +{preview.projectedTotalDemBonus}{' '}
-                DEM)
+                Bonus Demolizione permanente Era III: +{preview.demBonusGained} DEM a ogni tua unità
+                (Totale: +{preview.projectedTotalDemBonus} DEM)
               </span>
             </div>
           )}
@@ -425,18 +403,15 @@ export function ConversionModal({
                 color: 'var(--crimson, #A8404D)',
               }}
             >
-              Attenzione: parte del guadagno eccede il cap di magazzino ({preview.cap})
-              e verrà troncata.
+              Attenzione: parte del guadagno eccede il cap di magazzino ({preview.cap}) e verrà
+              troncata.
             </p>
           )}
         </section>
 
         {/* Selettore degli Edifici Economici attivi da sacrificare */}
         <section aria-label="Seleziona l'Edificio Economico da sacrificare">
-          <h3
-            className="font-display"
-            style={{ margin: '0 0 8px 0', fontSize: '1rem' }}
-          >
+          <h3 className="font-display" style={{ margin: '0 0 8px 0', fontSize: '1rem' }}>
             Edifici Economici attivi nella tua Città ({availableBuildings.length})
           </h3>
 
@@ -497,9 +472,7 @@ export function ConversionModal({
                         backgroundColor: isSelected
                           ? 'var(--brass, #B58E48)'
                           : 'var(--surface-card, #223444)',
-                        color: isSelected
-                          ? 'var(--table-deep, #141E27)'
-                          : 'var(--chalk, #E9E5D6)',
+                        color: isSelected ? 'var(--table-deep, #141E27)' : 'var(--chalk, #E9E5D6)',
                         fontFamily: 'var(--font-numeric)',
                         fontSize: '0.84rem',
                         fontWeight: 700,
@@ -566,9 +539,7 @@ export function ConversionModal({
                 backgroundColor: canConfirm
                   ? 'var(--brass, #B58E48)'
                   : 'var(--surface-card, #223444)',
-                color: canConfirm
-                  ? 'var(--table-deep, #141E27)'
-                  : 'var(--chalk-muted, #A7B4C2)',
+                color: canConfirm ? 'var(--table-deep, #141E27)' : 'var(--chalk-muted, #A7B4C2)',
                 fontFamily: 'var(--font-numeric)',
                 fontSize: '0.96rem',
                 fontWeight: 700,

@@ -11,23 +11,15 @@ import {
   RemoteGameController,
   type RemoteControllerSnapshot,
 } from '../controllers/remote-controller.js';
-import {
-  PRESET_DECK_OPTIONS,
-  type PresetDeckOption,
-} from './HomeScreen.js';
+import { PRESET_DECK_OPTIONS, type PresetDeckOption } from './HomeScreen.js';
 
 export interface OnlineLobbyScreenProps {
+  readonly createController?: ((wsUrl: string) => RemoteGameController) | undefined;
   readonly availableDecks?: readonly PresetDeckOption[] | undefined;
   readonly defaultWsUrl?: string | undefined;
   readonly initialController?: RemoteGameController | null | undefined;
-  readonly onMatchReady: (
-    controller: RemoteGameController,
-    gameId: string,
-  ) => void;
-  readonly onOpenReplayViewer: (
-    gameId?: string,
-    httpBaseUrl?: string,
-  ) => void;
+  readonly onMatchReady: (controller: RemoteGameController, gameId: string) => void;
+  readonly onOpenReplayViewer: (gameId?: string, httpBaseUrl?: string) => void;
   readonly onBackHome: () => void;
 }
 
@@ -46,6 +38,7 @@ export function OnlineLobbyScreen({
   availableDecks = PRESET_DECK_OPTIONS,
   defaultWsUrl,
   initialController,
+  createController,
   onMatchReady,
   onOpenReplayViewer,
   onBackHome,
@@ -56,17 +49,13 @@ export function OnlineLobbyScreen({
   const [replayGameIdInput, setReplayGameIdInput] = useState<string>(() =>
     readLastFinishedGameId(),
   );
-  const [wsUrlInput, setWsUrlInput] = useState<string>(
-    defaultWsUrl ?? 'ws://127.0.0.1:3000/ws',
-  );
+  const [wsUrlInput, setWsUrlInput] = useState<string>(defaultWsUrl ?? 'ws://127.0.0.1:3000/ws');
   const [snapshot, setSnapshot] = useState<RemoteControllerSnapshot | null>(
     initialController ? initialController.getSnapshot() : null,
   );
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
-  const controllerRef = useRef<RemoteGameController | null>(
-    initialController ?? null,
-  );
+  const controllerRef = useRef<RemoteGameController | null>(initialController ?? null);
   const handedOffToMatchRef = useRef<boolean>(false);
 
   const resolveSelectedDeck = (): DeckPayload => {
@@ -84,20 +73,22 @@ export function OnlineLobbyScreen({
       existing.dispose();
     }
 
-    const ctrl = new RemoteGameController({
-      wsUrl: wsUrlInput.trim(),
-      onStateChange: (nextSnap) => {
-        setSnapshot(nextSnap);
-        if (
-          nextSnap.lobbyStatus === 'in_match' &&
-          nextSnap.gameId !== null &&
-          !handedOffToMatchRef.current
-        ) {
-          handedOffToMatchRef.current = true;
-          onMatchReady(ctrl, nextSnap.gameId);
-        }
-      },
-    });
+    const ctrl =
+      createController?.(wsUrlInput.trim()) ??
+      new RemoteGameController({
+        wsUrl: wsUrlInput.trim(),
+        onStateChange: (nextSnap) => {
+          setSnapshot(nextSnap);
+          if (
+            nextSnap.lobbyStatus === 'in_match' &&
+            nextSnap.gameId !== null &&
+            !handedOffToMatchRef.current
+          ) {
+            handedOffToMatchRef.current = true;
+            onMatchReady(ctrl, nextSnap.gameId);
+          }
+        },
+      });
 
     controllerRef.current = ctrl;
     setSnapshot(ctrl.getSnapshot());
@@ -123,9 +114,7 @@ export function OnlineLobbyScreen({
         return;
       }
       setConnectionError(
-        err instanceof Error
-          ? err.message
-          : 'Impossibile connettersi al server multiplayer.',
+        err instanceof Error ? err.message : 'Impossibile connettersi al server multiplayer.',
       );
     });
 
@@ -145,9 +134,7 @@ export function OnlineLobbyScreen({
       await ctrl.connect();
     } catch (err) {
       setConnectionError(
-        err instanceof Error
-          ? err.message
-          : 'Connessione al server WebSocket non riuscita.',
+        err instanceof Error ? err.message : 'Connessione al server WebSocket non riuscita.',
       );
     }
   };
@@ -159,9 +146,7 @@ export function OnlineLobbyScreen({
       await ctrl.joinQuickQueue(resolveSelectedDeck());
     } catch (err) {
       setConnectionError(
-        err instanceof Error
-          ? err.message
-          : 'Impossibile avviare la Coda Veloce.',
+        err instanceof Error ? err.message : 'Impossibile avviare la Coda Veloce.',
       );
     }
   };
@@ -173,9 +158,7 @@ export function OnlineLobbyScreen({
       await ctrl.createPrivateRoom(resolveSelectedDeck());
     } catch (err) {
       setConnectionError(
-        err instanceof Error
-          ? err.message
-          : 'Impossibile creare la stanza privata.',
+        err instanceof Error ? err.message : 'Impossibile creare la stanza privata.',
       );
     }
   };
@@ -183,9 +166,7 @@ export function OnlineLobbyScreen({
   const handleJoinPrivateRoom = async (): Promise<void> => {
     const trimmed = joinRoomCodeInput.trim().toUpperCase();
     if (trimmed.length < 4) {
-      setConnectionError(
-        'Inserisci un codice stanza valido (almeno 4 caratteri).',
-      );
+      setConnectionError('Inserisci un codice stanza valido (almeno 4 caratteri).');
       return;
     }
 
@@ -195,9 +176,7 @@ export function OnlineLobbyScreen({
       await ctrl.joinPrivateRoom(trimmed, resolveSelectedDeck());
     } catch (err) {
       setConnectionError(
-        err instanceof Error
-          ? err.message
-          : 'Impossibile entrare nella stanza privata.',
+        err instanceof Error ? err.message : 'Impossibile entrare nella stanza privata.',
       );
     }
   };
@@ -206,10 +185,7 @@ export function OnlineLobbyScreen({
     const ctrl = controllerRef.current;
     const httpBase = ctrl?.getHttpBaseUrl();
     const targetGameId = replayGameIdInput.trim();
-    onOpenReplayViewer(
-      targetGameId.length > 0 ? targetGameId : undefined,
-      httpBase,
-    );
+    onOpenReplayViewer(targetGameId.length > 0 ? targetGameId : undefined, httpBase);
   };
 
   const connectionLabel = (() => {
@@ -500,8 +476,7 @@ export function OnlineLobbyScreen({
                   color: 'var(--chalk-muted)',
                 }}
               >
-                Abbinamento immediato con il primo stratega in attesa sul server
-                autoritativo.
+                Abbinamento immediato con il primo stratega in attesa sul server autoritativo.
               </p>
 
               {snapshot?.lobbyStatus === 'searching_quick' && (
@@ -578,8 +553,8 @@ export function OnlineLobbyScreen({
                   color: 'var(--chalk-muted)',
                 }}
               >
-                Genera un codice stanza da condividere con il tuo avversario o
-                inserisci un codice ricevuto.
+                Genera un codice stanza da condividere con il tuo avversario o inserisci un codice
+                ricevuto.
               </p>
 
               <button
@@ -617,9 +592,7 @@ export function OnlineLobbyScreen({
                     gap: '10px',
                   }}
                 >
-                  <span style={{ fontSize: '0.88rem' }}>
-                    Codice Stanza Privata:
-                  </span>
+                  <span style={{ fontSize: '0.88rem' }}>Codice Stanza Privata:</span>
                   <strong
                     className="font-numeric"
                     data-testid="online-created-room-code"
@@ -656,9 +629,7 @@ export function OnlineLobbyScreen({
                     data-testid="online-join-room-code-input"
                     placeholder="Es. AB12CD"
                     value={joinRoomCodeInput}
-                    onChange={(ev) =>
-                      setJoinRoomCodeInput(ev.target.value.toUpperCase())
-                    }
+                    onChange={(ev) => setJoinRoomCodeInput(ev.target.value.toUpperCase())}
                     style={{
                       flex: 1,
                       padding: '8px 12px',
@@ -731,8 +702,8 @@ export function OnlineLobbyScreen({
                 color: 'var(--chalk-muted)',
               }}
             >
-              Inserisci l&apos;ID di una partita terminata per esaminarla passo
-              dopo passo da P1, P2 o Pubblico.
+              Inserisci l&apos;ID di una partita terminata per esaminarla passo dopo passo da P1, P2
+              o Pubblico.
             </p>
           </div>
 

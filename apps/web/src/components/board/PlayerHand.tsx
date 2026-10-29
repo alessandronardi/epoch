@@ -1,4 +1,4 @@
-import { useDraggable } from '@dnd-kit/core';
+import { useDndContext, useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { getCard, type CatalogCard } from '@epochs/content';
 import {
@@ -10,7 +10,9 @@ import {
   type UnplayableReason,
 } from '@epochs/engine';
 import {
+  useEffect,
   useRef,
+  useState,
   type CSSProperties,
   type KeyboardEvent,
   type ReactElement,
@@ -37,9 +39,8 @@ export interface PlayerHandProps {
   readonly selectedInstantUids?: readonly string[] | undefined;
   readonly unplayableBanner?: UnplayableBannerState | null | undefined;
   readonly enableDrag?: boolean | undefined;
-  readonly onSelectCard?:
-    | ((instance: CardInstance, playable: boolean) => void)
-    | undefined;
+  readonly suggestedCardIds?: readonly string[] | undefined;
+  readonly onSelectCard?: ((instance: CardInstance, playable: boolean) => void) | undefined;
   readonly onPlayCard?: ((cardUid: string) => void) | undefined;
   readonly onInspectCard?: ((cardId: string) => void) | undefined;
   readonly onDismissBanner?: (() => void) | undefined;
@@ -106,13 +107,12 @@ interface DraggableHandSlotProps {
   readonly selected: boolean;
   readonly unplayableReason: UnplayableReason | undefined;
   readonly enableDrag: boolean;
+  readonly suggested: boolean;
   readonly slotRef: (el: HTMLDivElement | null) => void;
   readonly onActivate: () => void;
+  readonly onPlay: (() => void) | undefined;
   readonly onInspect: (cardId: string) => void;
-  readonly onKeyNavigate: (
-    event: KeyboardEvent<HTMLDivElement>,
-    index: number,
-  ) => void;
+  readonly onKeyNavigate: (event: KeyboardEvent<HTMLDivElement>, index: number) => void;
 }
 
 function DraggableHandSlot({
@@ -124,8 +124,10 @@ function DraggableHandSlot({
   selected,
   unplayableReason,
   enableDrag,
+  suggested,
   slotRef,
   onActivate,
+  onPlay,
   onInspect,
   onKeyNavigate,
 }: DraggableHandSlotProps): ReactElement {
@@ -137,18 +139,13 @@ function DraggableHandSlot({
     unplayableReason,
   };
 
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: `hand-card-${instance.uid}`,
-      data: dragData,
-      disabled: !enableDrag || !playable,
-    });
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: `hand-card-${instance.uid}`,
+    data: dragData,
+    disabled: !enableDrag || !playable,
+  });
 
-  const {
-    role: _draggableRole,
-    tabIndex: _draggableTabIndex,
-    ...ariaDragAttributes
-  } = attributes;
+  const { role: _draggableRole, tabIndex: _draggableTabIndex, ...ariaDragAttributes } = attributes;
 
   // Calcolo angolo e arco per la disposizione a ventaglio (fino a 10 carte, §9.2 riga 791)
   const centerIndex = (total - 1) / 2;
@@ -165,7 +162,7 @@ function DraggableHandSlot({
     transform: dragTransform ?? fanTransform,
     zIndex: isDragging ? 45 : selected ? 30 : index + 1,
     opacity: isDragging ? 0.55 : 1,
-    width: 'clamp(92px, 10.5vw, 132px)',
+    width: 'clamp(104px, 11vw, 148px)',
     minWidth: 'var(--touch-target-min, 44px)',
     minHeight: 'var(--touch-target-min, 44px)',
     marginLeft: index === 0 ? '0px' : 'clamp(-18px, -1.2vw, -6px)',
@@ -187,7 +184,7 @@ function DraggableHandSlot({
       ref={setCombinedRef}
       className={`player-hand__slot touch-target ${
         playable ? 'player-hand__slot--playable' : 'player-hand__slot--unplayable'
-      } ${selected ? 'player-hand__slot--selected' : ''}`.trim()}
+      } ${selected ? 'player-hand__slot--selected' : ''} ${suggested ? 'player-hand__slot--suggested' : ''}`.trim()}
       style={combinedStyle}
       data-testid={`hand-slot-${instance.uid}`}
       data-hand-uid={instance.uid}
@@ -197,8 +194,11 @@ function DraggableHandSlot({
       data-selected={selected ? 'true' : 'false'}
       data-unplayable-reason={unplayableReason}
       role="listitem"
-      onKeyDown={(ev) => onKeyNavigate(ev, index)}
       {...(enableDrag && playable ? { ...listeners, ...ariaDragAttributes } : {})}
+      onKeyDown={(ev) => {
+        onKeyNavigate(ev, index);
+        if (!ev.defaultPrevented && enableDrag && playable) listeners?.['onKeyDown']?.(ev);
+      }}
     >
       <Card
         card={catalogCard}
@@ -206,6 +206,7 @@ function DraggableHandSlot({
         selected={selected}
         unplayableReason={unplayableReason}
         onSelect={() => onActivate()}
+        onDoubleActivate={onPlay}
         onInspect={onInspect}
       />
     </div>
@@ -218,6 +219,7 @@ export function PlayerHand({
   selectedInstantUids: propSelectedInstantUids,
   unplayableBanner: propUnplayableBanner,
   enableDrag = true,
+  suggestedCardIds = [],
   onSelectCard,
   onPlayCard,
   onInspectCard,
@@ -232,21 +234,21 @@ export function PlayerHand({
   const setInspectedCardId = useGameStore((s) => s.setInspectedCardId);
   const toggleInstantUid = useGameStore((s) => s.toggleInstantUid);
 
+  const [handOpen, setHandOpen] = useState(false);
+  const { active } = useDndContext();
   const slotRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   const view = propView !== undefined ? propView : storeView;
   const selectedHandUid =
-    propSelectedHandUid !== undefined
-      ? propSelectedHandUid
-      : storeSelectedHandUid;
+    propSelectedHandUid !== undefined ? propSelectedHandUid : storeSelectedHandUid;
   const selectedInstantUids =
-    propSelectedInstantUids !== undefined
-      ? propSelectedInstantUids
-      : storeSelectedInstantUids;
+    propSelectedInstantUids !== undefined ? propSelectedInstantUids : storeSelectedInstantUids;
   const unplayableBanner =
-    propUnplayableBanner !== undefined
-      ? propUnplayableBanner
-      : storeUnplayableBanner;
+    propUnplayableBanner !== undefined ? propUnplayableBanner : storeUnplayableBanner;
+
+  useEffect(() => {
+    setHandOpen(false);
+  }, [view?.phase, view?.me, view?.self.hand.length]);
 
   const handleInspect = (cardId: string): void => {
     if (onInspectCard) {
@@ -297,29 +299,19 @@ export function PlayerHand({
       }
       return {
         playable: false,
-        reason:
-          catalogCard.rules.type === 'instant'
-            ? 'insufficient_resources'
-            : 'wrong_phase',
+        reason: catalogCard.rules.type === 'instant' ? 'insufficient_resources' : 'wrong_phase',
       };
     }
 
     return { playable: false, reason: 'wrong_phase' };
   };
 
-  const handleActivateCard = (
-    instance: CardInstance,
-    catalogCard: CatalogCard,
-  ): void => {
+  const handleActivateCard = (instance: CardInstance, catalogCard: CatalogCard): void => {
     const { playable, reason } = resolveCardPlayability(instance, catalogCard);
 
     if (!playable) {
       const effectiveReason: UnplayableReason = reason ?? 'wrong_phase';
-      const message = buildUnplayableBannerMessage(
-        catalogCard,
-        effectiveReason,
-        view,
-      );
+      const message = buildUnplayableBannerMessage(catalogCard, effectiveReason, view);
       setSelectedHandUid(null);
       setUnplayableBanner({
         uid: instance.uid,
@@ -339,8 +331,7 @@ export function PlayerHand({
       return;
     }
 
-    const nextSelectedUid =
-      selectedHandUid === instance.uid ? null : instance.uid;
+    const nextSelectedUid = selectedHandUid === instance.uid ? null : instance.uid;
     setSelectedHandUid(nextSelectedUid);
     onSelectCard?.(instance, true);
   };
@@ -352,16 +343,12 @@ export function PlayerHand({
     const clampedIndex = (targetIndex + hand.length) % hand.length;
     const slotEl = slotRefs.current[clampedIndex];
     if (slotEl) {
-      const focusableCard =
-        slotEl.querySelector<HTMLElement>('[tabindex="0"]') ?? slotEl;
+      const focusableCard = slotEl.querySelector<HTMLElement>('[tabindex="0"]') ?? slotEl;
       focusableCard.focus();
     }
   };
 
-  const handleSlotKeyNavigation = (
-    event: KeyboardEvent<HTMLDivElement>,
-    index: number,
-  ): void => {
+  const handleSlotKeyNavigation = (event: KeyboardEvent<HTMLDivElement>, index: number): void => {
     if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
       event.preventDefault();
       focusHandSlotAt(index + 1);
@@ -382,15 +369,28 @@ export function PlayerHand({
   };
 
   const selectedInstance =
-    selectedHandUid !== null
-      ? hand.find((c) => c.uid === selectedHandUid) ?? null
-      : null;
-  const selectedCatalogCard =
-    selectedInstance !== null ? getCard(selectedInstance.cardId) : null;
+    selectedHandUid !== null ? (hand.find((c) => c.uid === selectedHandUid) ?? null) : null;
+  const selectedCatalogCard = selectedInstance !== null ? getCard(selectedInstance.cardId) : null;
 
   return (
     <section
-      className="player-hand"
+      className={`player-hand ${view.phase === 'development' ? 'player-hand--retractable' : ''}`}
+      data-expanded={handOpen || active !== null}
+      onFocus={(event) => {
+        if (event.target.matches(':focus-visible')) setHandOpen(true);
+      }}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setHandOpen(false);
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') setHandOpen(false);
+      }}
+      onPointerEnter={(event) => {
+        if (event.pointerType === 'mouse') setHandOpen(true);
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType === 'mouse') setHandOpen(false);
+      }}
       data-testid="player-hand"
       data-hand-count={String(hand.length)}
       aria-label={`La tua mano (${hand.length} su 10 carte)`}
@@ -402,6 +402,25 @@ export function PlayerHand({
         width: '100%',
       }}
     >
+      {view.phase === 'development' && (
+        <button
+          type="button"
+          className="hand-reveal-handle"
+          data-testid="hand-reveal-toggle"
+          aria-expanded={handOpen || active !== null}
+          onClick={(event) => {
+            const mouse =
+              event.detail > 0 && window.matchMedia?.('(hover: hover) and (pointer: fine)').matches;
+            setHandOpen(mouse ? true : !handOpen);
+            setSelectedHandUid(null);
+          }}
+        >
+          <span>
+            La tua mano <strong>{hand.length}</strong>
+          </span>
+          <span>{handOpen ? 'Abbassa' : 'Solleva per giocare'} ↑</span>
+        </button>
+      )}
       {/* Banner di avviso quando viene toccata una carta non giocabile (§9.4 riga 812) */}
       {unplayableBanner !== null && (
         <div
@@ -428,9 +447,7 @@ export function PlayerHand({
             <strong className="font-display" style={{ marginRight: '6px' }}>
               {getCard(unplayableBanner.cardId).text.name}:
             </strong>
-            <span data-testid="unplayable-reason-text">
-              {unplayableBanner.message}
-            </span>
+            <span data-testid="unplayable-reason-text">{unplayableBanner.message}</span>
           </div>
           <button
             type="button"
@@ -475,16 +492,10 @@ export function PlayerHand({
           }}
         >
           <div>
-            <strong className="font-display">
-              {selectedCatalogCard.text.name}
-            </strong>
-            <span style={{ margin: '0 6px', color: 'var(--chalk-muted)' }}>
-              ·
-            </span>
+            <strong className="font-display">{selectedCatalogCard.text.name}</strong>
+            <span style={{ margin: '0 6px', color: 'var(--chalk-muted)' }}>·</span>
             <span>{selectedCatalogCard.text.typeLine}</span>
-            <span style={{ margin: '0 6px', color: 'var(--chalk-muted)' }}>
-              —
-            </span>
+            <span style={{ margin: '0 6px', color: 'var(--chalk-muted)' }}>—</span>
             <span>{selectedCatalogCard.rulesText}</span>
           </div>
 
@@ -529,19 +540,16 @@ export function PlayerHand({
           style={{
             display: 'flex',
             alignItems: 'flex-end',
-            justifyContent: 'center',
-            padding: '14px 8px 4px 8px',
+            justifyContent: 'safe center',
+            padding: '28px 12px 22px',
             overflowX: 'auto',
-            overflowY: 'visible',
+            overflowY: 'hidden',
             minHeight: '142px',
           }}
         >
           {hand.map((instance, idx) => {
             const catalogCard = getCard(instance.cardId);
-            const { playable, reason } = resolveCardPlayability(
-              instance,
-              catalogCard,
-            );
+            const { playable, reason } = resolveCardPlayability(instance, catalogCard);
             const isSelected =
               view.phase === 'prebattle'
                 ? selectedInstantUids.includes(instance.uid)
@@ -558,10 +566,16 @@ export function PlayerHand({
                 selected={isSelected}
                 unplayableReason={reason}
                 enableDrag={enableDrag && view.phase === 'development'}
+                suggested={suggestedCardIds.includes(instance.cardId)}
                 slotRef={(el) => {
                   slotRefs.current[idx] = el;
                 }}
                 onActivate={() => handleActivateCard(instance, catalogCard)}
+                onPlay={
+                  view.phase === 'development' && enableDrag
+                    ? () => onPlayCard?.(instance.uid)
+                    : undefined
+                }
                 onInspect={handleInspect}
                 onKeyNavigate={handleSlotKeyNavigation}
               />

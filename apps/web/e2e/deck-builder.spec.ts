@@ -54,7 +54,9 @@ test('crea un mazzo 3×20, blocca bozze incomplete, salva e usa il mazzo persona
 
   // La bozza non compare tra i mazzi giocabili e sopravvive alla navigazione.
   await page.getByTestId('back-to-home-btn').click();
+  await page.getByTestId('open-bot-setup-btn').click();
   await expect(page.getByTestId('bot-player-deck-select').locator('option')).toHaveCount(3);
+  await page.getByRole('button', { name: 'Chiudi finestra' }).click();
   await page.getByTestId('nav-deck-builder-btn').click();
   await expect(page.getByTestId('deck-name-input')).toHaveValue(expectedDeck.name);
   await page.getByTestId('deck-era-3').click();
@@ -105,17 +107,26 @@ test('crea un mazzo 3×20, blocca bozze incomplete, salva e usa il mazzo persona
 
   // Reload prova la persistenza reale, senza inserire dati nello storage dal test.
   await page.reload();
+  await page.getByTestId('open-bot-setup-btn').click();
   await page.getByTestId('bot-player-deck-select').selectOption(`custom:${exported.id}`);
+  await page.getByRole('button', { name: 'Chiudi finestra' }).click();
+  await page.getByTestId('open-hotseat-setup-btn').click();
   await expect(
     page.getByTestId('hotseat-p1-deck-select').locator(`option[value="custom:${exported.id}"]`),
   ).toContainText(expectedDeck.name);
+  await page.getByRole('button', { name: 'Chiudi finestra' }).click();
   await page.getByTestId('nav-online-lobby-btn').click();
   await page.getByTestId('online-deck-select').selectOption(`custom:${exported.id}`);
   await expect(page.getByTestId('online-deck-select')).toHaveValue(`custom:${exported.id}`);
   await page.getByTestId('back-to-home-btn').click();
+  await page.getByTestId('open-bot-setup-btn').click();
   await page.getByTestId('bot-player-deck-select').selectOption(`custom:${exported.id}`);
+  await page.getByRole('button', { name: 'Chiudi finestra' }).click();
+  await page.getByTestId('open-match-settings-btn').click();
   const seed = 'e2e-m6-custom-deck';
   await page.getByTestId('home-seed-input').fill(seed);
+  await page.getByRole('button', { name: 'Chiudi finestra' }).click();
+  await page.getByTestId('open-bot-setup-btn').click();
   await page.getByTestId('start-bot-match-btn').click();
   const modal = page.getByTestId('mulligan-modal');
   await expect(modal).toBeVisible();

@@ -1,14 +1,6 @@
-import {
-  getCard,
-  getKeywordTooltip,
-  type CatalogCard,
-  type KeywordName,
-} from '@epochs/content';
-import {
-  useEffect,
-  type MouseEvent,
-  type ReactElement,
-} from 'react';
+import { useDialogFocus } from '../modals/use-dialog-focus.js';
+import { getCard, getKeywordTooltip, type CatalogCard, type KeywordName } from '@epochs/content';
+import { useEffect, useRef, type MouseEvent, type ReactElement } from 'react';
 import { ERA_LABELS_IT } from '../icons/DomainIcons.js';
 import { Card } from './Card.js';
 import './card.css';
@@ -36,6 +28,9 @@ export function CardInspectModal({
       : cardId !== undefined && cardId !== null
         ? getCard(cardId)
         : null;
+
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(dialogRef, resolved !== null);
 
   useEffect(() => {
     if (resolved === null) {
@@ -74,6 +69,7 @@ export function CardInspectModal({
       onClick={handleBackdropClick}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
@@ -82,12 +78,7 @@ export function CardInspectModal({
         data-inspected-card-id={resolved.id}
         onClick={handleDialogClick}
       >
-        <Card
-          card={resolved}
-          atkMod={atkMod}
-          demBonus={demBonus}
-          currentHp={currentHp}
-        />
+        <Card card={resolved} atkMod={atkMod} demBonus={demBonus} currentHp={currentHp} />
 
         <div className="epochs-inspect-details">
           <div className="epochs-inspect-header">
@@ -129,10 +120,7 @@ export function CardInspectModal({
               border: '1px solid rgba(233, 229, 214, 0.14)',
             }}
           >
-            <p
-              style={{ margin: '0 0 6px 0', fontSize: '1rem' }}
-              data-testid="inspect-rules-text"
-            >
+            <p style={{ margin: '0 0 6px 0', fontSize: '1rem' }} data-testid="inspect-rules-text">
               {resolved.rulesText}
             </p>
             <p
@@ -162,9 +150,7 @@ export function CardInspectModal({
                   data-keyword={keyword}
                 >
                   <h3 className="epochs-inspect-keyword-title">{keyword}</h3>
-                  <p className="epochs-inspect-keyword-desc">
-                    {getKeywordTooltip(keyword, 'it')}
-                  </p>
+                  <p className="epochs-inspect-keyword-desc">{getKeywordTooltip(keyword, 'it')}</p>
                 </div>
               ))}
             </section>

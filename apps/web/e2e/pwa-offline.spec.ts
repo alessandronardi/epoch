@@ -44,9 +44,10 @@ async function completeOfflineMatch(page: Page, hotSeat: boolean): Promise<void>
         .first();
       // Una giocata per giocatore ed Era, poi Passo: si attraversano tutte le tre Ere.
       if (!played.has(seatAndEra) && (await playable.count()) > 0) {
+        if (await page.getByTestId('player-hand').getAttribute('data-expanded') !== 'true') await page.getByTestId('hand-reveal-toggle').click();
         const uid = (await playable.getAttribute('data-hand-uid'))!;
         await playable.click();
-        await page.getByTestId('play-selected-card-btn').click();
+        await page.getByTestId('hand-preview-play-btn').click();
         await expect(page.getByTestId(`hand-slot-${uid}`)).toHaveCount(0);
         played.add(seatAndEra);
       } else {
@@ -107,8 +108,11 @@ for (const mode of ['GreedyBot', 'Hot-Seat'] as const) {
     expect(response?.fromServiceWorker()).toBe(true);
     expect(await page.evaluate(() => navigator.onLine)).toBe(false);
     await expect(page.getByTestId('home-screen')).toBeVisible();
+    await page.getByTestId('open-match-settings-btn').click();
     await page.getByTestId('home-seed-input').fill('e2e-pwa-offline-three-eras');
+    await page.getByRole('button', { name: 'Chiudi finestra' }).click();
     const hotSeat = mode === 'Hot-Seat';
+    await page.getByTestId(hotSeat ? 'open-hotseat-setup-btn' : 'open-bot-setup-btn').click();
     if (!hotSeat) await page.getByTestId('select-bot-greedy').click();
     await page.getByTestId(hotSeat ? 'start-hotseat-match-btn' : 'start-bot-match-btn').click();
     await expect(page.getByTestId('mulligan-modal')).toBeVisible();

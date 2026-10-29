@@ -1,5 +1,6 @@
 import { KEYWORD_TOOLTIPS_IT, type KeywordName } from '@epochs/content';
 import type { ReactElement } from 'react';
+import './rules.css';
 import {
   EraIcon,
   ResourceIcon,
@@ -59,7 +60,7 @@ export function QuickRulesScreen({
               className="font-display"
               style={{ margin: 0, fontSize: '1.45rem', color: 'var(--brass)' }}
             >
-              Regolamento Rapido — The Epochs (GDD v1.0)
+              Regolamento
             </h1>
             <p
               style={{
@@ -68,8 +69,7 @@ export function QuickRulesScreen({
                 color: 'var(--chalk-muted, #A7B4C2)',
               }}
             >
-              Riferimento normativo su 3 Ere, Raccolto e Rendite, Cap Logistico,
-              4 Fasi di Battaglia e Assedio.
+              Tutto ciò che serve per giocare a The Epochs, dalla preparazione alla vittoria.
             </p>
           </div>
 
@@ -94,6 +94,52 @@ export function QuickRulesScreen({
             </button>
           )}
         </header>
+
+        <nav aria-label="Indice del regolamento" className="rules-index">
+          <a href="#rules-sec-settings">Impostazioni partita</a>
+          <a href="#rules-sec-eras">Preparazione</a>
+          <a href="#rules-sec-economy">Economia</a>
+          <a href="#rules-sec-development">Sviluppo</a>
+          <a href="#rules-sec-battle">Battaglia</a>
+          <a href="#rules-sec-siege">Assedio e vittoria</a>
+          <a href="#rules-sec-keywords">Glossario</a>
+        </nav>
+
+        <section
+          aria-labelledby="rules-sec-settings"
+          data-testid="rules-section-settings"
+          style={{
+            padding: '16px 20px',
+            borderRadius: '10px',
+            backgroundColor: 'rgba(20, 30, 39, 0.88)',
+            border: '1px solid rgba(181, 142, 72, 0.4)',
+            lineHeight: 1.55,
+          }}
+        >
+          <h2 id="rules-sec-settings" className="font-display" style={{ margin: '0 0 10px', fontSize: '1.2rem', color: 'var(--brass, #B58E48)' }}>
+            Impostazioni partita nella home
+          </h2>
+          <p>
+            Apri <strong>Impostazioni partita</strong> nella home per modificare il
+            <strong> seed</strong>, una parola o sequenza di caratteri che determina
+            le scelte casuali iniziali, come l&apos;iniziativa e il mescolamento dei mazzi.
+            Chiudi la finestra: il valore inserito viene usato quando avvii una
+            partita contro il bot o una partita locale Hot-Seat.
+          </p>
+          <p>
+            Con lo stesso seed e gli stessi mazzi si ottiene la stessa preparazione
+            iniziale; per riprodurre anche lo svolgimento servono le stesse scelte
+            durante la partita. Cambiare seed permette di ottenere una preparazione diversa.
+            Il valore iniziale è <code>epochs-cartographer-seed-1</code>. Se lasci
+            il campo vuoto, il gioco usa un valore predefinito per la modalità scelta.
+          </p>
+          <p style={{ marginBottom: 0 }}>
+            Il valore resta disponibile mentre sei nella home, ma torna a quello
+            iniziale quando esci dalla home e vi ritorni. Una rivincita genera un
+            seed diverso a partire da quello della partita precedente. Il campo
+            non imposta il seed delle partite online.
+          </p>
+        </section>
 
         {/* Sezione 1: Le 3 Ere, Mazzi, Pesca, Limite di Mano e Iniziativa */}
         <section
@@ -126,6 +172,13 @@ export function QuickRulesScreen({
           </h2>
           <ul style={{ margin: 0, paddingLeft: '20px', display: 'grid', gap: '6px' }}>
             <li>
+              <strong>Obiettivo e preparazione:</strong> due giocatori si sfidano
+              in tre Ere. Ciascuno inizia con 6 HP alle Mura e 10 HP al Centro
+              Città, senza edifici o unità in campo. Porta il Centro Città
+              avversario a 0 HP per vincere subito, oppure termina la terza Era
+              con più HP al tuo Centro Città.
+            </li>
+            <li>
               <strong>Composizione del Mazzo:</strong> 60 carte totali divise in
               3 sotto-mazzi da <strong>20 carte per Era</strong> (Era I, Era II,
               Era III), con massimo <strong>3 copie</strong> per singola carta.
@@ -138,14 +191,15 @@ export function QuickRulesScreen({
               <em>Mulligan</em> simultaneo (pescando prima le carte sostitutive
               dalla cima e riponendo quelle scartate in fondo). All&apos;inizio
               di Era II ed Era III si pescano <strong>5 carte</strong> dal
-              rispettivo sotto-mazzo.
+              rispettivo sotto-mazzo. Non si pesca a ogni ciclo.
             </li>
             <li>
               <strong>Limite di Mano (10 carte):</strong> se dopo la pesca d&apos;apertura
               la mano supera <strong>10 carte</strong>, il giocatore scarta fino a
-              riportarla a 10 prima del Ciclo 1 (politica automatica FIFO: Era
-              inferiore → costo totale inferiore → ordine di pesca{' '}
-              <code>drawnOrder</code>).
+              riportarla a 10 prima del Ciclo 1 scegliendo le carte da scartare.
+              Per IA e in caso di timeout o disconnessione lo scarto è automatico:
+              prima le carte di Era inferiore, poi quelle di costo totale inferiore
+              e, a parità, quelle pescate prima.
             </li>
             <li>
               <strong>Iniziativa:</strong> P1 agisce per primo in{' '}
@@ -251,7 +305,9 @@ export function QuickRulesScreen({
               <strong>Una sola azione per opportunità:</strong> ad ogni turno di
               un ciclo il giocatore deve giocare <strong>al massimo 1 carta</strong>{' '}
               dalla mano oppure dichiarare <strong>Passo</strong> (irrevocabile
-              per il resto dell&apos;Era).
+              per il resto dell&apos;Era). Se non ha carte giocabili deve passare;
+              chi ha passato viene saltato, ma riceve comunque le rendite finché
+              l&apos;avversario continua a giocare.
             </li>
             <li>
               <strong>Schieramento coperto e bluff economico:</strong> durante la
@@ -262,7 +318,7 @@ export function QuickRulesScreen({
             </li>
             <li>
               <strong>Riconversioni (Era III, 0 Slot):</strong> richiedono il
-              sacrificio di 1 proprio Edificio Economico attivo:{' '}
+              pagamento del costo e il sacrificio di 1 proprio Edificio Economico attivo:{' '}
               <em>Gilda dei Mercanti</em> accredita{' '}
               <code>+1 Cibo, +1 Legno, +1 Metallo</code> per ogni tuo edificio
               attivo pre-sacrificio; <em>Altoforno Reale</em> accredita{' '}
@@ -308,6 +364,14 @@ export function QuickRulesScreen({
               risorse diventano pubblici. I giocatori scelgono segretamente 0 o
               più carte <strong>Istantanee (0 Slot)</strong>; i bonus ad ATK e
               Mura si applicano simultaneamente.
+            </li>
+            <li>
+              <strong>Come si risolvono i danni:</strong> in ogni fase i due lati
+              calcolano gli attacchi dalle unità vive all&apos;inizio della fase e
+              infliggono i danni simultaneamente. Il danno in eccesso passa al
+              bersaglio successivo; le unità a 0 HP vengono rimosse prima della
+              fase seguente. ATK indica l&apos;attacco, HP la resistenza e DEM la
+              demolizione contro le strutture.
             </li>
             <li>
               <strong>Guardia Pre-Fase e Bersagli FIFO:</strong> prima di Fase 1,
@@ -395,8 +459,9 @@ export function QuickRulesScreen({
               a <code>&lt;= 0 HP</code>, l&apos;attaccante vince immediatamente
               per <strong>Annientamento</strong>. Altrimenti, se c&apos;è stata
               Breccia, razzia fino a <strong>1 Cibo</strong> e{' '}
-              <strong>1 Legno</strong> dal magazzino nemico (il Metallo non è
-              razziabile).
+              <strong>1 Legno</strong> dal magazzino nemico, nei limiti delle
+              risorse disponibili e dello spazio nel proprio magazzino (il Metallo
+              non è razziabile).
             </li>
             <li>
               <strong>Transizione di Fine Era (I → II → III):</strong> tutte le

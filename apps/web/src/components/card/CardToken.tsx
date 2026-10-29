@@ -1,11 +1,6 @@
+import { useBoardCardInspection } from './BoardCardInspection.js';
 import type { CatalogCard } from '@epochs/content';
-import {
-  useEffect,
-  useRef,
-  type KeyboardEvent,
-  type MouseEvent,
-  type ReactElement,
-} from 'react';
+import { useEffect, useRef, type KeyboardEvent, type MouseEvent, type ReactElement } from 'react';
 import {
   LINE_LABELS_IT,
   LineIcon,
@@ -14,11 +9,7 @@ import {
   UNIT_CATEGORY_LABELS_IT,
   UnitCategoryIcon,
 } from '../icons/DomainIcons.js';
-import {
-  getCardPlaceholderUrl,
-  LONG_PRESS_MS,
-  resolveCatalogCard,
-} from './Card.js';
+import { getCardPlaceholderUrl, LONG_PRESS_MS, resolveCatalogCard } from './Card.js';
 import './card.css';
 
 export interface CardTokenProps {
@@ -45,6 +36,12 @@ export function CardToken({
   const resolved = resolveCatalogCard(cardId, card);
   const { rules, text, art } = resolved;
 
+  const inspection = useBoardCardInspection(
+    { cardId: resolved.id, atkMod, demBonus, currentHp },
+    onInspect,
+  );
+  const inspect = inspection?.inspect ?? onInspect;
+
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longPressTriggeredRef = useRef(false);
 
@@ -65,13 +62,13 @@ export function CardToken({
 
   const handlePointerDown = (): void => {
     longPressTriggeredRef.current = false;
-    if (!onInspect) {
+    if (!inspect) {
       return;
     }
     clearLongPress();
     longPressTimerRef.current = setTimeout(() => {
       longPressTriggeredRef.current = true;
-      onInspect(resolved.id);
+      inspect(resolved.id);
     }, LONG_PRESS_MS);
   };
 
@@ -91,19 +88,16 @@ export function CardToken({
   const handleDoubleClick = (event: MouseEvent<HTMLElement>): void => {
     event.stopPropagation();
     clearLongPress();
-    onInspect?.(resolved.id);
+    inspect?.(resolved.id);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       onSelect?.(resolved.id);
-    } else if (
-      (event.key === 'i' || event.key === 'I' || event.key === 'ContextMenu') &&
-      onInspect
-    ) {
+    } else if ((event.key === 'i' || event.key === 'I' || event.key === 'ContextMenu') && inspect) {
       event.preventDefault();
-      onInspect(resolved.id);
+      inspect(resolved.id);
     }
   };
 
@@ -121,6 +115,7 @@ export function CardToken({
 
   return (
     <div
+      ref={inspection?.ref}
       role="button"
       tabIndex={0}
       className={`epochs-card-token touch-target ${className ?? ''}`.trim()}
@@ -128,20 +123,25 @@ export function CardToken({
       data-card-id={resolved.id}
       data-era={String(rules.era)}
       aria-label={`${text.name} (Token): ATK ${effectiveAtk}, DEM ${effectiveDem}, HP ${effectiveHp}`}
-      onPointerDown={handlePointerDown}
+      onPointerEnter={inspection?.onPointerEnter}
+      onFocus={inspection?.onFocus}
+      onBlur={inspection?.onBlur}
+      onPointerDown={(event) => {
+        inspection?.onPointerDown(event);
+        handlePointerDown();
+      }}
       onPointerUp={handlePointerUpOrLeave}
-      onPointerLeave={handlePointerUpOrLeave}
+      onPointerLeave={(event) => {
+        handlePointerUpOrLeave();
+        inspection?.onPointerLeave(event);
+      }}
       onPointerCancel={handlePointerUpOrLeave}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
       onKeyDown={handleKeyDown}
     >
       <div className="epochs-card-token__thumb">
-        <img
-          src={getCardPlaceholderUrl(resolved.id)}
-          alt={art.alt.it}
-          loading="lazy"
-        />
+        <img src={getCardPlaceholderUrl(resolved.id)} alt={art.alt.it} loading="lazy" />
       </div>
       <div className="epochs-card-token__body">
         <div className="epochs-card-token__header">
@@ -155,11 +155,7 @@ export function CardToken({
               />
             )}
             {rules.line !== undefined && (
-              <LineIcon
-                line={rules.line}
-                size={13}
-                label={LINE_LABELS_IT[rules.line]}
-              />
+              <LineIcon line={rules.line} size={13} label={LINE_LABELS_IT[rules.line]} />
             )}
           </span>
         </div>
