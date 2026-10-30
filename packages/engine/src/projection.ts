@@ -34,10 +34,7 @@ export function isPublicBattleStage(state: Readonly<GameState>): boolean {
  * Proietta lo stato canonico `GameState` nella vista filtrata `PlayerView` per `viewer`,
  * oscurando tutte le informazioni nascoste dell'avversario secondo la Matrice §5.3 e la Decisione `D3`.
  */
-export function playerView(
-  state: Readonly<GameState>,
-  viewer: PlayerId,
-): PlayerView {
+export function playerView(state: Readonly<GameState>, viewer: PlayerId): PlayerView {
   const opponentId = getOpponent(viewer);
   const selfState = state.players[viewer];
   const oppState = state.players[opponentId];
@@ -60,8 +57,7 @@ export function playerView(
     : null;
 
   const opponentCoveredCount = revealedStage
-    ? oppState.buildings.length +
-      oppState.units.filter((u) => !u.revealed).length
+    ? oppState.buildings.length + oppState.units.filter((u) => !u.revealed).length
     : oppState.units.length + oppState.buildings.length;
 
   return {
@@ -124,10 +120,7 @@ export function playerView(
  * oppure `null` se `viewer` non deve ricevere alcuna notifica per quell'evento interno
  * (TECH-SPEC §5.4, Decisione `D3`).
  */
-export function projectEvent(
-  event: GameEvent,
-  viewer: PlayerId,
-): GameEvent | null {
+export function projectEvent(event: GameEvent, viewer: PlayerId): GameEvent | null {
   switch (event.type) {
     case 'GameStarted':
     case 'InitiativeAssigned':
@@ -135,7 +128,6 @@ export function projectEvent(
     case 'CycleStarted':
     case 'PlayerPassed':
     case 'DevelopmentEnded':
-    case 'BattleStarted':
     case 'BattleOutcome':
     case 'SiegeResolved':
     case 'RaidResolved':
@@ -143,6 +135,7 @@ export function projectEvent(
       return { ...event };
 
     case 'EraStarted':
+    case 'BattleStarted':
     case 'UnitsRevealed':
     case 'InstantsRevealed':
     case 'WallsModified':
@@ -186,21 +179,13 @@ export function projectEvent(
       };
 
     case 'ResourcesChanged':
-      if (
-        event.player === viewer ||
-        event.reason === 'conversion' ||
-        event.reason === 'raid'
-      ) {
+      if (event.player === viewer || event.reason === 'conversion' || event.reason === 'raid') {
         return structuredClone(event);
       }
       return null;
 
     case 'ResourcesOverflowed':
-      if (
-        event.player === viewer ||
-        event.reason === 'conversion' ||
-        event.reason === 'raid'
-      ) {
+      if (event.player === viewer || event.reason === 'conversion' || event.reason === 'raid') {
         return structuredClone(event);
       }
       return null;

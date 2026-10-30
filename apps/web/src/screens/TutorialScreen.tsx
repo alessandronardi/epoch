@@ -60,7 +60,7 @@ function GuidedTutorialMatch({
   const cues = MATCH_EXERCISE_CUES[moduleId];
   const cuesRef = useRef(cues);
   cuesRef.current = cues;
-  const view = useGameStore((state) => state.view);
+  const view = useGameStore((state) => state.presentationView ?? state.view);
   const busy = useGameStore((state) => state.isPlaying);
   const cue = cues[cueIndex]!;
   const completed = cueIndex === cues.length - 1;

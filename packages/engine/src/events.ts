@@ -10,32 +10,15 @@ import type {
   UnitInstance,
 } from './types.js';
 
-export type ResourceChangeReason =
-  | 'initial'
-  | 'harvest'
-  | 'rent'
-  | 'cost'
-  | 'conversion'
-  | 'raid';
+export type ResourceChangeReason = 'initial' | 'harvest' | 'rent' | 'cost' | 'conversion' | 'raid';
 
-export type ResourceOverflowReason =
-  | 'harvest'
-  | 'rent'
-  | 'conversion'
-  | 'raid';
+export type ResourceOverflowReason = 'harvest' | 'rent' | 'conversion' | 'raid';
 
 export type PassReason = 'chosen' | 'no_legal_play' | 'timeout';
 
-export type BattlePhaseId =
-  | 'phase1_volley'
-  | 'phase2a_impale'
-  | 'phase2b_impact'
-  | 'phase3_melee';
+export type BattlePhaseId = 'phase1_volley' | 'phase2a_impale' | 'phase2b_impact' | 'phase3_melee';
 
-export type BattleOutcomeKind =
-  | 'winner'
-  | 'mutual_annihilation'
-  | 'stalemate';
+export type BattleOutcomeKind = 'winner' | 'mutual_annihilation' | 'stalemate';
 
 export interface DamageAssignment {
   uid: string;
@@ -194,6 +177,17 @@ export interface BattleStartedEvent {
   n: number;
   type: 'BattleStarted';
   era: EraNo;
+  /** Public snapshot after instant modifiers. Optional when reading older replays. */
+  units?: Record<PlayerId, UnitInstance[]>;
+}
+
+export interface BattleContribution {
+  uid: string;
+  cardId: string;
+  baseDamage: number;
+  bonus: number;
+  totalDamage: number;
+  rule?: 'volley' | 'impale' | 'impact' | 'flank' | 'melee' | 'archer_melee';
 }
 
 export interface BattlePhaseResolvedEvent {
@@ -203,8 +197,12 @@ export interface BattlePhaseResolvedEvent {
   phase: BattlePhaseId;
   meleeCycle?: number;
   damageDealt: Record<PlayerId, number>;
+  /** Keyed by attacker: assignments.P1 contains targets owned by P2. */
   assignments: Record<PlayerId, DamageAssignment[]>;
+  /** Keyed by owner, unlike assignments. */
   casualties: Record<PlayerId, string[]>;
+  /** Engine-calculated contributions; absent in older replays. */
+  contributions?: Record<PlayerId, BattleContribution[]>;
 }
 
 export interface BattleOutcomeEvent {

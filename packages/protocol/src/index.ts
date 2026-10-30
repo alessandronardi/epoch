@@ -121,7 +121,8 @@ export const ERROR_CODE_DESCRIPTIONS_IT: Readonly<Record<ErrorCode, string>> = {
   NO_LOGISTICS_SLOT: 'Nessuno slot logistico disponibile in questa Era.',
   NO_BUILDING_TO_SACRIFICE: 'Edificio da sacrificare non valido o assente.',
   INVALID_DISCARD_COUNT: 'Il numero di carte selezionate per lo scarto non è valido.',
-  INVALID_DECK: 'Il mazzo selezionato non rispetta i requisiti regolamentari (3x20 carte, max 3 copie).',
+  INVALID_DECK:
+    'Il mazzo selezionato non rispetta i requisiti regolamentari (3x20 carte, max 3 copie).',
   INTERNAL_ERROR: 'Errore interno o messaggio di protocollo non valido.',
 };
 
@@ -137,11 +138,7 @@ export const NonEmptyIdSchema = z.string().trim().min(1).max(128);
 
 export const PlayerIdSchema: z.ZodType<PlayerId> = z.enum(['P1', 'P2']);
 
-export const EraNoSchema: z.ZodType<EraNo> = z.union([
-  z.literal(1),
-  z.literal(2),
-  z.literal(3),
-]);
+export const EraNoSchema: z.ZodType<EraNo> = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 
 export const LineSchema: z.ZodType<Line> = z.enum(['front', 'center', 'rear']);
 
@@ -229,30 +226,25 @@ function hasUniqueItems(items: readonly string[]): boolean {
   return new Set(items).size === items.length;
 }
 
-const UniqueCardUidsArraySchema = z
-  .array(NonEmptyIdSchema)
-  .max(15)
-  .refine(hasUniqueItems, {
-    message: 'cardUids non può contenere UID duplicati.',
-  });
+const UniqueCardUidsArraySchema = z.array(NonEmptyIdSchema).max(15).refine(hasUniqueItems, {
+  message: 'cardUids non può contenere UID duplicati.',
+});
 
-export const SubmitMulliganClientCommandSchema: z.ZodType<SubmitMulliganClientCommand> =
-  z
-    .object({
-      type: z.literal('SubmitMulligan'),
-      cardUids: UniqueCardUidsArraySchema.refine((arr) => arr.length <= 8, {
-        message: 'SubmitMulligan accetta al massimo 8 carte.',
-      }),
-    })
-    .strict();
+export const SubmitMulliganClientCommandSchema: z.ZodType<SubmitMulliganClientCommand> = z
+  .object({
+    type: z.literal('SubmitMulligan'),
+    cardUids: UniqueCardUidsArraySchema.refine((arr) => arr.length <= 8, {
+      message: 'SubmitMulligan accetta al massimo 8 carte.',
+    }),
+  })
+  .strict();
 
-export const SubmitDiscardClientCommandSchema: z.ZodType<SubmitDiscardClientCommand> =
-  z
-    .object({
-      type: z.literal('SubmitDiscard'),
-      cardUids: UniqueCardUidsArraySchema,
-    })
-    .strict();
+export const SubmitDiscardClientCommandSchema: z.ZodType<SubmitDiscardClientCommand> = z
+  .object({
+    type: z.literal('SubmitDiscard'),
+    cardUids: UniqueCardUidsArraySchema,
+  })
+  .strict();
 
 export const PlayCardClientCommandSchema: z.ZodType<PlayCardClientCommand> = z
   .object({
@@ -261,14 +253,13 @@ export const PlayCardClientCommandSchema: z.ZodType<PlayCardClientCommand> = z
   })
   .strict();
 
-export const PlayConversionClientCommandSchema: z.ZodType<PlayConversionClientCommand> =
-  z
-    .object({
-      type: z.literal('PlayConversion'),
-      cardUid: NonEmptyIdSchema,
-      sacrificeUid: NonEmptyIdSchema,
-    })
-    .strict();
+export const PlayConversionClientCommandSchema: z.ZodType<PlayConversionClientCommand> = z
+  .object({
+    type: z.literal('PlayConversion'),
+    cardUid: NonEmptyIdSchema,
+    sacrificeUid: NonEmptyIdSchema,
+  })
+  .strict();
 
 export const PassClientCommandSchema: z.ZodType<PassClientCommand> = z
   .object({
@@ -276,20 +267,18 @@ export const PassClientCommandSchema: z.ZodType<PassClientCommand> = z
   })
   .strict();
 
-export const LockInstantsClientCommandSchema: z.ZodType<LockInstantsClientCommand> =
-  z
-    .object({
-      type: z.literal('LockInstants'),
-      cardUids: UniqueCardUidsArraySchema,
-    })
-    .strict();
+export const LockInstantsClientCommandSchema: z.ZodType<LockInstantsClientCommand> = z
+  .object({
+    type: z.literal('LockInstants'),
+    cardUids: UniqueCardUidsArraySchema,
+  })
+  .strict();
 
-export const ApplyTimeoutClientCommandSchema: z.ZodType<ApplyTimeoutClientCommand> =
-  z
-    .object({
-      type: z.literal('ApplyTimeout'),
-    })
-    .strict();
+export const ApplyTimeoutClientCommandSchema: z.ZodType<ApplyTimeoutClientCommand> = z
+  .object({
+    type: z.literal('ApplyTimeout'),
+  })
+  .strict();
 
 export const ConcedeClientCommandSchema: z.ZodType<ConcedeClientCommand> = z
   .object({
@@ -297,41 +286,38 @@ export const ConcedeClientCommandSchema: z.ZodType<ConcedeClientCommand> = z
   })
   .strict();
 
-export const ClientCommandSchema: z.ZodType<ClientCommand> = z.discriminatedUnion(
-  'type',
-  [
-    SubmitMulliganClientCommandSchema as z.ZodObject<{
-      type: z.ZodLiteral<'SubmitMulligan'>;
-      cardUids: z.ZodType<string[]>;
-    }>,
-    SubmitDiscardClientCommandSchema as z.ZodObject<{
-      type: z.ZodLiteral<'SubmitDiscard'>;
-      cardUids: z.ZodType<string[]>;
-    }>,
-    PlayCardClientCommandSchema as z.ZodObject<{
-      type: z.ZodLiteral<'PlayCard'>;
-      cardUid: z.ZodType<string>;
-    }>,
-    PlayConversionClientCommandSchema as z.ZodObject<{
-      type: z.ZodLiteral<'PlayConversion'>;
-      cardUid: z.ZodType<string>;
-      sacrificeUid: z.ZodType<string>;
-    }>,
-    PassClientCommandSchema as z.ZodObject<{
-      type: z.ZodLiteral<'Pass'>;
-    }>,
-    LockInstantsClientCommandSchema as z.ZodObject<{
-      type: z.ZodLiteral<'LockInstants'>;
-      cardUids: z.ZodType<string[]>;
-    }>,
-    ApplyTimeoutClientCommandSchema as z.ZodObject<{
-      type: z.ZodLiteral<'ApplyTimeout'>;
-    }>,
-    ConcedeClientCommandSchema as z.ZodObject<{
-      type: z.ZodLiteral<'Concede'>;
-    }>,
-  ],
-);
+export const ClientCommandSchema: z.ZodType<ClientCommand> = z.discriminatedUnion('type', [
+  SubmitMulliganClientCommandSchema as z.ZodObject<{
+    type: z.ZodLiteral<'SubmitMulligan'>;
+    cardUids: z.ZodType<string[]>;
+  }>,
+  SubmitDiscardClientCommandSchema as z.ZodObject<{
+    type: z.ZodLiteral<'SubmitDiscard'>;
+    cardUids: z.ZodType<string[]>;
+  }>,
+  PlayCardClientCommandSchema as z.ZodObject<{
+    type: z.ZodLiteral<'PlayCard'>;
+    cardUid: z.ZodType<string>;
+  }>,
+  PlayConversionClientCommandSchema as z.ZodObject<{
+    type: z.ZodLiteral<'PlayConversion'>;
+    cardUid: z.ZodType<string>;
+    sacrificeUid: z.ZodType<string>;
+  }>,
+  PassClientCommandSchema as z.ZodObject<{
+    type: z.ZodLiteral<'Pass'>;
+  }>,
+  LockInstantsClientCommandSchema as z.ZodObject<{
+    type: z.ZodLiteral<'LockInstants'>;
+    cardUids: z.ZodType<string[]>;
+  }>,
+  ApplyTimeoutClientCommandSchema as z.ZodObject<{
+    type: z.ZodLiteral<'ApplyTimeout'>;
+  }>,
+  ConcedeClientCommandSchema as z.ZodObject<{
+    type: z.ZodLiteral<'Concede'>;
+  }>,
+]);
 
 // ============================================================================
 // 4. Schemi PlayerView e GameEvent per messaggi Server -> Client
@@ -476,8 +462,12 @@ export const ResourceChangeReasonSchema: z.ZodType<ResourceChangeReason> = z.enu
   'raid',
 ]);
 
-export const ResourceOverflowReasonSchema: z.ZodType<ResourceOverflowReason> =
-  z.enum(['harvest', 'rent', 'conversion', 'raid']);
+export const ResourceOverflowReasonSchema: z.ZodType<ResourceOverflowReason> = z.enum([
+  'harvest',
+  'rent',
+  'conversion',
+  'raid',
+]);
 
 export const PassReasonSchema: z.ZodType<PassReason> = z.enum([
   'chosen',
@@ -676,12 +666,8 @@ export const GameEventSchema: z.ZodType<GameEvent> = z.discriminatedUnion('type'
       era: EraNoSchema,
       played: z
         .object({
-          P1: z.array(
-            z.object({ uid: NonEmptyIdSchema, cardId: NonEmptyIdSchema }).strict(),
-          ),
-          P2: z.array(
-            z.object({ uid: NonEmptyIdSchema, cardId: NonEmptyIdSchema }).strict(),
-          ),
+          P1: z.array(z.object({ uid: NonEmptyIdSchema, cardId: NonEmptyIdSchema }).strict()),
+          P2: z.array(z.object({ uid: NonEmptyIdSchema, cardId: NonEmptyIdSchema }).strict()),
         })
         .strict(),
     })
@@ -702,6 +688,10 @@ export const GameEventSchema: z.ZodType<GameEvent> = z.discriminatedUnion('type'
       n: z.number().int().min(1),
       type: z.literal('BattleStarted'),
       era: EraNoSchema,
+      units: z
+        .object({ P1: z.array(UnitInstanceSchema), P2: z.array(UnitInstanceSchema) })
+        .strict()
+        .optional(),
     })
     .strict(),
   z
@@ -711,6 +701,39 @@ export const GameEventSchema: z.ZodType<GameEvent> = z.discriminatedUnion('type'
       era: EraNoSchema,
       phase: BattlePhaseIdSchema,
       meleeCycle: z.number().int().min(1).max(6).optional(),
+      contributions: z
+        .object({
+          P1: z.array(
+            z
+              .object({
+                uid: NonEmptyIdSchema,
+                cardId: NonEmptyIdSchema,
+                baseDamage: z.number(),
+                bonus: z.number(),
+                totalDamage: z.number(),
+                rule: z
+                  .enum(['volley', 'impale', 'impact', 'flank', 'melee', 'archer_melee'])
+                  .optional(),
+              })
+              .strict(),
+          ),
+          P2: z.array(
+            z
+              .object({
+                uid: NonEmptyIdSchema,
+                cardId: NonEmptyIdSchema,
+                baseDamage: z.number(),
+                bonus: z.number(),
+                totalDamage: z.number(),
+                rule: z
+                  .enum(['volley', 'impale', 'impact', 'flank', 'melee', 'archer_melee'])
+                  .optional(),
+              })
+              .strict(),
+          ),
+        })
+        .strict()
+        .optional(),
       damageDealt: PlayerNumberMapSchema,
       assignments: z
         .object({
@@ -948,22 +971,17 @@ export const GameResyncMessageSchema: z.ZodType<GameResyncMessage> = z
   .strict();
 
 export type ClientToServerMessage =
-  | HelloMessage
-  | QueueJoinMessage
-  | RoomCreateMessage
-  | GameCommandMessage
-  | GameResyncMessage;
+  HelloMessage | QueueJoinMessage | RoomCreateMessage | GameCommandMessage | GameResyncMessage;
 
 export type ClientMessage = ClientToServerMessage;
 
-export const ClientToServerMessageSchema: z.ZodType<ClientToServerMessage> = z
-  .union([
-    HelloMessageSchema,
-    QueueJoinMessageSchema,
-    RoomCreateMessageSchema,
-    GameCommandMessageSchema,
-    GameResyncMessageSchema,
-  ]);
+export const ClientToServerMessageSchema: z.ZodType<ClientToServerMessage> = z.union([
+  HelloMessageSchema,
+  QueueJoinMessageSchema,
+  RoomCreateMessageSchema,
+  GameCommandMessageSchema,
+  GameResyncMessageSchema,
+]);
 
 export const ClientMessageSchema = ClientToServerMessageSchema;
 
@@ -1211,17 +1229,16 @@ export type ServerToClientMessage =
 
 export type ServerMessage = ServerToClientMessage;
 
-export const ServerToClientMessageSchema: z.ZodType<ServerToClientMessage> = z
-  .union([
-    WelcomeMessageSchema,
-    RoomCreatedMessageSchema,
-    MatchFoundMessageSchema,
-    GameSnapshotMessageSchema,
-    GameEventsMessageSchema,
-    GameErrorMessageSchema,
-    GameDeadlineMessageSchema,
-    GameEndedMessageSchema,
-  ]);
+export const ServerToClientMessageSchema: z.ZodType<ServerToClientMessage> = z.union([
+  WelcomeMessageSchema,
+  RoomCreatedMessageSchema,
+  MatchFoundMessageSchema,
+  GameSnapshotMessageSchema,
+  GameEventsMessageSchema,
+  GameErrorMessageSchema,
+  GameDeadlineMessageSchema,
+  GameEndedMessageSchema,
+]);
 
 export const ServerMessageSchema = ServerToClientMessageSchema;
 
@@ -1230,11 +1247,7 @@ export const ServerMessageSchema = ServerToClientMessageSchema;
 // ============================================================================
 
 export type ReplayPerspective = 'P1' | 'P2' | 'public';
-export const ReplayPerspectiveSchema: z.ZodType<ReplayPerspective> = z.enum([
-  'P1',
-  'P2',
-  'public',
-]);
+export const ReplayPerspectiveSchema: z.ZodType<ReplayPerspective> = z.enum(['P1', 'P2', 'public']);
 
 export interface ReplayStep {
   idx: number;
@@ -1325,10 +1338,7 @@ export function parseClientMessage(
     } catch {
       return {
         ok: false,
-        error: createGameErrorMessage(
-          'INTERNAL_ERROR',
-          'Payload JSON WebSocket malformato.',
-        ),
+        error: createGameErrorMessage('INTERNAL_ERROR', 'Payload JSON WebSocket malformato.'),
       };
     }
   }
@@ -1362,20 +1372,14 @@ export function parseClientMessage(
         : undefined;
     return {
       ok: false,
-      error: createGameErrorMessage(
-        'INTERNAL_ERROR',
-        result.error.message,
-        commandId,
-      ),
+      error: createGameErrorMessage('INTERNAL_ERROR', result.error.message, commandId),
     };
   }
 
   return { ok: true, value: result.data };
 }
 
-export function parseServerMessage(
-  raw: string | unknown,
-): Result<ServerToClientMessage, string> {
+export function parseServerMessage(raw: string | unknown): Result<ServerToClientMessage, string> {
   let parsedJson: unknown = raw;
   if (typeof raw === 'string') {
     try {

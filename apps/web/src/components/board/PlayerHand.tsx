@@ -162,7 +162,7 @@ function DraggableHandSlot({
     transform: dragTransform ?? fanTransform,
     zIndex: isDragging ? 45 : selected ? 30 : index + 1,
     opacity: isDragging ? 0.55 : 1,
-    width: 'clamp(104px, 11vw, 148px)',
+    width: 'clamp(128px, 12vw, 184px)',
     minWidth: 'var(--touch-target-min, 44px)',
     minHeight: 'var(--touch-target-min, 44px)',
     marginLeft: index === 0 ? '0px' : 'clamp(-18px, -1.2vw, -6px)',
@@ -225,7 +225,7 @@ export function PlayerHand({
   onInspectCard,
   onDismissBanner,
 }: PlayerHandProps): ReactElement {
-  const storeView = useGameStore((s) => s.view);
+  const storeView = useGameStore((s) => s.presentationView ?? s.view);
   const storeSelectedHandUid = useGameStore((s) => s.selectedHandUid);
   const storeSelectedInstantUids = useGameStore((s) => s.selectedInstantUids);
   const storeUnplayableBanner = useGameStore((s) => s.unplayableBanner);
@@ -376,9 +376,11 @@ export function PlayerHand({
     <section
       className={`player-hand ${view.phase === 'development' ? 'player-hand--retractable' : ''}`}
       data-expanded={handOpen || active !== null}
-      onFocus={(event) => {
-        if (event.target.matches(':focus-visible')) setHandOpen(true);
+      tabIndex={-1}
+      onPointerDown={(event) => {
+        if (event.pointerType === 'touch' || event.pointerType === 'pen') setHandOpen(true);
       }}
+      onFocus={() => setHandOpen(true)}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setHandOpen(false);
       }}
@@ -402,25 +404,6 @@ export function PlayerHand({
         width: '100%',
       }}
     >
-      {view.phase === 'development' && (
-        <button
-          type="button"
-          className="hand-reveal-handle"
-          data-testid="hand-reveal-toggle"
-          aria-expanded={handOpen || active !== null}
-          onClick={(event) => {
-            const mouse =
-              event.detail > 0 && window.matchMedia?.('(hover: hover) and (pointer: fine)').matches;
-            setHandOpen(mouse ? true : !handOpen);
-            setSelectedHandUid(null);
-          }}
-        >
-          <span>
-            La tua mano <strong>{hand.length}</strong>
-          </span>
-          <span>{handOpen ? 'Abbassa' : 'Solleva per giocare'} ↑</span>
-        </button>
-      )}
       {/* Banner di avviso quando viene toccata una carta non giocabile (§9.4 riga 812) */}
       {unplayableBanner !== null && (
         <div

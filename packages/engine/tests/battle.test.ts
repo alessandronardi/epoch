@@ -13,27 +13,15 @@ import {
 } from '../src/battle.js';
 import type { GameEvent } from '../src/events.js';
 import { createGame } from '../src/setup.js';
-import type {
-  CardRules,
-  EraNo,
-  GameState,
-  PlayerId,
-  UnitInstance,
-} from '../src/types.js';
+import type { CardRules, EraNo, GameState, PlayerId, UnitInstance } from '../src/types.js';
 import cardsRulesJson from '../../../data/cards.rules.json' with { type: 'json' };
 
 const catalog = cardsRulesJson as unknown as Record<string, CardRules>;
 
 function buildFixedDecks(): Record<PlayerId, Record<EraNo, string[]>> {
-  const era1 = Array.from({ length: 20 }, (_, i) =>
-    i % 2 === 0 ? 'e1_farm' : 'u1_inf_l',
-  );
-  const era2 = Array.from({ length: 20 }, (_, i) =>
-    i % 2 === 0 ? 'e2_mill' : 'u2_inf_l',
-  );
-  const era3 = Array.from({ length: 20 }, (_, i) =>
-    i % 2 === 0 ? 'e3_gld' : 'u3_inf_l',
-  );
+  const era1 = Array.from({ length: 20 }, (_, i) => (i % 2 === 0 ? 'e1_farm' : 'u1_inf_l'));
+  const era2 = Array.from({ length: 20 }, (_, i) => (i % 2 === 0 ? 'e2_mill' : 'u2_inf_l'));
+  const era3 = Array.from({ length: 20 }, (_, i) => (i % 2 === 0 ? 'e3_gld' : 'u3_inf_l'));
 
   return {
     P1: { 1: [...era1], 2: [...era2], 3: [...era3] },
@@ -81,12 +69,7 @@ describe('Task M1-09: Deterministic Field Battle Resolution (TV-10..TV-13, TV-21
     const milizia = makeUnit('P2', 'u_mil', 'u1_inf_l', 1, { hp: 3 });
     const fante = makeUnit('P2', 'u_fan', 'u1_inf_h', 2, { hp: 5 });
 
-    const targets = orderTargets(
-      [fante, milizia],
-      STANDARD_LINE_PRIORITY,
-      () => true,
-      catalog,
-    );
+    const targets = orderTargets([fante, milizia], STANDARD_LINE_PRIORITY, () => true, catalog);
     expect(targets.map((t) => t.uid)).toEqual(['u_mil', 'u_fan']);
 
     const assignments = assignDamage(5, targets);
@@ -114,12 +97,8 @@ describe('Task M1-09: Deterministic Field Battle Resolution (TV-10..TV-13, TV-21
 
     const phaseEvents = events.filter((e) => e.type === 'BattlePhaseResolved');
     // Phase 1, Phase 2A, Phase 2B, Phase 3 Cycle 1, Phase 3 Cycle 2
-    const melee1 = phaseEvents.find(
-      (e) => e.phase === 'phase3_melee' && e.meleeCycle === 1,
-    );
-    const melee2 = phaseEvents.find(
-      (e) => e.phase === 'phase3_melee' && e.meleeCycle === 2,
-    );
+    const melee1 = phaseEvents.find((e) => e.phase === 'phase3_melee' && e.meleeCycle === 1);
+    const melee2 = phaseEvents.find((e) => e.phase === 'phase3_melee' && e.meleeCycle === 2);
     expect(melee1).toBeDefined();
     expect(melee1?.damageDealt).toEqual({ P1: 2, P2: 2 });
     expect(melee1?.casualties).toEqual({ P1: [], P2: [] });
@@ -148,10 +127,7 @@ describe('Task M1-09: Deterministic Field Battle Resolution (TV-10..TV-13, TV-21
     expect(outcome).toEqual({ kind: 'winner', winner: 'P1' });
 
     const phaseEvents = events.filter((e) => e.type === 'BattlePhaseResolved');
-    expect(phaseEvents.map((e) => e.phase)).toEqual([
-      'phase1_volley',
-      'phase2a_impale',
-    ]);
+    expect(phaseEvents.map((e) => e.phase)).toEqual(['phase1_volley', 'phase2a_impale']);
 
     const phase2a = phaseEvents[1]!;
     expect(phase2a.damageDealt).toEqual({ P1: 3, P2: 0 });
@@ -187,9 +163,7 @@ describe('Task M1-09: Deterministic Field Battle Resolution (TV-10..TV-13, TV-21
 
     // Phase 1: P2 Archer deals 4 -> P1 Cavalry HP 6 -> 2
     expect(phaseEvents[0]!.damageDealt).toEqual({ P1: 0, P2: 4 });
-    expect(phaseEvents[0]!.assignments.P2).toEqual([
-      { uid: 'p1_cav', damage: 4 },
-    ]);
+    expect(phaseEvents[0]!.assignments.P2).toEqual([{ uid: 'p1_cav', damage: 4 }]);
 
     // Phase 2B: P1 Cavalry flanks (6 + 2 = 8), priority rear -> front -> center:
     // P2 Archer (rear, 2 HP) takes 2 and dies; excess 6 hits P2 Uomo d'Arme (front, 8 -> 2 HP)
@@ -228,12 +202,8 @@ describe('Task M1-09: Deterministic Field Battle Resolution (TV-10..TV-13, TV-21
       abilities: [],
     };
 
-    state.players.P1.units = [
-      makeUnit('P1', 'p1_tank', 'syn_tank', 1, { hp: 10, line: 'front' }),
-    ];
-    state.players.P2.units = [
-      makeUnit('P2', 'p2_tank', 'syn_tank', 2, { hp: 10, line: 'front' }),
-    ];
+    state.players.P1.units = [makeUnit('P1', 'p1_tank', 'syn_tank', 1, { hp: 10, line: 'front' })];
+    state.players.P2.units = [makeUnit('P2', 'p2_tank', 'syn_tank', 2, { hp: 10, line: 'front' })];
 
     const events: GameEvent[] = [];
     const outcome = resolveFieldBattle(state, events);
@@ -292,10 +262,7 @@ describe('Task M1-09: Deterministic Field Battle Resolution (TV-10..TV-13, TV-21
     }
 
     const melee1 = events.find(
-      (e) =>
-        e.type === 'BattlePhaseResolved' &&
-        e.phase === 'phase3_melee' &&
-        e.meleeCycle === 1,
+      (e) => e.type === 'BattlePhaseResolved' && e.phase === 'phase3_melee' && e.meleeCycle === 1,
     );
     expect(melee1).toBeDefined();
     if (melee1?.type === 'BattlePhaseResolved') {
@@ -327,10 +294,7 @@ describe('Task M1-09: Deterministic Field Battle Resolution (TV-10..TV-13, TV-21
     expect(getMeleeUnitAtk(p1Arc, state.catalog, state.rules)).toBe(1);
 
     // Order targets without catalog parameter (fallback check)
-    const fallbackTargets = orderTargets(
-      [p2Sig, p2Arc, p2Spr],
-      FLANK_LINE_PRIORITY,
-    );
+    const fallbackTargets = orderTargets([p2Sig, p2Arc, p2Spr], FLANK_LINE_PRIORITY);
     expect(fallbackTargets.map((t) => t.uid)).toEqual(['p2_arc', 'p2_spr']);
 
     const customUnitWithFlag = {
@@ -356,6 +320,17 @@ describe('Task M1-09: Deterministic Field Battle Resolution (TV-10..TV-13, TV-21
     );
     if (phase2a?.type === 'BattlePhaseResolved') {
       expect(phase2a.damageDealt.P1).toBe(7);
+    }
+
+    const melee = events.find(
+      (event) => event.type === 'BattlePhaseResolved' && event.phase === 'phase3_melee',
+    );
+    expect(melee?.type).toBe('BattlePhaseResolved');
+    if (melee?.type === 'BattlePhaseResolved') {
+      expect(melee.contributions?.P1.find((unit) => unit.uid === p1Arc.uid)).toMatchObject({
+        baseDamage: 1,
+        rule: 'melee',
+      });
     }
 
     // Siege unit p2_sig was never damaged in field battle
@@ -398,12 +373,8 @@ describe('Task M1-09: Deterministic Field Battle Resolution (TV-10..TV-13, TV-21
       isCombatant: true,
       abilities: [],
     };
-    state3.players.P1.units = [
-      makeUnit('P1', 'p1_6', 'syn_6', 1, { hp: 7, line: 'front' }),
-    ];
-    state3.players.P2.units = [
-      makeUnit('P2', 'p2_6', 'syn_6', 2, { hp: 6, line: 'front' }),
-    ];
+    state3.players.P1.units = [makeUnit('P1', 'p1_6', 'syn_6', 1, { hp: 7, line: 'front' })];
+    state3.players.P2.units = [makeUnit('P2', 'p2_6', 'syn_6', 2, { hp: 6, line: 'front' })];
     const ev3: GameEvent[] = [];
     expect(resolveFieldBattle(state3, ev3)).toEqual({
       kind: 'winner',
@@ -417,13 +388,11 @@ describe('Task M1-09: Deterministic Field Battle Resolution (TV-10..TV-13, TV-21
       kind: 'winner',
       winner: 'P2',
     });
-    expect(countLivingCombatants(state4.players.P2.units, state4.catalog)).toBe(
-      1,
-    );
+    expect(countLivingCombatants(state4.players.P2.units, state4.catalog)).toBe(1);
 
     // Unknown card throws descriptive error
-    expect(() =>
-      isCombatantUnit(makeUnit('P1', 'bad', 'unknown_id', 1), state4.catalog),
-    ).toThrow(/not found in catalog/);
+    expect(() => isCombatantUnit(makeUnit('P1', 'bad', 'unknown_id', 1), state4.catalog)).toThrow(
+      /not found in catalog/,
+    );
   });
 });

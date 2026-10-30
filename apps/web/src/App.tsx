@@ -73,7 +73,7 @@ export function App(): ReactElement {
     ),
   ];
 
-  const view = useGameStore((s) => s.view);
+  const view = useGameStore((s) => s.presentationView ?? s.view);
   const inspectedCardId = useGameStore((s) => s.inspectedCardId);
   const setInspectedCardId = useGameStore((s) => s.setInspectedCardId);
   const resetStore = useGameStore((s) => s.resetStore);

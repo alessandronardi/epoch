@@ -11,12 +11,10 @@ import {
 
 const SAMPLE_DECK = balancedTacticalDeckJson as DeckPayload;
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  describeEvent,
-  getBattleStageLabel,
-} from '../src/state/event-describer.js';
+import { describeEvent, getBattleStageLabel } from '../src/state/event-describer.js';
 import {
   BATTLE_EVENT_STEP_MS,
+  getEventBaseDurationMs,
   createGameStore,
   DEFAULT_EVENT_STEP_MS,
   formatUnplayableReasonIt,
@@ -240,7 +238,7 @@ function createSampleEvents(): GameEvent[] {
       era: 1,
       phase: 'phase1_volley',
       damageDealt: { P1: 2, P2: 0 },
-      assignments: { P1: [], P2: [{ uid: 'unit-p2-1', damage: 2 }] },
+      assignments: { P1: [{ uid: 'unit-p2-1', damage: 2 }], P2: [] },
       casualties: { P1: [], P2: ['unit-p2-1'] },
     },
     {
@@ -258,7 +256,7 @@ function createSampleEvents(): GameEvent[] {
       era: 1,
       phase: 'phase2b_impact',
       damageDealt: { P1: 0, P2: 2 },
-      assignments: { P1: [{ uid: 'unit-p1-1', damage: 1 }], P2: [] },
+      assignments: { P1: [], P2: [{ uid: 'unit-p1-1', damage: 1 }] },
       casualties: { P1: ['unit-p1-1'], P2: [] },
     },
     {
@@ -336,12 +334,8 @@ describe('describeEvent and getBattleStageLabel (M3-05)', () => {
     expect(describeEvent(events[14]!, 'it')).toContain('Riconversione');
     expect(describeEvent(events[21]!, 'it')).toContain('Fase 1: Tiro');
     expect(describeEvent(events[22]!, 'it')).toContain('Fase 2A: Impalamento');
-    expect(describeEvent(events[23]!, 'it')).toContain(
-      'Fase 2B: Impatto/Accerchiamento',
-    );
-    expect(describeEvent(events[24]!, 'it')).toContain(
-      'Fase 3: Mischia Ciclo 1/6',
-    );
+    expect(describeEvent(events[23]!, 'it')).toContain('Fase 2B: Impatto/Accerchiamento');
+    expect(describeEvent(events[24]!, 'it')).toContain('Fase 3: Mischia Ciclo 1/6');
     expect(describeEvent(events[26]!, 'it')).toContain('Fase 4: Assedio e Razzia');
   });
 
@@ -351,8 +345,7 @@ describe('describeEvent and getBattleStageLabel (M3-05)', () => {
       events.find(
         (ev) =>
           ev.type === type &&
-          (phase === undefined ||
-            (ev.type === 'BattlePhaseResolved' && ev.phase === phase)),
+          (phase === undefined || (ev.type === 'BattlePhaseResolved' && ev.phase === phase)),
       )!;
 
     expect(getBattleStageLabel(byType('BattlePhaseResolved', 'phase1_volley'))).toBe(
@@ -367,12 +360,8 @@ describe('describeEvent and getBattleStageLabel (M3-05)', () => {
     expect(getBattleStageLabel(byType('BattlePhaseResolved', 'phase3_melee'))).toBe(
       'Fase 3: Mischia Ciclo 1/6',
     );
-    expect(getBattleStageLabel(byType('SiegeResolved'))).toBe(
-      'Fase 4: Assedio e Razzia',
-    );
-    expect(getBattleStageLabel(byType('RaidResolved'))).toBe(
-      'Fase 4: Assedio e Razzia',
-    );
+    expect(getBattleStageLabel(byType('SiegeResolved'))).toBe('Fase 4: Assedio e Razzia');
+    expect(getBattleStageLabel(byType('RaidResolved'))).toBe('Fase 4: Assedio e Razzia');
     expect(getBattleStageLabel(byType('CycleStarted'))).toBeNull();
   });
 });
@@ -381,12 +370,8 @@ describe('EventPlayer and GameStore (M3-05)', () => {
   it('reveals units in cascade every 120ms at 1x speed and 60ms at 2x speed during UnitsRevealed', () => {
     const store = createGameStore();
     const sampleEvents = createSampleEvents();
-    const unitsRevealedEv = sampleEvents.find(
-      (ev) => ev.type === 'UnitsRevealed',
-    )!;
-    const battleStartedEv = sampleEvents.find(
-      (ev) => ev.type === 'BattleStarted',
-    )!;
+    const unitsRevealedEv = sampleEvents.find((ev) => ev.type === 'UnitsRevealed')!;
+    const battleStartedEv = sampleEvents.find((ev) => ev.type === 'BattleStarted')!;
 
     store.getState().enqueueEvents([unitsRevealedEv, battleStartedEv]);
 
@@ -404,18 +389,11 @@ describe('EventPlayer and GameStore (M3-05)', () => {
     store.getState().setPlaybackSpeed(2);
 
     vi.advanceTimersByTime(UNIT_REVEAL_CASCADE_MS / 2);
-    expect(store.getState().revealedUnitUids).toEqual([
-      'unit-p1-1',
-      'unit-p1-2',
-    ]);
+    expect(store.getState().revealedUnitUids).toEqual(['unit-p1-1', 'unit-p1-2']);
     expect(store.getState().isRevealingUnits).toBe(true);
 
     vi.advanceTimersByTime(UNIT_REVEAL_CASCADE_MS / 2);
-    expect(store.getState().revealedUnitUids).toEqual([
-      'unit-p1-1',
-      'unit-p1-2',
-      'unit-p2-1',
-    ]);
+    expect(store.getState().revealedUnitUids).toEqual(['unit-p1-1', 'unit-p1-2', 'unit-p2-1']);
     expect(store.getState().isRevealingUnits).toBe(false);
     // Avanza automaticamente a BattleStarted
     expect(store.getState().currentEvent?.type).toBe('BattleStarted');
@@ -424,9 +402,7 @@ describe('EventPlayer and GameStore (M3-05)', () => {
   it('scans battle phases 1, 2A, 2B, 3, 4 in order and supports Pause, Resume, 1x/2x and Skip to End', () => {
     const store = createGameStore();
     const sampleEvents = createSampleEvents();
-    const battleSequence = sampleEvents.filter(
-      (ev) => ev.n >= 21 && ev.n <= 29,
-    );
+    const battleSequence = sampleEvents.filter((ev) => ev.n >= 21 && ev.n <= 29);
 
     // Creiamo una PlayerView iniziale e una finale per verificare l'aggiornamento su Salta alla fine
     const { state: initialState } = createGame({
@@ -442,10 +418,7 @@ describe('EventPlayer and GameStore (M3-05)', () => {
       cardUids: [],
     });
     expect(applied.ok).toBe(true);
-    const targetView = playerView(
-      applied.ok ? applied.value.state : initialState,
-      'P1',
-    );
+    const targetView = playerView(applied.ok ? applied.value.state : initialState, 'P1');
 
     store.getState().setPlayerView(initialView);
 
@@ -476,25 +449,21 @@ describe('EventPlayer and GameStore (M3-05)', () => {
     expect(store.getState().isPaused).toBe(false);
 
     // Avanza a n=23 (Fase 2A: Impalamento)
-    vi.advanceTimersByTime(BATTLE_EVENT_STEP_MS / 2);
+    vi.advanceTimersByTime(getEventBaseDurationMs(store.getState().currentEvent!) / 2);
     expect(store.getState().currentEvent?.n).toBe(23);
     expect(store.getState().activeBattleStage).toBe('Fase 2A: Impalamento');
     expect(store.getState().activeBattleStageCode).toBe('2A');
 
     // Avanza a n=24 (Fase 2B: Impatto/Accerchiamento)
-    vi.advanceTimersByTime(BATTLE_EVENT_STEP_MS / 2);
+    vi.advanceTimersByTime(getEventBaseDurationMs(store.getState().currentEvent!) / 2);
     expect(store.getState().currentEvent?.n).toBe(24);
-    expect(store.getState().activeBattleStage).toBe(
-      'Fase 2B: Impatto/Accerchiamento',
-    );
+    expect(store.getState().activeBattleStage).toBe('Fase 2B: Impatto/Accerchiamento');
     expect(store.getState().activeBattleStageCode).toBe('2B');
 
     // Avanza a n=25 (Fase 3: Mischia Ciclo 1/6)
-    vi.advanceTimersByTime(BATTLE_EVENT_STEP_MS / 2);
+    vi.advanceTimersByTime(getEventBaseDurationMs(store.getState().currentEvent!) / 2);
     expect(store.getState().currentEvent?.n).toBe(25);
-    expect(store.getState().activeBattleStage).toBe(
-      'Fase 3: Mischia Ciclo 1/6',
-    );
+    expect(store.getState().activeBattleStage).toBe('Fase 3: Mischia Ciclo 1/6');
     expect(store.getState().activeBattleStageCode).toBe('3');
 
     // Premiamo "Salta alla fine" (skipToEnd): deve consumare istantaneamente il resto (inclusa Fase 4)
@@ -525,22 +494,16 @@ describe('EventPlayer and GameStore (M3-05)', () => {
     });
     const view = playerView(state, 'P1');
     const projected = events.map((ev) => projectEvent(ev, 'P1'));
-    const nonNullProjected = projected.filter(
-      (ev): ev is GameEvent => ev !== null,
-    );
+    const nonNullProjected = projected.filter((ev): ev is GameEvent => ev !== null);
 
     const store = createGameStore();
     store.getState().receiveTransition(view, projected);
 
-    vi.advanceTimersByTime(
-      DEFAULT_EVENT_STEP_MS * nonNullProjected.length + 500,
-    );
+    vi.advanceTimersByTime(DEFAULT_EVENT_STEP_MS * nonNullProjected.length + 500);
     expect(store.getState().battleLog.length).toBe(nonNullProjected.length);
     expect(store.getState().isPlaying).toBe(false);
 
-    expect(formatUnplayableReasonIt('no_slot', view)).toContain(
-      'Cap Logistico raggiunto (0/4)',
-    );
+    expect(formatUnplayableReasonIt('no_slot', view)).toContain('Cap Logistico raggiunto (0/4)');
     expect(formatUnplayableReasonIt('insufficient_resources', view)).toContain(
       'Risorse insufficienti',
     );

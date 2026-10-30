@@ -1,9 +1,10 @@
 import { useBattlePresentation } from './use-battle-presentation.js';
 import { ERA_ROMAN_LABELS } from '../icons/DomainIcons.js';
 import type { PlayerView } from '@epochs/engine';
-import type { ReactElement } from 'react';
+import { useEffect, useRef, useState, type ReactElement } from 'react';
 import {
   useGameStore,
+  getBattleStageCode,
   type BattleLogEntry,
   type BattleStageCode,
   type PlaybackSpeed,
@@ -90,6 +91,7 @@ export function BattlePlaybackBar({
   const storeIsPaused = useGameStore((s) => s.isPaused);
   const storeIsPlaying = useGameStore((s) => s.isPlaying);
   const storeQueueLength = useGameStore((s) => s.queue.length);
+  const skippedStages = useGameStore((s) => s.skippedBattleStages);
   const setPlaybackSpeed = useGameStore((s) => s.setPlaybackSpeed);
   const togglePausePlayback = useGameStore((s) => s.togglePausePlayback);
   const skipToEnd = useGameStore((s) => s.skipToEnd);
@@ -155,7 +157,10 @@ export function BattlePlaybackBar({
           data-testid="battle-active-stage-indicator"
           data-stage-code={activeBattleStageCode ?? ''}
         >
-          {activeBattleStage ?? 'Sviluppo / Attesa Battaglia'}
+          {activeBattleStage ??
+            (scannedBattleStages.length > 0 || Object.keys(skippedStages).length > 0
+              ? 'Battaglia conclusa'
+              : 'Preparazione della battaglia')}
         </span>
       </header>
 
@@ -171,8 +176,9 @@ export function BattlePlaybackBar({
         }}
       >
         {BATTLE_STAGE_DESCRIPTORS.map((desc) => {
-          const isCurrent = activeBattleStageCode === desc.code;
+          const isCurrent = isPlaying && activeBattleStageCode === desc.code;
           const isScanned = scannedBattleStages.includes(desc.code);
+          const skipReason = skippedStages[desc.code];
           const dynamicLabel =
             desc.code === '3' &&
             activeBattleStage !== null &&
@@ -187,6 +193,10 @@ export function BattlePlaybackBar({
               data-testid={`battle-stage-step-${desc.code}`}
               data-active={isCurrent ? 'true' : 'false'}
               data-scanned={isScanned ? 'true' : 'false'}
+              data-status={
+                isCurrent ? 'active' : isScanned ? 'resolved' : skipReason ? 'skipped' : 'pending'
+              }
+              title={skipReason}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -216,7 +226,13 @@ export function BattlePlaybackBar({
             >
               <span>{dynamicLabel}</span>
               <span style={{ fontSize: '0.72rem' }}>
-                {isCurrent ? 'In corso' : isScanned ? 'Risolta' : '—'}
+                {isCurrent
+                  ? 'In corso'
+                  : isScanned
+                    ? 'Risolta'
+                    : skipReason
+                      ? `Saltata: ${skipReason}`
+                      : 'In attesa'}
               </span>
             </div>
           );
@@ -305,7 +321,7 @@ export function BattlePlaybackBar({
             cursor: 'pointer',
           }}
         >
-          Pausa
+          {isPaused ? 'Riprendi' : 'Pausa'}
         </button>
 
         <button
@@ -342,146 +358,223 @@ export function BattlePlaybackBar({
 export function BattlePlaybackAndLog({
   view: propView,
   battleLog: propBattleLog,
-  latestAnnouncement: propLatestAnnouncement,
+  latestAnnouncement: propAnnouncement,
   playbackControls,
   onLogConsulted,
 }: BattlePlaybackAndLogProps): ReactElement {
-  const storeView = useGameStore((s) => s.view);
-  const storeBattleLog = useGameStore((s) => s.battleLog);
-  const storeLatestAnnouncement = useGameStore((s) => s.latestAnnouncement);
-
+  const storeView = useGameStore((s) => s.presentationView ?? s.view);
+  const storeLog = useGameStore((s) => s.battleLog);
+  const storeAnnouncement = useGameStore((s) => s.latestAnnouncement);
+  const battleEra = useGameStore((s) => s.battleEra);
+  const notice = useGameStore((s) => s.playbackNotice);
   const view = propView !== undefined ? propView : storeView;
-  const battleLog = propBattleLog !== undefined ? propBattleLog : storeBattleLog;
-  const latestAnnouncement =
-    propLatestAnnouncement !== undefined ? propLatestAnnouncement : storeLatestAnnouncement;
-
+  const battleLog = propBattleLog ?? storeLog;
+  const announcement = propAnnouncement ?? storeAnnouncement;
   const battleScene = useBattlePresentation(view);
-  if (!battleScene) return <></>;
+  const [chosenEra, setChosenEra] = useState<number | null>(null);
+  const [showDevelopment, setShowDevelopment] = useState(false);
+  const [unread, setUnread] = useState(0);
+  const region = useRef<HTMLDivElement>(null);
+  const following = useRef(true);
+  const lastCount = useRef(0);
+  const eras = [...new Set(battleLog.map((entry) => entry.era))].sort();
+  const era = chosenEra ?? battleEra ?? view?.era ?? 1;
+  const eraLog = battleLog.filter((entry) => entry.era === era);
+  const beginning = eraLog.find(
+    (entry) => entry.type === 'UnitsRevealed' || entry.type === 'BattleStarted',
+  )?.n;
+  const entries = eraLog.filter((entry) =>
+    showDevelopment
+      ? beginning === undefined || entry.n < beginning
+      : beginning !== undefined &&
+        entry.n >= beginning &&
+        entry.type !== 'EraStarted' &&
+        entry.type !== 'CardsDrawn' &&
+        entry.type !== 'CycleStarted',
+  );
+  const lastId = entries.at(-1)?.id;
+  useEffect(() => {
+    if (following.current && region.current) {
+      region.current.scrollTop = region.current.scrollHeight;
+      setUnread(0);
+    } else {
+      const added = Math.max(0, entries.length - lastCount.current);
+      setUnread((previous) => previous + added);
+    }
+    lastCount.current = entries.length;
+  }, [lastId, entries.length, chosenEra, showDevelopment]);
 
+  if (!battleScene && battleLog.length === 0) return <></>;
+  const outcome = entries.find((entry) => entry.event.type === 'BattleOutcome');
+  const phases = entries.flatMap((entry) =>
+    entry.event.type === 'BattlePhaseResolved' ? [entry.event] : [],
+  );
+  const siege = entries.find((entry) => entry.event.type === 'SiegeResolved');
+  const raid = entries.find((entry) => entry.event.type === 'RaidResolved');
+  const skippedLabels = outcome
+    ? BATTLE_STAGE_DESCRIPTORS.filter(
+        (stage) =>
+          stage.code !== '4' && !phases.some((phase) => getBattleStageCode(phase) === stage.code),
+      ).map((stage) => stage.fullLabel)
+    : [];
+  const groups: { label: string; entries: BattleLogEntry[] }[] = [];
+  for (const entry of entries) {
+    const label =
+      entry.stageLabel ??
+      (entry.type === 'BattleOutcome'
+        ? 'Esito campale'
+        : entry.type === 'EraEnded' || entry.type === 'GameEnded'
+          ? 'Conclusione'
+          : showDevelopment
+            ? 'Sviluppo'
+            : 'Preparazione');
+    if (groups.at(-1)?.label !== label) groups.push({ label, entries: [] });
+    groups.at(-1)!.entries.push(entry);
+  }
   return (
     <div
       onFocusCapture={onLogConsulted}
       className="battle-playback-and-log"
       data-testid="battle-playback-and-log"
       tabIndex={0}
-      aria-label="Pannello EventPlayer e Registro di Battaglia"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-        height: '100%',
-        minHeight: 0,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-      }}
+      aria-label="Riproduzione e Registro di Battaglia"
     >
-      {/* 1. Controlli EventPlayer e indicatore Fase 1..4 */}
-      <BattlePlaybackBar {...playbackControls} />
-
-      {/* 3. Registro di Battaglia testuale in italiano con aria-live="polite" (§9.5 riga 828) */}
+      {battleScene && <BattlePlaybackBar {...playbackControls} />}
+      {notice && <p role="status">{notice}</p>}
       <section
         aria-label="Registro di Battaglia"
-        className="board-zone"
+        className="board-zone battle-log-panel"
         data-testid="battle-log-panel"
-        style={{
-          flex: 1,
-          minHeight: '140px',
-          flexShrink: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '8px 10px',
-        }}
       >
         <header className="board-zone__header">
           <span className="board-zone__title">Registro di Battaglia</span>
           <span className="board-zone__count" data-testid="battle-log-count">
-            {battleLog.length} eventi
+            {entries.length} eventi
           </span>
         </header>
-
-        {/* Annuncio live sincrono per tecnologie assistive */}
+        <div className="battle-log-filters">
+          <label>
+            Era{' '}
+            <select
+              aria-label="Era del registro"
+              value={era}
+              onChange={(event) => {
+                following.current = true;
+                setChosenEra(Number(event.target.value));
+              }}
+            >
+              {[...new Set([...eras, era])].sort().map((value) => (
+                <option key={value} value={value}>
+                  {ERA_ROMAN_LABELS[value as 1 | 2 | 3]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            className="touch-target"
+            aria-pressed={showDevelopment}
+            onClick={() => {
+              following.current = true;
+              setShowDevelopment(!showDevelopment);
+            }}
+          >
+            {showDevelopment ? 'Mostra battaglia' : 'Mostra sviluppo'}
+          </button>
+        </div>
+        {outcome && !showDevelopment && (
+          <div
+            className="battle-summary"
+            data-testid="battle-summary"
+            aria-label="Riepilogo battaglia"
+          >
+            <strong>{outcome.text}</strong>
+            {skippedLabels.length > 0 && (
+              <p>Fasi saltate perché la battaglia era già conclusa: {skippedLabels.join(', ')}.</p>
+            )}
+            {outcome.event.type === 'BattleOutcome' && outcome.event.kind !== 'winner' && (
+              <p>Assedio e Razzia non previsti: nessun vincitore campale.</p>
+            )}
+            <p>
+              Perdite: P1 {phases.reduce((sum, phase) => sum + phase.casualties.P1.length, 0)} · P2{' '}
+              {phases.reduce((sum, phase) => sum + phase.casualties.P2.length, 0)}.
+            </p>
+            {siege && <p>{siege.text}</p>}
+            {raid && <p>{raid.text}</p>}
+          </div>
+        )}
         <div
           className="sr-only"
           aria-live="polite"
           aria-atomic="true"
           data-testid="battle-log-live-announcer"
-          style={{
-            position: 'absolute',
-            width: '1px',
-            height: '1px',
-            padding: 0,
-            margin: '-1px',
-            overflow: 'hidden',
-            clip: 'rect(0, 0, 0, 0)',
-            whiteSpace: 'nowrap',
-            border: 0,
-          }}
         >
-          {latestAnnouncement}
+          {announcement}
         </div>
-
+        {unread > 0 && (
+          <button
+            type="button"
+            className="touch-target battle-log-follow"
+            onClick={() => {
+              following.current = true;
+              if (region.current) region.current.scrollTop = region.current.scrollHeight;
+              setUnread(0);
+            }}
+          >
+            {unread} nuovi eventi · Vai in fondo
+          </button>
+        )}
         <div
+          ref={region}
           role="log"
           tabIndex={0}
+          aria-label="Eventi del registro"
           aria-live="polite"
           aria-relevant="additions text"
-          className="board-zone__content"
+          className="battle-log-region"
           data-testid="battle-log-region"
-          style={{
-            flexDirection: 'column',
-            alignItems: 'stretch',
-            gap: '5px',
-            minHeight: '80px',
+          onScroll={() => {
+            const node = region.current;
+            if (node) {
+              following.current = node.scrollHeight - node.scrollTop - node.clientHeight < 24;
+              if (following.current) setUnread(0);
+            }
           }}
         >
-          {battleLog.length === 0 ? (
-            <div className="board-zone__empty" data-testid="battle-log-empty">
-              Nessun evento registrato nel Registro di Battaglia.
-            </div>
+          {entries.length === 0 ? (
+            <p className="board-zone__empty" data-testid="battle-log-empty">
+              {showDevelopment
+                ? 'Nessun evento di Sviluppo in questa Era.'
+                : 'Nessun evento di battaglia in questa Era.'}
+            </p>
           ) : (
-            battleLog.map((entry) => (
-              <article
-                key={entry.id}
-                data-testid={`battle-log-entry-${entry.n}`}
-                data-event-type={entry.type}
-                style={{
-                  padding: '5px 7px',
-                  borderRadius: '4px',
-                  backgroundColor:
-                    entry.stageLabel !== null
-                      ? 'rgba(181, 142, 72, 0.14)'
-                      : 'rgba(20, 30, 39, 0.55)',
-                  borderLeft:
-                    entry.stageLabel !== null
-                      ? '3px solid var(--brass, #B58E48)'
-                      : '2px solid rgba(233, 229, 214, 0.2)',
-                  fontSize: '0.82rem',
-                  lineHeight: 1.35,
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '6px',
-                    fontFamily: 'var(--font-numeric)',
-                    fontSize: '0.73rem',
-                    color: 'var(--chalk-muted)',
-                    marginBottom: '2px',
-                  }}
-                >
-                  <span>
-                    #{entry.n} · Era {ERA_ROMAN_LABELS[entry.era]}
-                  </span>
-                  {entry.stageLabel !== null && (
-                    <span style={{ color: 'var(--brass)', fontWeight: 700 }}>
-                      {entry.stageLabel}
-                    </span>
-                  )}
-                </div>
-                <div>{entry.text}</div>
-              </article>
+            groups.map((group, index) => (
+              <section key={`${group.label}-${index}`} aria-label={group.label}>
+                <h3 className="battle-log-group-title">{group.label}</h3>
+                {group.entries.map((entry) => (
+                  <article
+                    key={entry.id}
+                    className="battle-log-entry"
+                    data-testid={`battle-log-entry-${entry.n}`}
+                    data-event-type={entry.type}
+                  >
+                    <small>
+                      #{entry.n} · Era {ERA_ROMAN_LABELS[entry.era]}
+                    </small>
+                    <div>{entry.text}</div>
+                    {!!entry.details?.length && (
+                      <details>
+                        <summary>Calcoli e bersagli</summary>
+                        <ul>
+                          {entry.details.map((detail, detailIndex) => (
+                            <li key={detailIndex}>{detail}</li>
+                          ))}
+                        </ul>
+                      </details>
+                    )}
+                  </article>
+                ))}
+              </section>
             ))
           )}
         </div>

@@ -94,7 +94,7 @@ export function ConversionModal({
   onClose,
   onInspectCard,
 }: ConversionModalProps): ReactElement | null {
-  const storeView = useGameStore((s) => s.view);
+  const storeView = useGameStore((s) => s.presentationView ?? s.view);
   const storeActiveConversionUid = useGameStore((s) => s.activeConversionUid);
   const setActiveConversionUid = useGameStore((s) => s.setActiveConversionUid);
   const setSelectedHandUid = useGameStore((s) => s.setSelectedHandUid);

@@ -2,6 +2,18 @@
 
 Questo documento traccia le interpretazioni normative del GDD e le decisioni architetturali adottate secondo il formato della sezione 13.3 di `docs/TECH-SPEC.md`.
 
+## DEC-007 — Separazione fra vista autorevole e presentazione della battaglia
+
+- **Stato:** IMPLEMENTATA
+- **Riferimento:** TECH-SPEC §4.5, §5.4, §9.5; `docs/BATTLE-CONSISTENCY-PLAN.md`.
+- **Problema:** la vista finale sostituiva immediatamente il contesto della battaglia; il playback leggeva le assegnazioni dei danni con una convenzione opposta al motore e non riceveva i modificatori ATK risolti. Il registro diventava inaccessibile al ritorno allo Sviluppo.
+- **Scelta:** mantenere `view` autorevole e una `presentationView` separata, filtrata per il giocatore che sta osservando lo scontro. Applicare gli eventi pubblici in ordine e adottare la vista finale alla conclusione o al salto. Controller e versioni dei comandi continuano a usare `view`.
+- **Contratto:** `assignments` resta indicizzato per attaccante e `casualties` per proprietario. Il motore aggiunge snapshot delle unità a `BattleStarted` e contributi al danno a `BattlePhaseResolved`; il client non ricalcola combattimento o bonus.
+- **Riproduzione:** annuncio, impatto simultaneo con registrazione e risultato con rimozione dei caduti condividono l'applicazione degli effetti usata dal salto. Pausa e velocità mantengono il tempo residuo. In hot-seat la presentazione pubblica termina prima del passaggio di dispositivo; i cambi ordinari di giocatore proteggono subito la nuova mano.
+- **Riallineamento:** uno snapshot online senza eventi interrompe la riproduzione in corso con un messaggio esplicito. Non si ricostruiscono eventi mancanti.
+- **Compatibilità:** i nuovi campi sono opzionali in lettura per i replay precedenti; in loro assenza non si inventano contributi o modificatori. L'introduzione dei campi richiede l'aggiornamento coordinato di client e server, poiché gli schemi precedenti sono strict. Gli hash dello stato e le regole di combattimento non cambiano.
+- **Autore e data:** agente, su richiesta dell'utente (2026-10-29).
+
 ---
 
 ## DEC-001 — Scaling per Era basato sul valore stampato sulla carta (`D1`)

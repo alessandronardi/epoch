@@ -14,12 +14,7 @@ import { useState, type ReactElement } from 'react';
 import type { GameController } from '../../controllers/types.js';
 import { useGameStore } from '../../state/game-store.js';
 import { Card } from '../card/Card.js';
-import {
-  CardTypeIcon,
-  RESOURCE_LABELS_IT,
-  ResourceIcon,
-  StatIcon,
-} from '../icons/DomainIcons.js';
+import { CardTypeIcon, RESOURCE_LABELS_IT, ResourceIcon, StatIcon } from '../icons/DomainIcons.js';
 
 export interface SelectedInstantItem {
   readonly instance: CardInstance;
@@ -111,9 +106,7 @@ export function calculatePrebattleInstantsPreview(
   const projectedOwnWalls = Math.max(0, view.self.walls + ownWallsDelta);
   const projectedEnemyWalls = Math.max(0, view.opponent.walls + enemyWallsDelta);
 
-  const affectedFrontUnitsCount = view.self.units.filter(
-    (u) => u.line === 'front',
-  ).length;
+  const affectedFrontUnitsCount = view.self.units.filter((u) => u.line === 'front').length;
   const affectedArcherUnitsCount = view.self.units.filter(
     (u) => getCard(u.cardId).rules.category === 'archer',
   ).length;
@@ -148,8 +141,9 @@ export function PrebattleInstantsBar({
   onLockInstants,
   onInspectCard,
 }: PrebattleInstantsBarProps): ReactElement | null {
-  const storeView = useGameStore((s) => s.view);
+  const storeView = useGameStore((s) => s.presentationView ?? s.view);
   const storeSelectedUids = useGameStore((s) => s.selectedInstantUids);
+  const isPlaying = useGameStore((s) => s.isPlaying);
   const isRevealingUnits = useGameStore((s) => s.isRevealingUnits);
   const toggleInstantUid = useGameStore((s) => s.toggleInstantUid);
   const setSelectedInstantUids = useGameStore((s) => s.setSelectedInstantUids);
@@ -169,24 +163,20 @@ export function PrebattleInstantsBar({
     }))
     .filter((entry) => entry.card.rules.type === 'instant');
 
-  const validInstantUids = new Set(
-    instantHandEntries.map((entry) => entry.instance.uid),
-  );
-  const rawSelectedUids =
-    propSelectedUids !== undefined ? propSelectedUids : storeSelectedUids;
-  const selectedUids = rawSelectedUids.filter((uid) =>
-    validInstantUids.has(uid),
-  );
+  const validInstantUids = new Set(instantHandEntries.map((entry) => entry.instance.uid));
+  const rawSelectedUids = propSelectedUids !== undefined ? propSelectedUids : storeSelectedUids;
+  const selectedUids = rawSelectedUids.filter((uid) => validInstantUids.has(uid));
 
   const preview = calculatePrebattleInstantsPreview(view, selectedUids);
   const storageCap = STORAGE_CAP_BY_ERA[view.era];
   const canLock =
+    !isPlaying &&
     view.self.legal.canLockInstants &&
     !view.self.committed &&
     preview.canAffordSelection;
 
   const handleToggleInstant = (instanceUid: string): void => {
-    if (!view.self.legal.canLockInstants || view.self.committed) {
+    if (isPlaying || !view.self.legal.canLockInstants || view.self.committed) {
       return;
     }
     if (onToggleInstantUid) {
@@ -265,14 +255,9 @@ export function PrebattleInstantsBar({
           <strong className="font-display" style={{ color: 'var(--brass)' }}>
             Finestra Pre-Battaglia — Istantanee Segrete (0 Slot)
           </strong>
-          <span className="board-badge board-badge--brass">
-            Selezionate: {selectedUids.length}
-          </span>
+          <span className="board-badge board-badge--brass">Selezionate: {selectedUids.length}</span>
           {isRevealingUnits && (
-            <span
-              className="board-badge"
-              data-testid="prebattle-cascade-status"
-            >
+            <span className="board-badge" data-testid="prebattle-cascade-status">
               Rivelazione unità in corso...
             </span>
           )}
@@ -375,9 +360,7 @@ export function PrebattleInstantsBar({
                   gap: '4px',
                   padding: '2px 7px',
                   borderRadius: '4px',
-                  backgroundColor: isDeficit
-                    ? 'rgba(168, 64, 77, 0.28)'
-                    : 'rgba(20, 30, 39, 0.65)',
+                  backgroundColor: isDeficit ? 'rgba(168, 64, 77, 0.28)' : 'rgba(20, 30, 39, 0.65)',
                   border: isDeficit
                     ? '1px solid var(--crimson, #A8404D)'
                     : '1px solid rgba(233, 229, 214, 0.14)',
@@ -388,8 +371,7 @@ export function PrebattleInstantsBar({
               >
                 <ResourceIcon resource={res} size={13} />
                 <span>
-                  {RESOURCE_LABELS_IT[res]} -{cost} ( Saldo: {remaining}/
-                  {storageCap})
+                  {RESOURCE_LABELS_IT[res]} -{cost} ( Saldo: {remaining}/{storageCap})
                 </span>
               </span>
             );
@@ -424,9 +406,7 @@ export function PrebattleInstantsBar({
           </span>
 
           <span
-            className={`board-badge ${
-              preview.ownWallsDelta !== 0 ? 'board-badge--brass' : ''
-            }`}
+            className={`board-badge ${preview.ownWallsDelta !== 0 ? 'board-badge--brass' : ''}`}
             data-testid="prebattle-preview-own-walls"
             data-projected-walls={String(preview.projectedOwnWalls)}
           >
@@ -437,9 +417,7 @@ export function PrebattleInstantsBar({
           </span>
 
           <span
-            className={`board-badge ${
-              preview.enemyWallsDelta !== 0 ? 'board-badge--crimson' : ''
-            }`}
+            className={`board-badge ${preview.enemyWallsDelta !== 0 ? 'board-badge--crimson' : ''}`}
             data-testid="prebattle-preview-enemy-walls"
             data-projected-walls={String(preview.projectedEnemyWalls)}
           >
@@ -450,30 +428,24 @@ export function PrebattleInstantsBar({
           </span>
 
           <span
-            className={`board-badge ${
-              preview.frontAtkBonus > 0 ? 'board-badge--brass' : ''
-            }`}
+            className={`board-badge ${preview.frontAtkBonus > 0 ? 'board-badge--brass' : ''}`}
             data-testid="prebattle-preview-front-atk"
             data-bonus={String(preview.frontAtkBonus)}
           >
             <StatIcon stat="atk" size={13} />
             <span>
-              Fronte: +{preview.frontAtkBonus} ATK ({preview.affectedFrontUnitsCount}{' '}
-              unità)
+              Fronte: +{preview.frontAtkBonus} ATK ({preview.affectedFrontUnitsCount} unità)
             </span>
           </span>
 
           <span
-            className={`board-badge ${
-              preview.archersAtkBonus > 0 ? 'board-badge--brass' : ''
-            }`}
+            className={`board-badge ${preview.archersAtkBonus > 0 ? 'board-badge--brass' : ''}`}
             data-testid="prebattle-preview-archers-atk"
             data-bonus={String(preview.archersAtkBonus)}
           >
             <StatIcon stat="atk" size={13} />
             <span>
-              Arcieri: +{preview.archersAtkBonus} ATK (
-              {preview.affectedArcherUnitsCount} unità)
+              Arcieri: +{preview.archersAtkBonus} ATK ({preview.affectedArcherUnitsCount} unità)
             </span>
           </span>
         </div>
@@ -496,8 +468,8 @@ export function PrebattleInstantsBar({
               data-testid="prebattle-no-instants"
               style={{ minHeight: '48px' }}
             >
-              Nessuna carta Istantanea nella tua mano — puoi esplorare le 3 linee
-              rivelate e premere &ldquo;Blocca Scelte Pre-Battaglia&rdquo;.
+              Nessuna carta Istantanea nella tua mano — puoi esplorare le 3 linee rivelate e premere
+              &ldquo;Blocca Scelte Pre-Battaglia&rdquo;.
             </div>
           ) : (
             <div
@@ -539,9 +511,7 @@ export function PrebattleInstantsBar({
                       card={card}
                       playable={isAffordable}
                       selected={isSelected}
-                      unplayableReason={
-                        isAffordable ? undefined : 'insufficient_resources'
-                      }
+                      unplayableReason={isAffordable ? undefined : 'insufficient_resources'}
                       onSelect={() => {
                         if (isSelected || isAffordable) {
                           handleToggleInstant(instance.uid);
@@ -574,17 +544,10 @@ export function PrebattleInstantsBar({
                         fontFamily: 'var(--font-numeric)',
                         fontSize: '0.8rem',
                         fontWeight: 700,
-                        cursor:
-                          isSelected || isAffordable
-                            ? 'pointer'
-                            : 'not-allowed',
+                        cursor: isSelected || isAffordable ? 'pointer' : 'not-allowed',
                       }}
                     >
-                      {isSelected
-                        ? 'Selezionata'
-                        : isAffordable
-                          ? 'Seleziona'
-                          : 'Risorse insuff.'}
+                      {isSelected ? 'Selezionata' : isAffordable ? 'Seleziona' : 'Risorse insuff.'}
                     </button>
                   </div>
                 );
@@ -622,12 +585,8 @@ export function PrebattleInstantsBar({
             padding: '8px 18px',
             borderRadius: '6px',
             border: '1.5px solid var(--brass, #B58E48)',
-            backgroundColor: canLock
-              ? 'var(--brass, #B58E48)'
-              : 'var(--surface-card, #223444)',
-            color: canLock
-              ? 'var(--table-deep, #141E27)'
-              : 'var(--chalk-muted, #A7B4C2)',
+            backgroundColor: canLock ? 'var(--brass, #B58E48)' : 'var(--surface-card, #223444)',
+            color: canLock ? 'var(--table-deep, #141E27)' : 'var(--chalk-muted, #A7B4C2)',
             fontFamily: 'var(--font-numeric)',
             fontSize: '0.98rem',
             fontWeight: 700,

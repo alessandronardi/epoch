@@ -822,6 +822,14 @@ Griglia interna a $5$ fasce (`grid-template-rows: 9fr 47fr 6fr 29fr 9fr`):
 
 ### 9.5 Riproduzione deterministica degli eventi (`EventPlayer`)
 
+**Coerenza della presentazione (DEC-007).** Lo store mantiene `view` come ultima vista autorevole per controller e comandi e `presentationView` come vista filtrata mostrata durante la sequenza pubblica. Il tavolo e le sue modali consumano la seconda quando presente. Era, unità, risorse, Mura e Centro Città avanzano al rispettivo evento; a fine coda o su «Salta alla fine» si adotta la vista autorevole. Un riallineamento privo dello storico necessario interrompe esplicitamente la riproduzione e applica lo snapshot ricevuto.
+
+`BattleStarted.units` contiene lo snapshot pubblico delle unità dopo i modificatori delle Istantanee. `BattlePhaseResolved.contributions` contiene, per attaccante, `uid`, `cardId`, `baseDamage`, `bonus` e `totalDamage`, calcolati dal motore. Entrambi i campi sono opzionali in lettura per mantenere leggibili i replay precedenti. `assignments` è indicizzato per **attaccante**, mentre `casualties` è indicizzato per **proprietario**. Il client applica gli effetti senza ricalcolare le regole.
+
+Le fasi campali e gli eventi di Assedio/Razzia vengono presentati in tre momenti: annuncio, impatto e risultato. Il registro viene compilato una sola volta all'impatto; i caduti vengono rimossi insieme al passaggio al risultato. I tempi iniziali a 1x sono rispettivamente 650, 400 e 850 ms, centralizzati nello store e soggetti a successiva taratura. Pausa e cambio velocità conservano il tempo già trascorso. La pausa sul campo resta accessibile anche con il cassetto mobile chiuso. Le evidenziazioni di attaccanti e bersagli sono statiche.
+
+Gli indicatori si azzerano alla preparazione di ogni nuova battaglia; le fasi non eseguite sono indicate come saltate con motivazione. Il registro conserva gli eventi della partita, consente la selezione dell'Era e la consultazione separata dello Sviluppo, raggruppa la battaglia per fase e rimane accessibile dopo lo scontro. Lo scorrimento segue le nuove voci solo quando il lettore è già in fondo. Il riepilogo include esito, perdite ed eventuali effetti di Assedio/Razzia.
+
 * Il client **non calcola mai il combattimento**: consuma in ordine la coda degli eventi proiettati (`events`) ricevuti da `apply` o dal WebSocket.
 * Controlli di riproduzione sempre visibili durante la battaglia: velocità **$1\\times$**, **$2\\times$**, **Pausa** (per ispezionare i calcoli nel Registro) e **`"Salta alla fine"`** (mostra immediatamente lo stato finale `PlayerView`).
 * Con `prefers-reduced-motion: reduce`, le animazioni di traslazione sono sostituite da dissolvenze brevi.

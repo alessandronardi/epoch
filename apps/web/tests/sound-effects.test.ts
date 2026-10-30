@@ -10,7 +10,11 @@ import {
   createSoundEffects,
   getEventSound,
 } from '../src/audio/sound-effects.js';
-import { createGameStore, DEFAULT_EVENT_STEP_MS } from '../src/state/game-store.js';
+import {
+  BATTLE_ANNOUNCE_MS,
+  createGameStore,
+  DEFAULT_EVENT_STEP_MS,
+} from '../src/state/game-store.js';
 
 const card: GameEvent = { n: 1, type: 'CardPlayed', player: 'P1', slotsUsed: 1, coveredCount: 1 };
 const pass: GameEvent = {
@@ -332,6 +336,23 @@ describe('procedural sound effects', () => {
 });
 
 describe('EventPlayer and controls integration', () => {
+  it('sounds combat only at impact, once, including across pause and resume', () => {
+    vi.useFakeTimers();
+    const store = createGameStore();
+    const audio = createSoundEffects({ storage: null });
+    const play = vi.spyOn(audio, 'playEvent');
+    const disconnect = connectGameAudio(store, audio);
+    store.getState().enqueueEvents([siege]);
+    expect(play).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(BATTLE_ANNOUNCE_MS);
+    expect(play).toHaveBeenCalledExactlyOnceWith(siege, 1);
+    store.getState().pausePlayback();
+    store.getState().resumePlayback();
+    vi.runAllTimers();
+    expect(play).toHaveBeenCalledTimes(1);
+    disconnect();
+    store.getState().resetStore();
+  });
   it('lets the final cue decay naturally, but stops it on reset and disconnect', () => {
     vi.useFakeTimers();
     const store = createGameStore();

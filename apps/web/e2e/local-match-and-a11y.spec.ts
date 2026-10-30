@@ -1,3 +1,4 @@
+import { openHand, closeHand, disablePassConfirmation } from './board-actions.js';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
@@ -29,6 +30,7 @@ test.describe('The Epochs — Partita completa locale vs Bot e Accessibilità (M
   test('completa una partita intera da Home fino a finished (3 Ere) con 0 violazioni axe critical/serious', async ({
     page,
   }) => {
+    test.setTimeout(120_000);
     await page.goto('/');
 
     const homeScreen = page.getByTestId('home-screen');
@@ -66,22 +68,12 @@ test.describe('The Epochs — Partita completa locale vs Bot e Accessibilità (M
 
     // 3. Verifica ingresso in Development e audit accessibilità sul Tavolo di Partita
     await expect(board).toHaveAttribute('data-phase', 'development');
-    await assertNoCriticalOrSeriousA11yViolations(
-      page,
-      'BattlefieldBoard - Development',
-    );
+    await assertNoCriticalOrSeriousA11yViolations(page, 'BattlefieldBoard - Development');
 
     const viewportSize = page.viewportSize();
     const isMobileViewport = (viewportSize?.width ?? 1280) < 1100;
 
-    // Disattiva la conferma rapida del Passo per velocizzare i cicli successivi dopo aver giocato
-    // Leave the hand before using controls on the field.
-    await page.mouse.move(0, 0);
-    if (await page.getByTestId('player-hand').getAttribute('data-expanded') === 'true') await page.getByTestId('hand-reveal-toggle').tap();
-    const confirmPassToggle = page.getByTestId('confirm-pass-toggle');
-    if (await confirmPassToggle.isChecked()) {
-      await confirmPassToggle.uncheck();
-    }
+    await disablePassConfirmation(page);
 
     let auditedPrebattleA11y = false;
     let testedSkipPlayback = false;
@@ -89,6 +81,7 @@ test.describe('The Epochs — Partita completa locale vs Bot e Accessibilità (M
 
     // 4. Loop deterministico delle fasi attraverso tutte le Ere fino a 'finished'
     for (let step = 0; step < 60; step += 1) {
+      await expect(board).toHaveAttribute('data-is-playing', 'false', { timeout: 30_000 });
       const currentPhase = await board.getAttribute('data-phase');
 
       if (currentPhase === 'finished') {
@@ -111,7 +104,8 @@ test.describe('The Epochs — Partita completa locale vs Bot e Accessibilità (M
             .locator('[data-testid^="hand-slot-"][data-playable="true"]')
             .first();
           if ((await playableSlot.count()) > 0) {
-            if (await page.getByTestId('player-hand').getAttribute('data-expanded') !== 'true') await page.getByTestId('hand-reveal-toggle').click();
+            if ((await page.getByTestId('player-hand').getAttribute('data-expanded')) !== 'true')
+              await openHand(page);
             await playableSlot.click();
             const playBtn = page.getByTestId('hand-preview-play-btn');
             if (await playBtn.isEnabled()) {
@@ -126,7 +120,7 @@ test.describe('The Epochs — Partita completa locale vs Bot e Accessibilità (M
           }
         }
 
-        await page.getByTestId('hand-reveal-toggle').press('Escape');
+        await closeHand(page);
         await expect(page.getByTestId('player-hand')).toHaveAttribute('data-expanded', 'false');
         const passBtn = page.getByTestId('pass-turn-btn');
         if (await passBtn.isEnabled()) {

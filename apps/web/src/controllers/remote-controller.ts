@@ -523,7 +523,7 @@ export class RemoteGameController implements GameController {
         this.#store.getState().setMode('remote');
         this.#store.getState().setHotSeatHandover(false, null);
         this.#store.getState().receiveTransition(msg.view, [], {
-          resetLog,
+          resetLog, resync: !resetLog,
         });
 
         // Se lo snapshot arriva in seguito a STALE_STATE_VERSION, riallinea e ritenta se appropriato

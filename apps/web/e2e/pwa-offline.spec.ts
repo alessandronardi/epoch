@@ -1,3 +1,4 @@
+import { openHand, disablePassConfirmation } from './board-actions.js';
 import { expect, test, type Page } from '@playwright/test';
 
 // Il service worker è generato soltanto dalla build di produzione.
@@ -11,11 +12,13 @@ async function completeOfflineMatch(page: Page, hotSeat: boolean): Promise<void>
   let viewer = 'P1';
 
   for (let action = 0; action < 120; action += 1) {
-    const era = (await board.getAttribute('data-era'))!;
-    const phase = await board.getAttribute('data-phase');
-    eras.add(era);
-    if (phase === 'finished') break;
-
+    // Presentation can hide the entire board for a hot-seat handover.
+    await page
+      .locator(
+        '[data-testid="hotseat-handover-modal"], [data-testid="battlefield-board"][data-is-playing="false"]',
+      )
+      .first()
+      .waitFor();
     if (await page.getByTestId('hotseat-handover-modal').isVisible()) {
       viewer = (await page.getByTestId('hotseat-handover-modal').getAttribute('data-next-player'))!;
       handovers.add(viewer);
@@ -24,6 +27,10 @@ async function completeOfflineMatch(page: Page, hotSeat: boolean): Promise<void>
       await page.getByTestId('hotseat-reveal-hand-btn').click();
       continue;
     }
+    const era = (await board.getAttribute('data-era'))!;
+    const phase = await board.getAttribute('data-phase');
+    eras.add(era);
+    if (phase === 'finished') break;
     if (phase === 'mulligan') {
       await page.getByTestId('mulligan-submit-btn').click();
       continue;
@@ -34,7 +41,7 @@ async function completeOfflineMatch(page: Page, hotSeat: boolean): Promise<void>
       continue;
     }
     if (phase === 'development') {
-      await page.getByTestId('confirm-pass-toggle').uncheck();
+      await disablePassConfirmation(page);
       const seatAndEra = `${viewer}:${era}`;
       const playable = page
         .locator(
@@ -44,7 +51,8 @@ async function completeOfflineMatch(page: Page, hotSeat: boolean): Promise<void>
         .first();
       // Una giocata per giocatore ed Era, poi Passo: si attraversano tutte le tre Ere.
       if (!played.has(seatAndEra) && (await playable.count()) > 0) {
-        if (await page.getByTestId('player-hand').getAttribute('data-expanded') !== 'true') await page.getByTestId('hand-reveal-toggle').click();
+        if ((await page.getByTestId('player-hand').getAttribute('data-expanded')) !== 'true')
+          await openHand(page);
         const uid = (await playable.getAttribute('data-hand-uid'))!;
         await playable.click();
         await page.getByTestId('hand-preview-play-btn').click();

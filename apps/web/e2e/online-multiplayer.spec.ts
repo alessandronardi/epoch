@@ -1,3 +1,4 @@
+import { openHand, closeHand, disablePassConfirmation } from './board-actions.js';
 // TECH-SPEC §10.1 Livello H, §12 M5 — Test E2E Playwright multiplayer online:
 // - Avvio server Fastify autoritativo
 // - 2 BrowserContext isolati (Giocatore 1 e Giocatore 2) abbinati tramite stanza privata
@@ -7,10 +8,7 @@
 
 import type { AddressInfo } from 'node:net';
 import { expect, test, type Page } from '@playwright/test';
-import {
-  createEpochsServer,
-  type EpochsServerInstance,
-} from '../../server/src/server.js';
+import { createEpochsServer, type EpochsServerInstance } from '../../server/src/server.js';
 import type { RemoteGameController } from '../src/controllers/remote-controller.js';
 
 declare global {
@@ -20,17 +18,18 @@ declare global {
 }
 
 async function uncheckConfirmPassIfPresent(page: Page): Promise<void> {
-  const toggle = page.getByTestId('confirm-pass-toggle');
-  if ((await toggle.count()) > 0 && (await toggle.isVisible())) {
-    if (await toggle.isChecked()) {
-      await toggle.uncheck();
-    }
-  }
+  await disablePassConfirmation(page);
 }
 
 async function passTurnIfActive(page: Page): Promise<boolean> {
   const passBtn = page.getByTestId('pass-turn-btn');
   if ((await passBtn.count()) > 0 && (await passBtn.isEnabled())) {
+    await page.mouse.move(0, 0);
+    const hand = page.getByTestId('player-hand');
+    if ((await hand.getAttribute('data-expanded')) === 'true') {
+      await closeHand(page);
+      await expect(hand).toHaveAttribute('data-expanded', 'false');
+    }
     await passBtn.click();
     const confirmDialog = page.getByTestId('pass-confirm-dialog');
     if ((await confirmDialog.count()) > 0 && (await confirmDialog.isVisible())) {
@@ -68,6 +67,7 @@ test.describe('The Epochs — Multiplayer Online E2E (2 BrowserContext, Riconnes
     browser,
     viewport,
   }) => {
+    test.setTimeout(120_000);
     const context1 = await browser.newContext({
       viewport: viewport ?? { width: 1280, height: 800 },
     });
@@ -132,9 +132,7 @@ test.describe('The Epochs — Multiplayer Online E2E (2 BrowserContext, Riconnes
         .first()
         .click();
       await page1.getByTestId('mulligan-submit-btn').click();
-      await expect(
-        page1.getByTestId('mulligan-waiting-opponent'),
-      ).toBeVisible();
+      await expect(page1.getByTestId('mulligan-waiting-opponent')).toBeVisible();
       await page2.getByTestId('mulligan-submit-btn').click();
 
       await expect(board1).toHaveAttribute('data-phase', 'development');
@@ -156,7 +154,8 @@ test.describe('The Epochs — Multiplayer Online E2E (2 BrowserContext, Riconnes
         (await page1.getByTestId('pass-turn-btn').isEnabled()) &&
         (await p1PlayableSlot.count()) > 0
       ) {
-        if (await page1.getByTestId('player-hand').getAttribute('data-expanded') !== 'true') await page1.getByTestId('hand-reveal-toggle').click();
+        if ((await page1.getByTestId('player-hand').getAttribute('data-expanded')) !== 'true')
+          await openHand(page1);
         await p1PlayableSlot.click();
         const playBtn1 = page1.getByTestId('hand-preview-play-btn');
         if (await playBtn1.isEnabled()) {
@@ -170,18 +169,18 @@ test.describe('The Epochs — Multiplayer Online E2E (2 BrowserContext, Riconnes
       });
 
       const syncedVersions = await Promise.all([
-        page1.evaluate(
-          () => window.__epochsRemoteController?.getSnapshot().stateVersion ?? -1,
-        ),
-        page2.evaluate(
-          () => window.__epochsRemoteController?.getSnapshot().stateVersion ?? -1,
-        ),
+        page1.evaluate(() => window.__epochsRemoteController?.getSnapshot().stateVersion ?? -1),
+        page2.evaluate(() => window.__epochsRemoteController?.getSnapshot().stateVersion ?? -1),
       ]);
       expect(syncedVersions[0]).toBeGreaterThanOrEqual(2);
       expect(syncedVersions[1]).toBe(syncedVersions[0]);
 
       // 6. Avanzamento deterministico della partita su entrambi i client fino a `finished`
       for (let step = 0; step < 80; step += 1) {
+        await Promise.all([
+          expect(board1).toHaveAttribute('data-is-playing', 'false', { timeout: 30_000 }),
+          expect(board2).toHaveAttribute('data-is-playing', 'false', { timeout: 30_000 }),
+        ]);
         const phase1 = await board1.getAttribute('data-phase');
         const phase2 = await board2.getAttribute('data-phase');
 
@@ -245,27 +244,17 @@ test.describe('The Epochs — Multiplayer Online E2E (2 BrowserContext, Riconnes
       await expect(replayScreen).toBeVisible();
 
       // Verifica che il replay sia stato caricato dal server con lo stesso gameId
-      await expect(page1.getByTestId('replay-game-id-input')).toHaveValue(
-        finishedGameId,
-      );
-      await expect(page1.getByTestId('replay-server-url-input')).toHaveValue(
-        httpBaseUrl,
-      );
+      await expect(page1.getByTestId('replay-game-id-input')).toHaveValue(finishedGameId);
+      await expect(page1.getByTestId('replay-server-url-input')).toHaveValue(httpBaseUrl);
       await expect(page1.getByTestId('replay-controls-bar')).toBeVisible();
-      await expect(page1.getByTestId('replay-step-indicator')).toContainText(
-        'Passo 0 /',
-      );
+      await expect(page1.getByTestId('replay-step-indicator')).toContainText('Passo 0 /');
 
       // Nella prospettiva P1 al Passo 0 sono visibili le 8 carte iniziali di P1
-      await expect(page1.getByTestId('replay-self-panel')).toContainText(
-        'Mano visibile: 8',
-      );
+      await expect(page1.getByTestId('replay-self-panel')).toContainText('Mano visibile: 8');
 
       // Controllo "Passo Avanti"
       await page1.getByTestId('replay-step-forward-btn').click();
-      await expect(page1.getByTestId('replay-step-indicator')).toContainText(
-        'Passo 1 /',
-      );
+      await expect(page1.getByTestId('replay-step-indicator')).toContainText('Passo 1 /');
       await expect(page1.getByTestId('replay-step-hash-badge')).toBeVisible();
 
       // Controllo "Play" / "Pausa"
@@ -276,17 +265,11 @@ test.describe('The Epochs — Multiplayer Online E2E (2 BrowserContext, Riconnes
 
       // Cambio punto di vista a "P2" e poi a "Pubblico" (dove le mani segrete sono oscurate: 0 carte visibili)
       await page1.getByTestId('replay-perspective-P2').click();
-      await expect(page1.getByTestId('replay-self-panel')).toContainText(
-        'Prospettiva: P2',
-      );
+      await expect(page1.getByTestId('replay-self-panel')).toContainText('Prospettiva: P2');
 
       await page1.getByTestId('replay-perspective-public').click();
-      await expect(page1.getByTestId('replay-self-panel')).toContainText(
-        'Prospettiva: public',
-      );
-      await expect(page1.getByTestId('replay-self-panel')).toContainText(
-        'Mano visibile: 0',
-      );
+      await expect(page1.getByTestId('replay-self-panel')).toContainText('Prospettiva: public');
+      await expect(page1.getByTestId('replay-self-panel')).toContainText('Mano visibile: 0');
     } finally {
       await context1.close();
       await context2.close();

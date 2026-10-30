@@ -3,6 +3,7 @@ import { PLAY_FIELD_DROPZONE_ID } from './ActionControls.js';
 import type { CardInstance, Line, PlayerView, PublicUnitView, UnitInstance } from '@epochs/engine';
 import type { CSSProperties, ReactElement } from 'react';
 import { UNIT_REVEAL_CASCADE_MS } from '../../state/game-store.js';
+import { useGameStore } from '../../state/game-store.js';
 import { Card } from '../card/Card.js';
 import { CardToken } from '../card/CardToken.js';
 import { CardTypeIcon, LINE_LABELS_IT, LineIcon } from '../icons/DomainIcons.js';
@@ -19,6 +20,7 @@ export interface CityAndLinesProps {
   readonly isRevealingUnits?: boolean | undefined;
   readonly playbackUnits?: readonly DisplayUnit[] | undefined;
   readonly isBattlePlaybackActive?: boolean | undefined;
+  readonly hasPlaybackSnapshot?: boolean | undefined;
   readonly selectedBuildingUid?: string | null | undefined;
   readonly isDroppableOver?: boolean | undefined;
   readonly onInspectCard?: ((cardId: string) => void) | undefined;
@@ -37,12 +39,16 @@ export function CityAndLines({
   isRevealingUnits = false,
   playbackUnits,
   isBattlePlaybackActive = false,
+  hasPlaybackSnapshot = true,
   selectedBuildingUid,
   isDroppableOver = false,
   onInspectCard,
   onSelectBuilding,
   onSelectUnit,
 }: CityAndLinesProps): ReactElement {
+  const currentEvent = useGameStore((state) => state.currentEvent);
+  const playbackMoment = useGameStore((state) => state.playbackMoment);
+  const isPaused = useGameStore((state) => state.isPaused);
   const { setNodeRef, isOver } = useDroppable({
     id: side === 'self' ? PLAY_FIELD_DROPZONE_ID : 'epochs-opponent-city',
     disabled: side !== 'self' || view.phase !== 'development',
@@ -53,7 +59,7 @@ export function CityAndLines({
 
   // Determina le unità visibili sulle 3 linee di battaglia (§9.2 riga 795)
   const activeLineUnits: readonly DisplayUnit[] = (() => {
-    if (isBattlePlaybackActive && playbackUnits !== undefined) {
+    if (isBattlePlaybackActive && hasPlaybackSnapshot && playbackUnits !== undefined) {
       return playbackUnits;
     }
     if (!inBattleStage) {
@@ -107,17 +113,14 @@ export function CityAndLines({
             : String(selfCityBuildings.length + selfCityCoveredUnits.length)
         }
       >
-        <header className="board-zone__header">
-          <span className="board-zone__title">
-            <CardTypeIcon type="economy" size={14} />
-            <span>{side === 'self' ? 'Città (tua)' : 'Città coperta'}</span>
-          </span>
-          <span className="board-zone__count">
-            {side === 'opponent'
-              ? `${view.opponent.coveredCount} coperte`
-              : `${selfCityBuildings.length + selfCityCoveredUnits.length} carte`}
-          </span>
-        </header>
+        {inBattleStage && (
+          <header className="board-zone__header">
+            <span className="board-zone__title">
+              <CardTypeIcon type="economy" size={14} />
+              <span>{side === 'self' ? 'Città (tua)' : 'Città coperta'}</span>
+            </span>
+          </header>
+        )}
 
         <div className="board-zone__content">
           {side === 'opponent' ? (
@@ -141,7 +144,7 @@ export function CityAndLines({
                     />
                   ))}
                 </div>
-                <div className="covered-stack__meta">
+                <div className="covered-stack__meta sr-only">
                   <span
                     className="covered-stack__number"
                     data-testid="opponent-covered-count-badge"
@@ -153,16 +156,8 @@ export function CityAndLines({
                   </span>
                 </div>
               </div>
-            ) : (
-              <div className="board-zone__empty">Nessuna carta coperta nella Città avversaria</div>
-            )
-          ) : selfCityBuildings.length === 0 && selfCityCoveredUnits.length === 0 ? (
-            <div className="board-zone__empty">
-              {inBattleStage
-                ? 'Nessun Edificio Economico attivo'
-                : 'Trascina o gioca qui Edifici e Unità coperte'}
-            </div>
-          ) : (
+            ) : null
+          ) : selfCityBuildings.length === 0 && selfCityCoveredUnits.length === 0 ? null : (
             <>
               {selfCityBuildings.map((building) => {
                 const isSelected = selectedBuildingUid === building.uid;
@@ -270,6 +265,20 @@ export function CityAndLines({
                   <div className="board-zone__empty">Linea vuota</div>
                 ) : (
                   lineUnits.map((unit) => {
+                    const battle =
+                      isBattlePlaybackActive && currentEvent?.type === 'BattlePhaseResolved'
+                        ? currentEvent
+                        : null;
+                    const attacker =
+                      battle &&
+                      Object.values(battle.contributions ?? {}).some((contributions) =>
+                        contributions.some((item) => item.uid === unit.uid),
+                      );
+                    const target =
+                      battle &&
+                      Object.values(battle.assignments).some((assignments) =>
+                        assignments.some((item) => item.uid === unit.uid),
+                      );
                     const cascadeIdx = cascadeIndexByUid.get(unit.uid) ?? 0;
                     const isUnitRevealed =
                       !isRevealingUnits ||
@@ -293,6 +302,10 @@ export function CityAndLines({
                         data-unit-uid={unit.uid}
                         data-unit-card-id={unit.cardId}
                         data-unit-seq={String(unit.seq)}
+                        data-combat-role={target ? 'target' : attacker ? 'attacker' : ''}
+                        data-playback-moment={playbackMoment ?? ''}
+                        data-paused={String(isPaused)}
+                        data-casualty={String(unit.hp <= 0)}
                         data-reveal-state={isUnitRevealed ? 'revealed' : 'revealing'}
                         data-cascade-index={String(cascadeIdx)}
                       >

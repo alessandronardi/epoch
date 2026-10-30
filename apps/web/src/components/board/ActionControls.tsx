@@ -164,7 +164,7 @@ export function DevelopmentPlayDndProvider({
   onDropzoneOverChange,
   children,
 }: DevelopmentPlayDndProviderProps): ReactElement {
-  const storeView = useGameStore((s) => s.view);
+  const storeView = useGameStore((s) => s.presentationView ?? s.view);
   const setSelectedHandUid = useGameStore((s) => s.setSelectedHandUid);
   const setActiveConversionUid = useGameStore((s) => s.setActiveConversionUid);
   const setUnplayableBanner = useGameStore((s) => s.setUnplayableBanner);
@@ -257,8 +257,9 @@ export function ActionControls({
   onPassTurn,
   onCancelPass,
 }: ActionControlsProps): ReactElement {
-  const storeView = useGameStore((s) => s.view);
+  const storeView = useGameStore((s) => s.presentationView ?? s.view);
   const storeConfirmPassEnabled = useGameStore((s) => s.confirmPassEnabled);
+  const isPlaying = useGameStore((s) => s.isPlaying);
   const setSelectedHandUid = useGameStore((s) => s.setSelectedHandUid);
   const setUnplayableBanner = useGameStore((s) => s.setUnplayableBanner);
   const setConfirmPassEnabled = useGameStore((s) => s.setConfirmPassEnabled);
@@ -279,9 +280,10 @@ export function ActionControls({
     );
   }
 
-  const canPass = view.phase === 'development' && view.self.legal.canPass;
+  const canPass = !isPlaying && view.phase === 'development' && view.self.legal.canPass;
 
   const executePass = (): void => {
+    if (!canPass) return;
     setIsPassDialogOpen(false);
     setSelectedHandUid(null);
     setUnplayableBanner(null);
@@ -323,7 +325,7 @@ export function ActionControls({
         border: isDropzoneOver
           ? '1.5px dashed var(--brass, #B58E48)'
           : '1px solid rgba(181, 142, 72, 0.35)',
-        minWidth: '220px',
+        minWidth: '0',
       }}
     >
       <button
@@ -335,8 +337,8 @@ export function ActionControls({
         style={{
           padding: '8px 16px',
           borderRadius: '6px',
-          border: '1.5px solid var(--crimson, #A8404D)',
-          backgroundColor: canPass ? 'rgba(168, 64, 77, 0.28)' : 'var(--surface-card, #223444)',
+          border: '1px solid var(--brass, #B58E48)',
+          backgroundColor: 'rgba(25, 25, 22, 0.88)',
           color: canPass ? 'var(--chalk, #E9E5D6)' : 'var(--chalk-muted, #A7B4C2)',
           fontFamily: 'var(--font-display)',
           fontSize: '0.92rem',
@@ -347,26 +349,6 @@ export function ActionControls({
       >
         Passo
       </button>
-
-      {/* Impostazione rapida per attivare/disattivare la conferma del Passo (§9.4 riga 816) */}
-      <label
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '6px',
-          fontSize: '0.78rem',
-          color: 'var(--chalk-muted, #A7B4C2)',
-          cursor: 'pointer',
-        }}
-      >
-        <input
-          type="checkbox"
-          data-testid="confirm-pass-toggle"
-          checked={confirmPassEnabled}
-          onChange={(ev) => setConfirmPassEnabled(ev.target.checked)}
-        />
-        <span>Chiedi conferma rapida prima di passare</span>
-      </label>
 
       {/* Dialogo di conferma rapida per il pulsante "Passo" (§9.4 riga 816) */}
       {isPassDialogOpen && (

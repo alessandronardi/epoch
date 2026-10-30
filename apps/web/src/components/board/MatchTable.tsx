@@ -41,6 +41,14 @@ export function MatchTable({
   const conversionUid = useGameStore((state) => state.activeConversionUid);
   const handover = useGameStore((state) => state.awaitingHotSeatHandover);
   const busy = useGameStore((state) => state.isPlaying);
+  const presentingBattle = useGameStore((state) => state.presentationView !== null);
+  const resolvingBattle = useGameStore(
+    (state) =>
+      state.isPlaying &&
+      state.battleLog.some(
+        (entry) => entry.era === state.battleEra && entry.type === 'BattleStarted',
+      ),
+  );
   const inspect = (cardId: string): void => useGameStore.getState().setInspectedCardId(cardId);
   const play = (cardUid: string): void => {
     const state = useGameStore.getState();
@@ -53,7 +61,8 @@ export function MatchTable({
       setUnplayableBanner: state.setUnplayableBanner,
     });
   };
-  if (handover) return <HotSeatHandoverModal controller={controller} />;
+  if (handover && (!busy || !presentingBattle))
+    return <HotSeatHandoverModal controller={controller} />;
   return (
     <DevelopmentPlayDndProvider
       view={view}
@@ -65,7 +74,7 @@ export function MatchTable({
         isDroppableOverSelfCity={isDropzoneOver}
         onInspectCard={inspect}
         handSlot={
-          view?.phase === 'prebattle' ? (
+          resolvingBattle ? null : view?.phase === 'prebattle' ? (
             <PrebattleInstantsBar view={view} controller={controller} onInspectCard={inspect} />
           ) : (
             <PlayerHand
@@ -78,7 +87,7 @@ export function MatchTable({
           )
         }
         actionControlsSlot={
-          view?.phase === 'prebattle' ? undefined : (
+          resolvingBattle || view?.phase === 'prebattle' ? undefined : (
             <ActionControls
               view={view}
               controller={controller}

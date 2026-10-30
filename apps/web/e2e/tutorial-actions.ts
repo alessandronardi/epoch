@@ -1,3 +1,4 @@
+import { openHand, closeHand } from './board-actions.js';
 import { expect, type Page, type Locator } from '@playwright/test';
 import type { TutorialCue } from '../src/tutorial/tutorial-scenario.js';
 
@@ -7,7 +8,11 @@ export async function performCue(page: Page, cue: TutorialCue): Promise<void> {
     (page.viewportSize()?.width ?? 1280) < 1100 ? card.tap() : card.click();
   const handCard = (id: string) =>
     page.locator(`.player-hand__slot[data-hand-card-id="${id}"]`).first().getByTestId(`card-${id}`);
-  if (['deselect', 'unplayable', 'play', 'conversion', 'cancel-conversion'].includes(action.kind) && await page.getByTestId('player-hand').getAttribute('data-expanded') !== 'true') await page.getByTestId('hand-reveal-toggle').click();
+  if (
+    ['deselect', 'unplayable', 'play', 'conversion', 'cancel-conversion'].includes(action.kind) &&
+    (await page.getByTestId('player-hand').getAttribute('data-expanded')) !== 'true'
+  )
+    await openHand(page);
   switch (action.kind) {
     case 'inspect':
       await page.getByTestId('mulligan-modal').getByTestId(`card-${action.cardId}`).press('i');
@@ -58,6 +63,10 @@ export async function performCue(page: Page, cue: TutorialCue): Promise<void> {
       break;
     case 'cancel-pass':
     case 'pass':
+      await closeHand(page);
+      await page
+        .getByTestId('pass-turn-btn')
+        .evaluate((button) => button.scrollIntoView({ block: 'center' }));
       await page.getByTestId('pass-turn-btn').click();
       await page
         .getByTestId(action.kind === 'pass' ? 'confirm-pass-btn' : 'cancel-pass-btn')

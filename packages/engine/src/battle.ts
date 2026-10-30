@@ -3,6 +3,7 @@
 
 import { PLAYERS_ORDER } from './economy.js';
 import type {
+  BattleContribution,
   BattleOutcomeEvent,
   BattleOutcomeKind,
   BattlePhaseId,
@@ -20,11 +21,7 @@ import type {
   UnitInstance,
 } from './types.js';
 
-export const STANDARD_LINE_PRIORITY: readonly Line[] = [
-  'front',
-  'center',
-  'rear',
-];
+export const STANDARD_LINE_PRIORITY: readonly Line[] = ['front', 'center', 'rear'];
 
 export const FLANK_LINE_PRIORITY: readonly Line[] = ['rear', 'front', 'center'];
 
@@ -118,11 +115,7 @@ export function orderTargets(
   return units
     .filter((u) => isCombatantUnit(u, catalog) && u.hp > 0 && filter(u))
     .slice()
-    .sort(
-      (a, b) =>
-        linePriority.indexOf(a.line) - linePriority.indexOf(b.line) ||
-        a.seq - b.seq,
-    );
+    .sort((a, b) => linePriority.indexOf(a.line) - linePriority.indexOf(b.line) || a.seq - b.seq);
 }
 
 /**
@@ -201,9 +194,7 @@ export function evaluateBattleGuard(
   return null;
 }
 
-function createSnapshot(
-  state: Readonly<GameState>,
-): Record<PlayerId, UnitInstance[]> {
+function createSnapshot(state: Readonly<GameState>): Record<PlayerId, UnitInstance[]> {
   return {
     P1: state.players.P1.units.filter((u) => u.hp > 0).map((u) => ({ ...u })),
     P2: state.players.P2.units.filter((u) => u.hp > 0).map((u) => ({ ...u })),
@@ -220,10 +211,7 @@ function hasLivingCategory(
   );
 }
 
-function getVolleyBonus(
-  rules: Readonly<CardRules>,
-  state: Readonly<GameState>,
-): number {
+function getVolleyBonus(rules: Readonly<CardRules>, state: Readonly<GameState>): number {
   if (state.rules.eraScalingSource === 'current_era') {
     return state.era;
   }
@@ -236,10 +224,7 @@ function getVolleyBonus(
   return bonus;
 }
 
-function getImpaleDamage(
-  rules: Readonly<CardRules>,
-  state: Readonly<GameState>,
-): number {
+function getImpaleDamage(rules: Readonly<CardRules>, state: Readonly<GameState>): number {
   if (state.rules.eraScalingSource === 'current_era') {
     return 1 + 2 * state.era;
   }
@@ -252,10 +237,7 @@ function getImpaleDamage(
   return dmg;
 }
 
-function getFlankBonus(
-  rules: Readonly<CardRules>,
-  state: Readonly<GameState>,
-): number {
+function getFlankBonus(rules: Readonly<CardRules>, state: Readonly<GameState>): number {
   if (state.rules.eraScalingSource === 'current_era') {
     return state.era;
   }
@@ -325,6 +307,7 @@ function emitBattlePhaseEvent(
   assignments: Record<PlayerId, DamageAssignment[]>,
   casualties: Record<PlayerId, string[]>,
   meleeCycle?: number,
+  contributions?: Record<PlayerId, BattleContribution[]>,
 ): void {
   events.push({
     n: ++state.counters.event,
@@ -332,6 +315,7 @@ function emitBattlePhaseEvent(
     era: state.era,
     phase,
     ...(meleeCycle !== undefined ? { meleeCycle } : {}),
+    ...(contributions !== undefined ? { contributions } : {}),
     damageDealt: {
       P1: damageDealt.P1,
       P2: damageDealt.P2,
@@ -366,6 +350,7 @@ function emitBattleOutcomeEvent(
 function executePhase1Volley(state: GameState, events: GameEvent[]): void {
   // 1. Snapshot
   const snapshot = createSnapshot(state);
+  const contributions: Record<PlayerId, BattleContribution[]> = { P1: [], P2: [] };
 
   // 2. Calcolo
   const damageDealt: Record<PlayerId, number> = { P1: 0, P2: 0 };
@@ -373,11 +358,7 @@ function executePhase1Volley(state: GameState, events: GameEvent[]): void {
 
   for (const attacker of PLAYERS_ORDER) {
     const defender = getOpponent(attacker);
-    const enemyHasSpearman = hasLivingCategory(
-      snapshot[defender],
-      state.catalog,
-      'spearman',
-    );
+    const enemyHasSpearman = hasLivingCategory(snapshot[defender], state.catalog, 'spearman');
 
     let totalDmg = 0;
     for (const unit of snapshot[attacker]) {
@@ -386,6 +367,14 @@ function executePhase1Volley(state: GameState, events: GameEvent[]): void {
         const effAtk = getEffectiveUnitAtk(unit, state.catalog);
         const bonus = enemyHasSpearman ? getVolleyBonus(rules, state) : 0;
         totalDmg += effAtk + bonus;
+        contributions[attacker].push({
+          uid: unit.uid,
+          cardId: unit.cardId,
+          baseDamage: effAtk,
+          bonus,
+          totalDamage: effAtk + bonus,
+          rule: 'volley',
+        });
       }
     }
 
@@ -409,12 +398,15 @@ function executePhase1Volley(state: GameState, events: GameEvent[]): void {
     damageDealt,
     assignments,
     casualties,
+    undefined,
+    contributions,
   );
 }
 
 function executePhase2AImpale(state: GameState, events: GameEvent[]): void {
   // 1. Snapshot post-Fase 1
   const snapshot = createSnapshot(state);
+  const contributions: Record<PlayerId, BattleContribution[]> = { P1: [], P2: [] };
 
   // 2. Calcolo
   const damageDealt: Record<PlayerId, number> = { P1: 0, P2: 0 };
@@ -427,7 +419,16 @@ function executePhase2AImpale(state: GameState, events: GameEvent[]): void {
     for (const unit of snapshot[attacker]) {
       const rules = getUnitRulesOrThrow(state.catalog, unit);
       if (rules.category === 'spearman') {
-        totalDmg += getImpaleDamage(rules, state);
+        const damage = getImpaleDamage(rules, state);
+        totalDmg += damage;
+        contributions[attacker].push({
+          uid: unit.uid,
+          cardId: unit.cardId,
+          baseDamage: damage,
+          bonus: 0,
+          totalDamage: damage,
+          rule: 'impale',
+        });
       }
     }
 
@@ -451,12 +452,15 @@ function executePhase2AImpale(state: GameState, events: GameEvent[]): void {
     damageDealt,
     assignments,
     casualties,
+    undefined,
+    contributions,
   );
 }
 
 function executePhase2BImpact(state: GameState, events: GameEvent[]): void {
   // 1. Snapshot post-Fase 2A
   const snapshot = createSnapshot(state);
+  const contributions: Record<PlayerId, BattleContribution[]> = { P1: [], P2: [] };
 
   // 2. Calcolo
   const damageDealt: Record<PlayerId, number> = { P1: 0, P2: 0 };
@@ -464,40 +468,32 @@ function executePhase2BImpact(state: GameState, events: GameEvent[]): void {
 
   for (const attacker of PLAYERS_ORDER) {
     const defender = getOpponent(attacker);
-    const enemyHasSpearman = hasLivingCategory(
-      snapshot[defender],
-      state.catalog,
-      'spearman',
-    );
-    const enemyHasArcher = hasLivingCategory(
-      snapshot[defender],
-      state.catalog,
-      'archer',
-    );
+    const enemyHasSpearman = hasLivingCategory(snapshot[defender], state.catalog, 'spearman');
+    const enemyHasArcher = hasLivingCategory(snapshot[defender], state.catalog, 'archer');
 
     const isFlanking = !enemyHasSpearman;
-    const linePriority = isFlanking
-      ? FLANK_LINE_PRIORITY
-      : STANDARD_LINE_PRIORITY;
+    const linePriority = isFlanking ? FLANK_LINE_PRIORITY : STANDARD_LINE_PRIORITY;
 
     let totalDmg = 0;
     for (const unit of snapshot[attacker]) {
       const rules = getUnitRulesOrThrow(state.catalog, unit);
       if (rules.category === 'cavalry') {
         const effAtk = getEffectiveUnitAtk(unit, state.catalog);
-        const bonus =
-          isFlanking && enemyHasArcher ? getFlankBonus(rules, state) : 0;
+        const bonus = isFlanking && enemyHasArcher ? getFlankBonus(rules, state) : 0;
         totalDmg += effAtk + bonus;
+        contributions[attacker].push({
+          uid: unit.uid,
+          cardId: unit.cardId,
+          baseDamage: effAtk,
+          bonus,
+          totalDamage: effAtk + bonus,
+          rule: isFlanking ? 'flank' : 'impact',
+        });
       }
     }
 
     damageDealt[attacker] = totalDmg;
-    const targets = orderTargets(
-      snapshot[defender],
-      linePriority,
-      () => true,
-      state.catalog,
-    );
+    const targets = orderTargets(snapshot[defender], linePriority, () => true, state.catalog);
     assignments[attacker] = assignDamage(totalDmg, targets);
   }
 
@@ -511,16 +507,15 @@ function executePhase2BImpact(state: GameState, events: GameEvent[]): void {
     damageDealt,
     assignments,
     casualties,
+    undefined,
+    contributions,
   );
 }
 
-function executePhase3MeleeCycle(
-  state: GameState,
-  events: GameEvent[],
-  meleeCycle: number,
-): void {
+function executePhase3MeleeCycle(state: GameState, events: GameEvent[], meleeCycle: number): void {
   // 1. Snapshot all'inizio del ciclo di mischia
   const snapshot = createSnapshot(state);
+  const contributions: Record<PlayerId, BattleContribution[]> = { P1: [], P2: [] };
 
   // 2. Calcolo
   const damageDealt: Record<PlayerId, number> = { P1: 0, P2: 0 };
@@ -532,7 +527,20 @@ function executePhase3MeleeCycle(
     let totalDmg = 0;
     for (const unit of snapshot[attacker]) {
       if (isCombatantUnit(unit, state.catalog)) {
-        totalDmg += getMeleeUnitAtk(unit, state.catalog, state.rules);
+        const damage = getMeleeUnitAtk(unit, state.catalog, state.rules);
+        totalDmg += damage;
+        contributions[attacker].push({
+          uid: unit.uid,
+          cardId: unit.cardId,
+          baseDamage: damage,
+          bonus: 0,
+          totalDamage: damage,
+          rule:
+            getUnitRulesOrThrow(state.catalog, unit).category === 'archer' &&
+            state.rules.archerMeleeUsesEffectiveAtk
+              ? 'archer_melee'
+              : 'melee',
+        });
       }
     }
 
@@ -557,6 +565,7 @@ function executePhase3MeleeCycle(
     assignments,
     casualties,
     meleeCycle,
+    contributions,
   );
 }
 
@@ -565,14 +574,12 @@ function executePhase3MeleeCycle(
  * sullo stato/draft della partita, emettendo `BattleStarted`, i relativi `BattlePhaseResolved`
  * e il `BattleOutcome` conclusivo (GDD §5.2–5.3, TECH-SPEC §4.8, R5).
  */
-export function resolveFieldBattle(
-  state: GameState,
-  events: GameEvent[],
-): BattleResult {
+export function resolveFieldBattle(state: GameState, events: GameEvent[]): BattleResult {
   events.push({
     n: ++state.counters.event,
     type: 'BattleStarted',
     era: state.era,
+    units: createSnapshot(state),
   });
 
   // Guardia prima di Fase 1 (Tiro degli Arcieri)

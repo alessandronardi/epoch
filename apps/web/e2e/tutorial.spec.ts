@@ -1,3 +1,4 @@
+import { openHand } from './board-actions.js';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { performCue } from './tutorial-actions.js';
@@ -71,7 +72,8 @@ test('trascina carte realmente sulla Città, poi torna a una partita libera', as
     await expect(page.getByTestId('tutorial-title')).toHaveText(cue.title);
     if (cue.action.kind === 'play' && drops < 2) {
       const slot = page.locator(`.player-hand__slot[data-hand-card-id="${cue.action.cardId}"]`);
-      if (await page.getByTestId('player-hand').getAttribute('data-expanded') !== 'true') await page.getByTestId('hand-reveal-toggle').click();
+      if ((await page.getByTestId('player-hand').getAttribute('data-expanded')) !== 'true')
+        await openHand(page);
       const target = page.getByTestId('self-city-zone');
       await target.scrollIntoViewIfNeeded();
       await slot.scrollIntoViewIfNeeded();

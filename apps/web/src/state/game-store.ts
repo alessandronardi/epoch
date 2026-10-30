@@ -9,13 +9,15 @@ import {
   type UnitInstance,
   type UnplayableReason,
 } from '@epochs/engine';
-import {
-  create,
-  createStore,
-  type StateCreator,
-  type StoreApi,
-} from 'zustand';
+import { create, createStore, type StateCreator, type StoreApi } from 'zustand';
 import { describeEvent, getBattleStageLabel } from './event-describer.js';
+import {
+  applyPlaybackUnits,
+  applyPlaybackView,
+  describeBattleDetails,
+  removePlaybackCasualties,
+  withPlaybackUnits,
+} from './playback-state.js';
 
 export type PlaybackSpeed = 1 | 2;
 
@@ -31,6 +33,19 @@ export const DEFAULT_EVENT_STEP_MS = 240;
 
 /** Durata base a 1x per un evento di risoluzione fase di battaglia/assedio. */
 export const BATTLE_EVENT_STEP_MS = 480;
+export const BATTLE_ANNOUNCE_MS = 650;
+export const BATTLE_IMPACT_MS = 400;
+export const BATTLE_RESULT_MS = 850;
+export type PlaybackMoment = 'announce' | 'impact' | 'result' | null;
+export const BATTLE_STAGE_CODES: readonly BattleStageCode[] = ['1', '2A', '2B', '3', '4'];
+
+function hasBattleMoments(event: GameEvent): boolean {
+  return (
+    event.type === 'BattlePhaseResolved' ||
+    event.type === 'SiegeResolved' ||
+    event.type === 'RaidResolved'
+  );
+}
 
 export interface BattleLogEntry {
   readonly id: string;
@@ -40,6 +55,7 @@ export interface BattleLogEntry {
   readonly text: string;
   readonly stageLabel: string | null;
   readonly event: GameEvent;
+  readonly details?: readonly string[];
 }
 
 export interface UnplayableBannerState {
@@ -59,6 +75,7 @@ export interface EnqueueEventsOptions {
    * Se `true`, svuota la coda e il registro precedenti prima di accodare i nuovi eventi.
    */
   readonly resetLog?: boolean | undefined;
+  readonly resync?: boolean | undefined;
 }
 
 export function getBattleStageCode(event: GameEvent): BattleStageCode | null {
@@ -84,6 +101,7 @@ export function getBattleStageCode(event: GameEvent): BattleStageCode | null {
 }
 
 export function getEventBaseDurationMs(event: GameEvent): number {
+  if (hasBattleMoments(event)) return BATTLE_ANNOUNCE_MS + BATTLE_IMPACT_MS + BATTLE_RESULT_MS;
   switch (event.type) {
     case 'UnitsRevealed': {
       const totalUnits = event.units.P1.length + event.units.P2.length;
@@ -102,10 +120,7 @@ export function getEventBaseDurationMs(event: GameEvent): number {
   }
 }
 
-export function getEventStepDurationMs(
-  event: GameEvent,
-  speed: PlaybackSpeed,
-): number {
+export function getEventStepDurationMs(event: GameEvent, speed: PlaybackSpeed): number {
   return Math.round(getEventBaseDurationMs(event) / speed);
 }
 
@@ -140,51 +155,17 @@ function resolveEventEra(event: GameEvent, fallbackEra: EraNo): EraNo {
   return fallbackEra;
 }
 
-function applyEventToPlaybackUnits(
-  units: Record<PlayerId, UnitInstance[]>,
-  event: GameEvent,
-): Record<PlayerId, UnitInstance[]> {
-  if (event.type === 'UnitsRevealed') {
-    return {
-      P1: event.units.P1.map((u) => ({ ...u })),
-      P2: event.units.P2.map((u) => ({ ...u })),
-    };
-  }
-
-  if (event.type === 'BattlePhaseResolved') {
-    const updateSide = (side: PlayerId): UnitInstance[] => {
-      const damageByUid = new Map<string, number>();
-      for (const assignment of event.assignments[side]) {
-        damageByUid.set(
-          assignment.uid,
-          (damageByUid.get(assignment.uid) ?? 0) + assignment.damage,
-        );
-      }
-      const casualtiesSet = new Set(event.casualties[side]);
-      return units[side]
-        .map((unit) => {
-          const dmg = damageByUid.get(unit.uid) ?? 0;
-          return dmg > 0 ? { ...unit, hp: Math.max(0, unit.hp - dmg) } : unit;
-        })
-        .filter((unit) => !casualtiesSet.has(unit.uid) && unit.hp > 0);
-    };
-
-    return {
-      P1: updateSide('P1'),
-      P2: updateSide('P2'),
-    };
-  }
-
-  if (event.type === 'EraEnded') {
-    return { P1: [], P2: [] };
-  }
-
-  return units;
-}
-
 export interface GameStoreState {
   // Vista autorevole proiettata per il giocatore attivo
   readonly view: PlayerView | null;
+  /** Public presentation held while the authoritative view advances. */
+  readonly presentationView: PlayerView | null;
+  readonly presentationEventFloor: number;
+  readonly playbackMoment: PlaybackMoment;
+  readonly playbackNotice: string;
+  readonly battleEra: EraNo | null;
+  readonly battleId: number | null;
+  readonly skippedBattleStages: Readonly<Partial<Record<BattleStageCode, string>>>;
   readonly pendingView: PlayerView | null;
   readonly mode: ActiveGameMode;
 
@@ -203,6 +184,7 @@ export interface GameStoreState {
   readonly pendingCascadeUnitUids: readonly string[];
   readonly isRevealingUnits: boolean;
   readonly playbackUnits: Readonly<Record<PlayerId, readonly UnitInstance[]>>;
+  readonly hasPlaybackSnapshot: boolean;
   readonly speed: PlaybackSpeed;
   readonly isPaused: boolean;
   readonly isPlaying: boolean;
@@ -243,10 +225,7 @@ export interface GameStoreState {
   readonly clearPlayback: () => void;
 
   // Azioni Hot-Seat e UI effimera
-  readonly setHotSeatHandover: (
-    awaiting: boolean,
-    nextPlayer: PlayerId | null,
-  ) => void;
+  readonly setHotSeatHandover: (awaiting: boolean, nextPlayer: PlayerId | null) => void;
   readonly setLastError: (error: RuleError | null) => void;
   readonly setInspectedCardId: (cardId: string | null) => void;
   readonly setSelectedHandUid: (uid: string | null) => void;
@@ -266,240 +245,252 @@ export interface GameStoreState {
 
 export type GameStoreApi = StoreApi<GameStoreState>;
 
+function initialPlayback() {
+  return {
+    pendingView: null as PlayerView | null,
+    presentationView: null as PlayerView | null,
+    presentationEventFloor: 0,
+    playbackMoment: null as PlaybackMoment,
+    playbackNotice: '',
+    battleEra: null as EraNo | null,
+    battleId: null as number | null,
+    skippedBattleStages: {} as Partial<Record<BattleStageCode, string>>,
+    queue: [] as readonly GameEvent[],
+    currentEvent: null as GameEvent | null,
+    playedEvents: [] as readonly GameEvent[],
+    battleLog: [] as readonly BattleLogEntry[],
+    latestAnnouncement: '',
+    activeBattleStage: null as string | null,
+    activeBattleStageCode: null as BattleStageCode | null,
+    activeBattlePhaseId: null as BattlePhaseId | 'phase4_siege' | null,
+    scannedBattleStages: [] as readonly BattleStageCode[],
+    battleStageHistory: [] as readonly string[],
+    revealedUnitUids: [] as readonly string[],
+    pendingCascadeUnitUids: [] as readonly string[],
+    isRevealingUnits: false,
+    playbackUnits: { P1: [], P2: [] } as Readonly<Record<PlayerId, readonly UnitInstance[]>>,
+    hasPlaybackSnapshot: false,
+    speed: 1 as PlaybackSpeed,
+    isPaused: false,
+    isPlaying: false,
+  };
+}
+
 function createGameStoreInitializer(): StateCreator<GameStoreState> {
   let activeTimer: ReturnType<typeof setTimeout> | null = null;
-
-  const clearActiveTimer = (): void => {
+  let timerStarted = 0;
+  let timerSpeed: PlaybackSpeed = 1;
+  let remainingBaseMs = 0;
+  const stopTimer = (preserve = false): void => {
     if (activeTimer !== null) {
+      if (preserve)
+        remainingBaseMs = Math.max(0, remainingBaseMs - (Date.now() - timerStarted) * timerSpeed);
       clearTimeout(activeTimer);
       activeTimer = null;
     }
   };
 
   return (set, get) => {
-    const scheduleCurrentEventTimer = (): void => {
-      clearActiveTimer();
+    const finishPlayback = (): void => {
+      stopTimer();
       const state = get();
-      if (state.isPaused || state.currentEvent === null) {
-        return;
-      }
-
-      const current = state.currentEvent;
-      if (current.type === 'UnitsRevealed') {
-        const cascadeDelay = Math.round(UNIT_REVEAL_CASCADE_MS / state.speed);
-        activeTimer = setTimeout(() => {
-          activeTimer = null;
-          onCascadeTick();
-        }, cascadeDelay);
-        return;
-      }
-
-      const stepDelay = getEventStepDurationMs(current, state.speed);
-      activeTimer = setTimeout(() => {
-        activeTimer = null;
-        advanceToNextEvent();
-      }, stepDelay);
-    };
-
-    const onCascadeTick = (): void => {
-      const state = get();
-      if (state.isPaused || state.currentEvent?.type !== 'UnitsRevealed') {
-        return;
-      }
-
-      if (state.pendingCascadeUnitUids.length > 0) {
-        const [nextUid, ...remainingUids] = state.pendingCascadeUnitUids;
-        const updatedRevealed =
-          nextUid !== undefined && !state.revealedUnitUids.includes(nextUid)
-            ? [...state.revealedUnitUids, nextUid]
-            : state.revealedUnitUids;
-
-        if (remainingUids.length > 0) {
-          set({
-            revealedUnitUids: updatedRevealed,
-            pendingCascadeUnitUids: remainingUids,
-            isRevealingUnits: true,
-          });
-          scheduleCurrentEventTimer();
-          return;
-        }
-
-        // Ultima unità della cascata rivelata: chiudi la cascata e passa all'evento successivo
-        set({
-          revealedUnitUids: updatedRevealed,
-          pendingCascadeUnitUids: [],
-          isRevealingUnits: false,
-        });
-        advanceToNextEvent();
-        return;
-      }
-
-      // Caso 0 unità schierate in UnitsRevealed
       set({
+        view: state.pendingView ?? state.view,
+        pendingView: null,
+        presentationView: null,
+        presentationEventFloor: 0,
+        currentEvent: null,
+        playbackMoment: null,
+        activeBattleStage: null,
+        activeBattleStageCode: null,
+        activeBattlePhaseId: null,
+        isPlaying: false,
         isRevealingUnits: false,
         pendingCascadeUnitUids: [],
       });
-      advanceToNextEvent();
     };
 
-    const startEventStep = (
-      event: GameEvent,
-      remainingQueue: readonly GameEvent[],
-    ): void => {
+    const finalizeCasualties = (event: GameEvent): void => {
+      if (event.type !== 'BattlePhaseResolved') return;
       const state = get();
-      const fallbackEra: EraNo =
-        state.view?.era ?? state.pendingView?.era ?? 1;
-      const era = resolveEventEra(event, fallbackEra);
-      const description = describeEvent(event, 'it');
-      const stageLabel = getBattleStageLabel(event, 'it');
-      const stageCode = getBattleStageCode(event);
+      const units = removePlaybackCasualties(state.playbackUnits, event);
+      set({
+        playbackUnits: units,
+        presentationView:
+          state.presentationView && event.n >= state.presentationEventFloor
+            ? withPlaybackUnits(state.presentationView, units)
+            : state.presentationView,
+      });
+    };
 
-      const entry: BattleLogEntry = {
-        id: `ev-${event.n}-${event.type}`,
-        n: event.n,
-        era,
-        type: event.type,
-        text: description,
-        stageLabel,
-        event,
-      };
+    // Single application path for timed playback and skip. Logs are committed only here.
+    const consumeEvent = (event: GameEvent): void => {
+      const state = get();
+      const stage = getBattleStageLabel(event);
+      const code = getBattleStageCode(event);
+      const newBattle = event.type === 'UnitsRevealed' || event.type === 'BattleStarted';
+      const scanned = newBattle ? ([] as BattleStageCode[]) : [...state.scannedBattleStages];
+      const history = newBattle ? ([] as string[]) : [...state.battleStageHistory];
+      const skipped = newBattle ? {} : { ...state.skippedBattleStages };
+      if (code && !scanned.includes(code)) scanned.push(code);
+      if (stage && history.at(-1) !== stage) history.push(stage);
+      if (event.type === 'BattleOutcome') {
+        for (const pending of BATTLE_STAGE_CODES.filter(
+          (value) => value !== '4' && !scanned.includes(value),
+        )) {
+          skipped[pending] = 'Battaglia già conclusa';
+        }
+        if (event.kind !== 'winner')
+          skipped['4'] =
+            event.kind === 'stalemate' ? 'Nessun vincitore: stallo' : 'Annientamento reciproco';
+      }
+      if (event.type === 'EraEnded' && !scanned.includes('4') && !skipped['4'])
+        skipped['4'] = 'Nessun assedio eseguito';
+      const units = applyPlaybackUnits(state.playbackUnits, event);
+      const era = resolveEventEra(event, state.presentationView?.era ?? state.view?.era ?? 1);
+      const text = describeEvent(event);
+      const clearStage =
+        event.type === 'EraEnded' ||
+        event.type === 'EraStarted' ||
+        event.type === 'BattleOutcome' ||
+        newBattle;
+      set({
+        playedEvents: [...state.playedEvents, event],
+        battleLog: [
+          ...state.battleLog,
+          {
+            id: `ev-${event.n}-${event.type}`,
+            n: event.n,
+            era,
+            type: event.type,
+            text,
+            stageLabel: stage,
+            event,
+            details: describeBattleDetails(event, state.playbackUnits),
+          },
+        ],
+        latestAnnouncement: text,
+        activeBattleStage:
+          event.type === 'BattleStarted'
+            ? 'Inizio battaglia'
+            : event.type === 'BattleOutcome'
+              ? 'Esito campale'
+              : event.type === 'EraEnded'
+                ? 'Fine battaglia'
+                : (stage ?? (clearStage ? null : state.activeBattleStage)),
+        activeBattleStageCode: code ?? (clearStage ? null : state.activeBattleStageCode),
+        activeBattlePhaseId:
+          event.type === 'BattlePhaseResolved'
+            ? event.phase
+            : code === '4'
+              ? 'phase4_siege'
+              : clearStage
+                ? null
+                : state.activeBattlePhaseId,
+        scannedBattleStages: scanned,
+        battleStageHistory: history,
+        skippedBattleStages: skipped,
+        battleEra: newBattle ? event.era : state.battleEra,
+        battleId: newBattle ? event.n : state.battleId,
+        playbackNotice: newBattle ? '' : state.playbackNotice,
+        playbackUnits: units,
+        hasPlaybackSnapshot:
+          event.type === 'UnitsRevealed' ||
+          (event.type === 'BattleStarted' && event.units !== undefined)
+            ? true
+            : event.type === 'EraEnded'
+              ? false
+              : state.hasPlaybackSnapshot,
+        presentationView:
+          state.presentationView && event.n >= state.presentationEventFloor
+            ? applyPlaybackView(state.presentationView, event, units)
+            : state.presentationView,
+      });
+    };
 
-      const nextStageHistory =
-        stageLabel !== null &&
-        state.battleStageHistory[state.battleStageHistory.length - 1] !==
-          stageLabel
-          ? [...state.battleStageHistory, stageLabel]
-          : state.battleStageHistory;
-
-      const nextScannedStages =
-        stageCode !== null && !state.scannedBattleStages.includes(stageCode)
-          ? [...state.scannedBattleStages, stageCode]
-          : state.scannedBattleStages;
-
-      const nextActivePhaseId: BattlePhaseId | 'phase4_siege' | null =
-        event.type === 'BattlePhaseResolved'
-          ? event.phase
-          : event.type === 'SiegeResolved' || event.type === 'RaidResolved'
-            ? 'phase4_siege'
-            : event.type === 'EraEnded' || event.type === 'EraStarted'
-              ? null
-              : state.activeBattlePhaseId;
-
-      const nextActiveStage =
-        stageLabel !== null
-          ? stageLabel
-          : event.type === 'EraEnded' || event.type === 'EraStarted'
-            ? null
-            : state.activeBattleStage;
-
-      const nextActiveStageCode =
-        stageCode !== null
-          ? stageCode
-          : event.type === 'EraEnded' || event.type === 'EraStarted'
-            ? null
-            : state.activeBattleStageCode;
-
-      const nextPlaybackUnits = applyEventToPlaybackUnits(
-        {
-          P1: [...state.playbackUnits.P1],
-          P2: [...state.playbackUnits.P2],
+    const schedule = (baseMs?: number): void => {
+      stopTimer();
+      if (baseMs !== undefined) remainingBaseMs = baseMs;
+      const state = get();
+      if (state.isPaused || !state.currentEvent) return;
+      timerStarted = Date.now();
+      timerSpeed = state.speed;
+      activeTimer = setTimeout(
+        () => {
+          activeTimer = null;
+          tick();
         },
-        event,
+        Math.round(remainingBaseMs / state.speed),
       );
-
-      if (event.type === 'UnitsRevealed') {
-        const cascadeUids = [
-          ...event.units.P1.map((u) => u.uid),
-          ...event.units.P2.map((u) => u.uid),
-        ];
-        set({
-          currentEvent: event,
-          queue: remainingQueue,
-          playedEvents: [...state.playedEvents, event],
-          battleLog: [...state.battleLog, entry],
-          latestAnnouncement: description,
-          activeBattleStage: nextActiveStage,
-          activeBattleStageCode: nextActiveStageCode,
-          activeBattlePhaseId: nextActivePhaseId,
-          scannedBattleStages: nextScannedStages,
-          battleStageHistory: nextStageHistory,
-          playbackUnits: nextPlaybackUnits,
-          revealedUnitUids: [],
-          pendingCascadeUnitUids: cascadeUids,
-          isRevealingUnits: true,
-          isPlaying: true,
-        });
-      } else {
-        set({
-          currentEvent: event,
-          queue: remainingQueue,
-          playedEvents: [...state.playedEvents, event],
-          battleLog: [...state.battleLog, entry],
-          latestAnnouncement: description,
-          activeBattleStage: nextActiveStage,
-          activeBattleStageCode: nextActiveStageCode,
-          activeBattlePhaseId: nextActivePhaseId,
-          scannedBattleStages: nextScannedStages,
-          battleStageHistory: nextStageHistory,
-          playbackUnits: nextPlaybackUnits,
-          isRevealingUnits: false,
-          pendingCascadeUnitUids: [],
-          isPlaying: true,
-        });
-      }
-
-      scheduleCurrentEventTimer();
     };
 
-    const advanceToNextEvent = (): void => {
-      const state = get();
-      if (state.queue.length === 0) {
-        clearActiveTimer();
+    const startEventStep = (event: GameEvent, queue: readonly GameEvent[]): void => {
+      set({
+        currentEvent: event,
+        queue,
+        isPlaying: true,
+        playbackMoment: hasBattleMoments(event) ? 'announce' : null,
+        isRevealingUnits: false,
+        pendingCascadeUnitUids: [],
+      });
+      if (hasBattleMoments(event)) {
         set({
-          currentEvent: null,
-          isPlaying: false,
-          isRevealingUnits: false,
-          pendingCascadeUnitUids: [],
-          view: state.pendingView ?? state.view,
-          pendingView: null,
+          activeBattleStage: getBattleStageLabel(event),
+          activeBattleStageCode: getBattleStageCode(event),
+          activeBattlePhaseId: event.type === 'BattlePhaseResolved' ? event.phase : 'phase4_siege',
+          latestAnnouncement: `${getBattleStageLabel(event)}: preparazione.`,
         });
+        schedule(BATTLE_ANNOUNCE_MS);
         return;
       }
+      consumeEvent(event);
+      if (event.type === 'UnitsRevealed') {
+        set({
+          revealedUnitUids: [],
+          pendingCascadeUnitUids: [...event.units.P1, ...event.units.P2].map((unit) => unit.uid),
+          isRevealingUnits: true,
+        });
+        schedule(UNIT_REVEAL_CASCADE_MS);
+      } else schedule(getEventBaseDurationMs(event));
+    };
 
-      const [nextEvent, ...restQueue] = state.queue;
-      if (nextEvent === undefined) {
-        return;
-      }
-      startEventStep(nextEvent, restQueue);
+    const advance = (): void => {
+      const [next, ...rest] = get().queue;
+      if (next) startEventStep(next, rest);
+      else finishPlayback();
+    };
+
+    const tick = (): void => {
+      const state = get();
+      const event = state.currentEvent;
+      if (!event || state.isPaused) return;
+      if (state.playbackMoment === 'announce') {
+        consumeEvent(event);
+        set({ playbackMoment: 'impact' });
+        schedule(BATTLE_IMPACT_MS);
+      } else if (state.playbackMoment === 'impact') {
+        finalizeCasualties(event);
+        set({ playbackMoment: 'result' });
+        schedule(BATTLE_RESULT_MS);
+      } else if (event.type === 'UnitsRevealed') {
+        const [uid, ...remaining] = state.pendingCascadeUnitUids;
+        set({
+          revealedUnitUids: uid ? [...state.revealedUnitUids, uid] : state.revealedUnitUids,
+          pendingCascadeUnitUids: remaining,
+          isRevealingUnits: remaining.length > 0,
+        });
+        if (remaining.length > 0) schedule(UNIT_REVEAL_CASCADE_MS);
+        else advance();
+      } else advance();
     };
 
     return {
+      ...initialPlayback(),
       view: null,
-      pendingView: null,
       mode: null,
-
-      queue: [],
-      currentEvent: null,
-      playedEvents: [],
-      battleLog: [],
-      latestAnnouncement: '',
-      activeBattleStage: null,
-      activeBattleStageCode: null,
-      activeBattlePhaseId: null,
-      scannedBattleStages: [],
-      battleStageHistory: [],
-      revealedUnitUids: [],
-      pendingCascadeUnitUids: [],
-      isRevealingUnits: false,
-      playbackUnits: { P1: [], P2: [] },
-      speed: 1,
-      isPaused: false,
-      isPlaying: false,
-
       awaitingHotSeatHandover: false,
       hotSeatNextPlayer: null,
       lastError: null,
-
       inspectedCardId: null,
       selectedHandUid: null,
       unplayableBanner: null,
@@ -509,44 +500,20 @@ function createGameStoreInitializer(): StateCreator<GameStoreState> {
       selectedInstantUids: [],
       confirmPassEnabled: true,
       mobileDrawerOpen: false,
-
       setMode: (mode) => set({ mode }),
-
-      setPlayerView: (view) =>
-        set({
-          view,
-          pendingView: null,
-        }),
-
+      setPlayerView: (view) => set({ view }),
       receiveTransition: (nextView, events, options) => {
-        const validEvents = events.filter(
-          (ev): ev is GameEvent => ev !== null && ev !== undefined,
+        const valid = events.filter(
+          (event): event is GameEvent => event !== null && event !== undefined,
         );
-        const shouldReset =
-          options?.resetLog === true ||
-          validEvents.some((ev) => ev.type === 'GameStarted' && ev.n === 1);
-
-        if (shouldReset) {
-          clearActiveTimer();
+        const reset =
+          options?.resetLog || valid.some((event) => event.type === 'GameStarted' && event.n === 1);
+        const state = get();
+        if (reset) {
+          stopTimer();
           set({
+            ...initialPlayback(),
             view: nextView,
-            pendingView: null,
-            queue: [],
-            currentEvent: null,
-            playedEvents: [],
-            battleLog: [],
-            latestAnnouncement: '',
-            activeBattleStage: null,
-            activeBattleStageCode: null,
-            activeBattlePhaseId: null,
-            scannedBattleStages: [],
-            battleStageHistory: [],
-            revealedUnitUids: [],
-            pendingCascadeUnitUids: [],
-            isRevealingUnits: false,
-            playbackUnits: { P1: [], P2: [] },
-            isPlaying: false,
-            isPaused: false,
             selectedHandUid: null,
             unplayableBanner: null,
             selectedMulliganUids: [],
@@ -555,284 +522,140 @@ function createGameStoreInitializer(): StateCreator<GameStoreState> {
             selectedInstantUids: [],
             lastError: null,
           });
+        } else if (options?.resync && state.isPlaying) {
+          stopTimer();
+          set({
+            view: nextView,
+            presentationView: null,
+            pendingView: null,
+            queue: [],
+            currentEvent: null,
+            playbackMoment: null,
+            isPlaying: false,
+            isPaused: false,
+            isRevealingUnits: false,
+            pendingCascadeUnitUids: [],
+            activeBattleStage: null,
+            activeBattleStageCode: null,
+            activeBattlePhaseId: null,
+            playbackNotice: 'Riproduzione interrotta: partita riallineata allo stato aggiornato.',
+            hasPlaybackSnapshot: false,
+          });
         } else {
+          const known = new Set(
+            [
+              ...state.playedEvents,
+              ...state.queue,
+              ...(state.currentEvent ? [state.currentEvent] : []),
+            ].map((event) => event.n),
+          );
+          const fresh = valid.filter((event) => !known.has(event.n));
+          const battle = fresh.some(
+            (event) =>
+              event.type === 'UnitsRevealed' ||
+              event.type === 'BattleStarted' ||
+              hasBattleMoments(event),
+          );
           set({
             view: nextView,
             pendingView: null,
+            presentationView:
+              state.presentationView ?? (battle && state.view ? structuredClone(state.view) : null),
+            presentationEventFloor: state.presentationView
+              ? state.presentationEventFloor
+              : battle
+                ? Math.min(...fresh.map((event) => event.n))
+                : 0,
             selectedHandUid: null,
             unplayableBanner: null,
             lastError: null,
           });
         }
-
-        if (validEvents.length > 0) {
-          get().enqueueEvents(validEvents);
-        }
+        if (valid.length) get().enqueueEvents(valid);
       },
-
       enqueueEvents: (events, options) => {
         if (options?.resetLog) {
-          clearActiveTimer();
-          set({
-            queue: [],
-            currentEvent: null,
-            playedEvents: [],
-            battleLog: [],
-            latestAnnouncement: '',
-            activeBattleStage: null,
-            activeBattleStageCode: null,
-            activeBattlePhaseId: null,
-            scannedBattleStages: [],
-            battleStageHistory: [],
-            revealedUnitUids: [],
-            pendingCascadeUnitUids: [],
-            isRevealingUnits: false,
-            playbackUnits: { P1: [], P2: [] },
-            isPlaying: false,
-          });
+          stopTimer();
+          set(initialPlayback());
         }
-
         const state = get();
-        const existingNumbers = new Set<number>();
-        for (const ev of state.playedEvents) {
-          existingNumbers.add(ev.n);
-        }
-        for (const ev of state.queue) {
-          existingNumbers.add(ev.n);
-        }
-        if (state.currentEvent !== null) {
-          existingNumbers.add(state.currentEvent.n);
-        }
-
-        const sortedNewEvents = events
-          .filter(
-            (ev): ev is GameEvent =>
-              ev !== null && ev !== undefined && !existingNumbers.has(ev.n),
-          )
-          .sort((a, b) => a.n - b.n);
-
-        if (options?.targetView !== undefined) {
-          if (
-            state.view === null ||
-            (sortedNewEvents.length === 0 &&
-              state.currentEvent === null &&
-              state.queue.length === 0)
-          ) {
-            set({ view: options.targetView, pendingView: null });
-          } else {
-            set({ pendingView: options.targetView });
-          }
-        }
-
-        if (sortedNewEvents.length === 0) {
-          return;
-        }
-
-        const updatedState = get();
-        const combinedQueue = [...updatedState.queue, ...sortedNewEvents].sort(
-          (a, b) => a.n - b.n,
+        const existing = new Set(
+          [
+            ...state.playedEvents,
+            ...state.queue,
+            ...(state.currentEvent ? [state.currentEvent] : []),
+          ].map((event) => event.n),
         );
-
-        if (updatedState.currentEvent === null && !updatedState.isPaused) {
-          const [first, ...rest] = combinedQueue;
-          if (first !== undefined) {
-            startEventStep(first, rest);
-          }
-        } else {
-          set({
-            queue: combinedQueue,
-            isPlaying: true,
-          });
+        const fresh = events
+          .filter((event): event is GameEvent => {
+            if (!event || existing.has(event.n)) return false;
+            existing.add(event.n);
+            return true;
+          })
+          .sort((a, b) => a.n - b.n);
+        if (options?.targetView) {
+          if (!state.view || (!fresh.length && !state.currentEvent && !state.queue.length))
+            set({ view: options.targetView, pendingView: null });
+          else set({ pendingView: options.targetView });
         }
+        if (!fresh.length) return;
+        const queue = [...get().queue, ...fresh].sort((a, b) => a.n - b.n);
+        if (!state.currentEvent && !state.isPaused) {
+          const [first, ...rest] = queue;
+          if (first) startEventStep(first, rest);
+        } else set({ queue, isPlaying: true });
       },
-
       setPlaybackSpeed: (speed) => {
+        stopTimer(true);
         set({ speed });
-        const state = get();
-        if (state.currentEvent !== null && !state.isPaused) {
-          scheduleCurrentEventTimer();
-        }
+        schedule();
       },
-
       pausePlayback: () => {
-        clearActiveTimer();
+        stopTimer(true);
         set({ isPaused: true });
       },
-
       resumePlayback: () => {
-        const state = get();
-        if (!state.isPaused) {
-          return;
-        }
+        if (!get().isPaused) return;
         set({ isPaused: false });
-        const afterUnpause = get();
-        if (afterUnpause.currentEvent !== null) {
-          scheduleCurrentEventTimer();
-        } else if (afterUnpause.queue.length > 0) {
-          advanceToNextEvent();
-        }
+        if (get().currentEvent) schedule();
+        else if (get().queue.length) advance();
       },
-
       togglePausePlayback: () => {
-        if (get().isPaused) {
-          get().resumePlayback();
-        } else {
-          get().pausePlayback();
-        }
+        if (get().isPaused) get().resumePlayback();
+        else get().pausePlayback();
       },
-
       skipToEnd: () => {
-        clearActiveTimer();
+        stopTimer();
         const state = get();
-        const fallbackEra: EraNo =
-          state.pendingView?.era ?? state.view?.era ?? 1;
-
-        const revealedUids = [...state.revealedUnitUids];
-        for (const uid of state.pendingCascadeUnitUids) {
-          if (!revealedUids.includes(uid)) {
-            revealedUids.push(uid);
-          }
+        // Null currentEvent prevents audio from firing while events are consumed synchronously.
+        set({ currentEvent: null, playbackMoment: null });
+        if (state.currentEvent) {
+          if (state.playbackMoment === 'announce') consumeEvent(state.currentEvent);
+          finalizeCasualties(state.currentEvent);
         }
-
-        let playedEvents = [...state.playedEvents];
-        let battleLog = [...state.battleLog];
-        let latestAnnouncement = state.latestAnnouncement;
-        let activeBattleStage = state.activeBattleStage;
-        let activeBattleStageCode = state.activeBattleStageCode;
-        let activeBattlePhaseId = state.activeBattlePhaseId;
-        let scannedBattleStages = [...state.scannedBattleStages];
-        let battleStageHistory = [...state.battleStageHistory];
-        let playbackUnits: Record<PlayerId, UnitInstance[]> = {
-          P1: [...state.playbackUnits.P1],
-          P2: [...state.playbackUnits.P2],
-        };
-
         for (const event of state.queue) {
-          const era = resolveEventEra(event, fallbackEra);
-          const description = describeEvent(event, 'it');
-          const stageLabel = getBattleStageLabel(event, 'it');
-          const stageCode = getBattleStageCode(event);
-
-          playedEvents = [...playedEvents, event];
-          battleLog = [
-            ...battleLog,
-            {
-              id: `ev-${event.n}-${event.type}`,
-              n: event.n,
-              era,
-              type: event.type,
-              text: description,
-              stageLabel,
-              event,
-            },
-          ];
-          latestAnnouncement = description;
-
-          if (stageLabel !== null) {
-            activeBattleStage = stageLabel;
-            if (
-              battleStageHistory[battleStageHistory.length - 1] !== stageLabel
-            ) {
-              battleStageHistory = [...battleStageHistory, stageLabel];
-            }
-          } else if (
-            event.type === 'EraEnded' ||
-            event.type === 'EraStarted'
-          ) {
-            activeBattleStage = null;
-          }
-
-          if (stageCode !== null) {
-            activeBattleStageCode = stageCode;
-            if (!scannedBattleStages.includes(stageCode)) {
-              scannedBattleStages = [...scannedBattleStages, stageCode];
-            }
-          } else if (
-            event.type === 'EraEnded' ||
-            event.type === 'EraStarted'
-          ) {
-            activeBattleStageCode = null;
-          }
-
-          if (event.type === 'BattlePhaseResolved') {
-            activeBattlePhaseId = event.phase;
-          } else if (
-            event.type === 'SiegeResolved' ||
-            event.type === 'RaidResolved'
-          ) {
-            activeBattlePhaseId = 'phase4_siege';
-          } else if (
-            event.type === 'EraEnded' ||
-            event.type === 'EraStarted'
-          ) {
-            activeBattlePhaseId = null;
-          }
-
-          playbackUnits = applyEventToPlaybackUnits(playbackUnits, event);
-
-          if (event.type === 'UnitsRevealed') {
-            const eventUnitUids = [
-              ...event.units.P1.map((u) => u.uid),
-              ...event.units.P2.map((u) => u.uid),
-            ];
-            for (const uid of eventUnitUids) {
-              if (!revealedUids.includes(uid)) {
-                revealedUids.push(uid);
-              }
-            }
-          }
+          consumeEvent(event);
+          finalizeCasualties(event);
+          if (event.type === 'UnitsRevealed')
+            set({
+              revealedUnitUids: [...event.units.P1, ...event.units.P2].map((unit) => unit.uid),
+            });
         }
-
         set({
-          view: state.pendingView ?? state.view,
-          pendingView: null,
           queue: [],
-          currentEvent: null,
-          playedEvents,
-          battleLog,
-          latestAnnouncement,
-          activeBattleStage,
-          activeBattleStageCode,
-          activeBattlePhaseId,
-          scannedBattleStages,
-          battleStageHistory,
-          revealedUnitUids: revealedUids,
-          pendingCascadeUnitUids: [],
-          isRevealingUnits: false,
-          playbackUnits,
-          isPlaying: false,
+          revealedUnitUids: [
+            ...new Set([...get().revealedUnitUids, ...state.pendingCascadeUnitUids]),
+          ],
           isPaused: false,
         });
+        finishPlayback();
       },
-
       clearPlayback: () => {
-        clearActiveTimer();
-        set({
-          queue: [],
-          currentEvent: null,
-          playedEvents: [],
-          battleLog: [],
-          latestAnnouncement: '',
-          activeBattleStage: null,
-          activeBattleStageCode: null,
-          activeBattlePhaseId: null,
-          scannedBattleStages: [],
-          battleStageHistory: [],
-          revealedUnitUids: [],
-          pendingCascadeUnitUids: [],
-          isRevealingUnits: false,
-          playbackUnits: { P1: [], P2: [] },
-          isPlaying: false,
-          isPaused: false,
-        });
+        stopTimer();
+        set({ ...initialPlayback(), view: get().pendingView ?? get().view });
       },
-
       setHotSeatHandover: (awaiting, nextPlayer) =>
-        set({
-          awaitingHotSeatHandover: awaiting,
-          hotSeatNextPlayer: nextPlayer,
-        }),
-
+        set({ awaitingHotSeatHandover: awaiting, hotSeatNextPlayer: nextPlayer }),
       setLastError: (error) => set({ lastError: error }),
 
       setInspectedCardId: (cardId) => set({ inspectedCardId: cardId }),
@@ -874,32 +697,14 @@ function createGameStoreInitializer(): StateCreator<GameStoreState> {
 
       setMobileDrawerOpen: (open) => set({ mobileDrawerOpen: open }),
 
-      toggleMobileDrawer: () =>
-        set((state) => ({ mobileDrawerOpen: !state.mobileDrawerOpen })),
+      toggleMobileDrawer: () => set((state) => ({ mobileDrawerOpen: !state.mobileDrawerOpen })),
 
       resetStore: () => {
-        clearActiveTimer();
+        stopTimer();
         set({
+          ...initialPlayback(),
           view: null,
-          pendingView: null,
           mode: null,
-          queue: [],
-          currentEvent: null,
-          playedEvents: [],
-          battleLog: [],
-          latestAnnouncement: '',
-          activeBattleStage: null,
-          activeBattleStageCode: null,
-          activeBattlePhaseId: null,
-          scannedBattleStages: [],
-          battleStageHistory: [],
-          revealedUnitUids: [],
-          pendingCascadeUnitUids: [],
-          isRevealingUnits: false,
-          playbackUnits: { P1: [], P2: [] },
-          speed: 1,
-          isPaused: false,
-          isPlaying: false,
           awaitingHotSeatHandover: false,
           hotSeatNextPlayer: null,
           lastError: null,
@@ -922,6 +727,4 @@ export function createGameStore(): GameStoreApi {
   return createStore<GameStoreState>(createGameStoreInitializer());
 }
 
-export const useGameStore = create<GameStoreState>()(
-  createGameStoreInitializer(),
-);
+export const useGameStore = create<GameStoreState>()(createGameStoreInitializer());

@@ -47,7 +47,7 @@ export function MulliganModal({
   onSubmitMulligan,
   onInspectCard,
 }: MulliganModalProps): ReactElement | null {
-  const storeView = useGameStore((s) => s.view);
+  const storeView = useGameStore((s) => s.presentationView ?? s.view);
   const storeSelectedUids = useGameStore((s) => s.selectedMulliganUids);
   const toggleMulliganUid = useGameStore((s) => s.toggleMulliganUid);
   const setSelectedMulliganUids = useGameStore((s) => s.setSelectedMulliganUids);
@@ -322,7 +322,7 @@ export function HandLimitModal({
   onSubmitDiscard,
   onInspectCard,
 }: HandLimitModalProps): ReactElement | null {
-  const storeView = useGameStore((s) => s.view);
+  const storeView = useGameStore((s) => s.presentationView ?? s.view);
   const storeSelectedUids = useGameStore((s) => s.selectedDiscardUids);
   const toggleDiscardUid = useGameStore((s) => s.toggleDiscardUid);
   const setSelectedDiscardUids = useGameStore((s) => s.setSelectedDiscardUids);

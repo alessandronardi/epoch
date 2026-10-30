@@ -1,28 +1,15 @@
 import { BoardCardInspection } from '../card/BoardCardInspection.js';
 import { useBattlePresentation } from './use-battle-presentation.js';
-import {
-  LOGISTICS_CAP_BY_ERA,
-  STORAGE_CAP_BY_ERA,
-  getOpponent,
-  type CardInstance,
-  type Phase,
-  type PlayerView,
-  type Resource,
-} from '@epochs/engine';
+import { getOpponent, type CardInstance, type Phase, type PlayerView } from '@epochs/engine';
+import { Menu } from 'lucide-react';
 import type { ReactElement, ReactNode } from 'react';
 import { useGameStore } from '../../state/game-store.js';
 import { CardInspectModal } from '../card/CardInspectModal.js';
-import {
-  ERA_LABELS_IT,
-  EraIcon,
-  RESOURCE_LABELS_IT,
-  ResourceIcon,
-  StatIcon,
-} from '../icons/DomainIcons.js';
+import { ERA_ROMAN_LABELS } from '../icons/DomainIcons.js';
+import { PlayerResources, PlayerStatus } from './PlayerStatus.js';
+import { BoardPreferences } from './BoardPreferences.js';
 import { CityAndLines, type DisplayUnit } from './CityAndLines.js';
 import './board.css';
-
-const RESOURCE_ORDER: readonly Resource[] = ['food', 'wood', 'metal'];
 
 export const PHASE_LABELS_IT: Readonly<Record<Phase, string>> = Object.freeze({
   mulligan: 'Mulligan Iniziale',
@@ -57,12 +44,16 @@ export function BattlefieldBoard({
   sidebarSlot,
   overlaySlot,
 }: BattlefieldBoardProps): ReactElement {
-  const storeView = useGameStore((s) => s.view);
+  const storeView = useGameStore((s) => s.presentationView ?? s.view);
   const revealedUnitUids = useGameStore((s) => s.revealedUnitUids);
   const isRevealingUnits = useGameStore((s) => s.isRevealingUnits);
   const playbackUnits = useGameStore((s) => s.playbackUnits);
+  const hasPlaybackSnapshot = useGameStore((s) => s.hasPlaybackSnapshot);
   const activeBattleStage = useGameStore((s) => s.activeBattleStage);
   const isPlaying = useGameStore((s) => s.isPlaying);
+  const isPaused = useGameStore((s) => s.isPaused);
+  const playbackMoment = useGameStore((s) => s.playbackMoment);
+  const togglePausePlayback = useGameStore((s) => s.togglePausePlayback);
   const battleLog = useGameStore((s) => s.battleLog);
   const latestAnnouncement = useGameStore((s) => s.latestAnnouncement);
   const inspectedCardId = useGameStore((s) => s.inspectedCardId);
@@ -95,12 +86,7 @@ export function BattlefieldBoard({
 
   const selfId = view.me;
   const opponentId = getOpponent(selfId);
-  const storageCap = STORAGE_CAP_BY_ERA[view.era];
-  const logisticsCap = LOGISTICS_CAP_BY_ERA[view.era];
   const isBattlePlaybackActive = isPlaying && battleScene;
-
-  const selfCityDamaged = view.self.cityHp < view.self.cityMax;
-  const opponentCityDamaged = view.opponent.cityHp < view.opponent.cityMax;
 
   return (
     <BoardCardInspection>
@@ -110,14 +96,18 @@ export function BattlefieldBoard({
         data-scene={battleScene ? 'battle' : 'economy'}
         data-era={String(view.era)}
         data-phase={view.phase}
+        data-is-playing={String(isPlaying)}
+        data-playback-moment={playbackMoment ?? ''}
       >
         <div className="board-scenery" aria-hidden="true">
-          {['economy1', 'economy2', 'economy3', 'battle'].map((scene) => (
+          {['economy', 'battle'].map((scene) => (
             <div
               key={scene}
               className="board-scenery__layer"
-              data-active={scene === (battleScene ? 'battle' : `economy${view.era}`)}
-              style={{ backgroundImage: `url(/board-art/${scene}.webp)` }}
+              data-active={scene === (battleScene ? 'battle' : 'economy')}
+              style={{
+                backgroundImage: `url(/board-art/${scene === 'battle' ? 'battle' : 'table-landscape'}.webp)`,
+              }}
             />
           ))}
         </div>
@@ -143,156 +133,19 @@ export function BattlefieldBoard({
         </div>
 
         <div className="battlefield-board__main">
-          {/* 1. Barra Stato Avversario (§9.2 riga 780) */}
-          <header
-            className="board-status-bar board-status-bar--opponent"
-            data-testid="opponent-status-bar"
-            aria-label={`Stato Avversario (${opponentId})`}
-          >
-            <div className="board-status-bar__group">
-              <span className="board-status-bar__identity">
-                <span>Avversario ({opponentId})</span>
-                {view.initiative === opponentId && (
-                  <span
-                    className="board-badge board-badge--brass"
-                    data-testid="opponent-initiative-badge"
-                  >
-                    Iniziativa
-                  </span>
-                )}
-              </span>
-
-              <span
-                className="board-badge"
-                data-testid="opponent-walls"
-                aria-label={`Mura avversario: ${view.opponent.walls}`}
-              >
-                <StatIcon stat="walls" size={24} />
-                <span className="board-vital-value">
-                  <small>Mura</small>
-                  <strong>{view.opponent.walls}</strong>
-                </span>
-              </span>
-
-              <span
-                className={`board-badge ${opponentCityDamaged ? 'board-badge--crimson' : ''}`.trim()}
-                data-testid="opponent-city-hp"
-                aria-label={`Centro Città avversario: ${view.opponent.cityHp} su ${view.opponent.cityMax}`}
-              >
-                <StatIcon stat="cityCenter" size={24} />
-                <span className="board-vital-value">
-                  <small>Centro Città</small>
-                  <strong>
-                    {view.opponent.cityHp}
-                    <small> / {view.opponent.cityMax}</small>
-                  </strong>
-                </span>
-              </span>
-
-              <span
-                className="board-badge"
-                data-testid="opponent-slots"
-                aria-label={`Slot logistici avversario: ${view.opponent.slotsUsed} su ${logisticsCap}`}
-              >
-                Slot {view.opponent.slotsUsed}/{logisticsCap}
-              </span>
-
-              {view.opponent.demBonus > 0 && (
-                <span className="board-badge board-badge--brass" data-testid="opponent-dem-bonus">
-                  <StatIcon stat="dem" size={13} />
-                  <span>+{view.opponent.demBonus} DEM</span>
-                </span>
-              )}
-            </div>
-
-            <div className="board-status-bar__group">
-              <div
-                className="board-status-bar__group"
-                data-testid="opponent-resources"
-                aria-label="Risorse avversario"
-              >
-                {view.opponent.resources === null ? (
-                  <span
-                    className="board-badge board-badge--muted"
-                    data-testid="opponent-resources-hidden"
-                  >
-                    Risorse nascoste
-                  </span>
-                ) : (
-                  RESOURCE_ORDER.map((res) => (
-                    <span
-                      key={res}
-                      className={`board-resource-pip board-resource-pip--${res}`}
-                      data-testid={`opponent-resource-${res}`}
-                      aria-label={`${RESOURCE_LABELS_IT[res]} avversario: ${view.opponent.resources?.[res] ?? 0} su ${storageCap}`}
-                    >
-                      <ResourceIcon resource={res} size={13} />
-                      <span>
-                        {view.opponent.resources?.[res] ?? 0}/{storageCap}
-                      </span>
-                    </span>
-                  ))
-                )}
-              </div>
-
-              <span className="board-badge board-badge--muted" data-testid="opponent-counts">
-                Mano: {view.opponent.handCount}
-              </span>
-
-              {view.opponent.passed && (
-                <span
-                  className="board-badge board-badge--brass"
-                  data-testid="opponent-passed-badge"
-                >
-                  Ha passato
-                </span>
-              )}
-
-              {view.opponent.committed && (
-                <span
-                  className="board-badge board-badge--brass"
-                  data-testid="opponent-committed-badge"
-                >
-                  Scelta bloccata
-                </span>
-              )}
-
-              <button
-                type="button"
-                className="board-mobile-drawer-btn touch-target"
-                data-testid="mobile-drawer-toggle"
-                aria-expanded={mobileDrawerOpen}
-                aria-label={battleScene ? 'Apri Registro e menu partita' : 'Apri menu partita'}
-                onClick={toggleMobileDrawer}
-              >
-                {battleScene ? `Registro (${battleLog.length})` : 'Menu partita'}
-              </button>
-            </div>
-          </header>
-
-          {/* 2. Metà Campo Avversario: Città Coperta + 3 Linee (§9.2 righe 781-784) */}
-          <CityAndLines
-            side="opponent"
-            view={view}
-            revealedUnitUids={revealedUnitUids}
-            isRevealingUnits={isRevealingUnits}
-            playbackUnits={playbackUnits[opponentId]}
-            isBattlePlaybackActive={isBattlePlaybackActive}
-            onInspectCard={handleInspect}
-            onSelectUnit={onSelectUnit}
-          />
-
-          {/* 3. Fascia Divisoria Centrale: Era, Ciclo/Fase, Iniziativa e Turno (§9.2 riga 785) */}
           <section
             className="board-center-divider"
             data-testid="board-center-divider"
             aria-label="Stato Era e Turno"
           >
             <div className="board-center-divider__era">
-              <EraIcon era={view.era} size={18} />
-              <span data-testid="board-era-label">{ERA_LABELS_IT[view.era]}</span>
-              <span>·</span>
-              <span data-testid="board-phase-label">
+              <span data-testid="board-era-label">Era {ERA_ROMAN_LABELS[view.era]}</span>
+              <span
+                data-testid="board-phase-label"
+                className={
+                  view.phase === 'development' && activeBattleStage === null ? 'sr-only' : undefined
+                }
+              >
                 {activeBattleStage !== null
                   ? activeBattleStage
                   : view.phase === 'development'
@@ -307,135 +160,102 @@ export function BattlefieldBoard({
               }`.trim()}
               data-testid="board-turn-indicator"
             >
-              {view.phase === 'finished'
-                ? 'Partita terminata'
-                : view.self.legal.canAct
-                  ? 'Tocca a te'
-                  : `In attesa di ${opponentId}`}
+              {isBattlePlaybackActive ? (
+                <>
+                  <span role="status">
+                    {isPaused
+                      ? 'Battaglia in pausa'
+                      : playbackMoment === 'announce'
+                        ? 'Preparazione della fase'
+                        : playbackMoment === 'impact'
+                          ? 'Danni simultanei'
+                          : playbackMoment === 'result'
+                            ? 'Esito della fase'
+                            : 'Risoluzione in corso'}
+                  </span>
+                  <button
+                    type="button"
+                    className="touch-target battle-field-pause"
+                    data-testid="battle-field-pause"
+                    aria-pressed={isPaused}
+                    onClick={togglePausePlayback}
+                  >
+                    {isPaused ? 'Riprendi' : 'Pausa'}
+                  </button>
+                </>
+              ) : isPlaying ? (
+                'Aggiornamento del tavolo'
+              ) : view.phase === 'finished' ? (
+                'Partita terminata'
+              ) : view.self.legal.canAct ? (
+                'Tocca a te'
+              ) : (
+                'Turno avversario'
+              )}
             </div>
+            <button
+              type="button"
+              className="board-mobile-drawer-btn touch-target"
+              data-testid="mobile-drawer-toggle"
+              aria-expanded={mobileDrawerOpen}
+              aria-label={
+                battleScene || battleLog.length > 0
+                  ? 'Apri Registro e menu partita'
+                  : 'Apri menu partita'
+              }
+              onClick={toggleMobileDrawer}
+            >
+              <Menu size={23} aria-hidden="true" />
+            </button>
           </section>
 
-          {/* 4. Metà Campo Giocatore: Città + 3 Linee (§9.2 righe 786-789) */}
-          <CityAndLines
-            side="self"
-            view={view}
-            revealedUnitUids={revealedUnitUids}
-            isRevealingUnits={isRevealingUnits}
-            playbackUnits={playbackUnits[selfId]}
-            isBattlePlaybackActive={isBattlePlaybackActive}
-            selectedBuildingUid={selectedBuildingUid}
-            isDroppableOver={isDroppableOverSelfCity}
-            onInspectCard={handleInspect}
-            onSelectBuilding={onSelectBuilding}
-            onSelectUnit={onSelectUnit}
-          />
-
-          {/* 5. Barra Stato Giocatore (§9.2 riga 790) */}
           <section
-            className="board-status-bar board-status-bar--self"
-            data-testid="self-status-bar"
-            aria-label={`Il tuo stato (${selfId})`}
+            className="board-player-field board-player-field--opponent"
+            aria-label="Campo avversario"
           >
-            <div className="board-status-bar__group">
-              <span className="board-status-bar__identity">
-                <span>Tu ({selfId})</span>
-                {view.initiative === selfId && (
-                  <span
-                    className="board-badge board-badge--brass"
-                    data-testid="self-initiative-badge"
-                  >
-                    Iniziativa
-                  </span>
-                )}
-              </span>
-
-              <div
-                className="board-status-bar__group"
-                data-testid="self-resources"
-                aria-label="Le tue risorse"
-              >
-                {RESOURCE_ORDER.map((res) => (
-                  <span
-                    key={res}
-                    className={`board-resource-pip board-resource-pip--${res}`}
-                    data-testid={`self-resource-${res}`}
-                    aria-label={`${RESOURCE_LABELS_IT[res]}: ${view.self.resources[res]} su ${storageCap}`}
-                  >
-                    <ResourceIcon resource={res} size={28} />
-                    <span className="board-resource-value">
-                      <small>{RESOURCE_LABELS_IT[res]}</small>
-                      <strong>
-                        {view.self.resources[res]}
-                        <small> / {storageCap}</small>
-                      </strong>
-                    </span>
-                  </span>
-                ))}
-              </div>
-
-              <span
-                className="board-badge"
-                data-testid="self-slots"
-                aria-label={`Slot logistici usati: ${view.self.slotsUsed} su ${logisticsCap}`}
-              >
-                Slot {view.self.slotsUsed}/{logisticsCap}
-              </span>
-            </div>
-
-            <div className="board-status-bar__group">
-              <span
-                className="board-badge"
-                data-testid="self-walls"
-                aria-label={`Le tue Mura: ${view.self.walls}`}
-              >
-                <StatIcon stat="walls" size={24} />
-                <span className="board-vital-value">
-                  <small>Mura</small>
-                  <strong>{view.self.walls}</strong>
-                </span>
-              </span>
-
-              <span
-                className={`board-badge ${selfCityDamaged ? 'board-badge--crimson' : ''}`.trim()}
-                data-testid="self-city-hp"
-                aria-label={`Il tuo Centro Città: ${view.self.cityHp} su ${view.self.cityMax}`}
-              >
-                <StatIcon stat="cityCenter" size={24} />
-                <span className="board-vital-value">
-                  <small>Centro Città</small>
-                  <strong>
-                    {view.self.cityHp}
-                    <small> / {view.self.cityMax}</small>
-                  </strong>
-                </span>
-              </span>
-
-              {view.self.demBonus > 0 && (
-                <span className="board-badge board-badge--brass" data-testid="self-dem-bonus">
-                  <StatIcon stat="dem" size={13} />
-                  <span>+{view.self.demBonus} DEM</span>
-                </span>
-              )}
-
-              <span className="board-badge board-badge--muted" data-testid="self-counts">
-                Mano: {view.self.hand.length}/10
-              </span>
-
-              {view.self.passed && (
-                <span className="board-badge board-badge--brass" data-testid="self-passed-badge">
-                  Hai passato
-                </span>
-              )}
-            </div>
+            <PlayerStatus view={view} side="opponent" />
+            <CityAndLines
+              side="opponent"
+              view={view}
+              revealedUnitUids={revealedUnitUids}
+              isRevealingUnits={isRevealingUnits}
+              playbackUnits={playbackUnits[opponentId]}
+              isBattlePlaybackActive={isBattlePlaybackActive}
+              hasPlaybackSnapshot={hasPlaybackSnapshot}
+              onInspectCard={handleInspect}
+              onSelectUnit={onSelectUnit}
+            />
           </section>
-
-          {/* 6. Dock Mano a Ventaglio e Controlli Azione (§9.2 riga 791) */}
-          <footer className="board-hand-dock" data-testid="board-hand-dock">
-            <div style={{ flex: 1, minWidth: 0 }}>{handSlot}</div>
-            {actionControlsSlot !== undefined && (
-              <div style={{ flexShrink: 0 }}>{actionControlsSlot}</div>
-            )}
-          </footer>
+          <section
+            className="board-player-field board-player-field--self"
+            data-active={view.self.legal.canAct}
+            aria-label="Il tuo campo"
+          >
+            <PlayerStatus view={view} side="self" />
+            <CityAndLines
+              side="self"
+              view={view}
+              revealedUnitUids={revealedUnitUids}
+              isRevealingUnits={isRevealingUnits}
+              playbackUnits={playbackUnits[selfId]}
+              isBattlePlaybackActive={isBattlePlaybackActive}
+              hasPlaybackSnapshot={hasPlaybackSnapshot}
+              selectedBuildingUid={selectedBuildingUid}
+              isDroppableOver={isDroppableOverSelfCity}
+              onInspectCard={handleInspect}
+              onSelectBuilding={onSelectBuilding}
+              onSelectUnit={onSelectUnit}
+            />
+          </section>
+          <div className="board-action-dock">
+            <PlayerResources view={view} />
+            {actionControlsSlot}
+          </div>
+          {handSlot !== null && (
+            <footer className="board-hand-dock" data-testid="board-hand-dock">
+              {handSlot}
+            </footer>
+          )}
         </div>
 
         {/* Colonna Laterale / Cassetto Mobile per Controlli, Registro e Sotto-Mazzi (§9.2, §9.6) */}
@@ -465,6 +285,8 @@ export function BattlefieldBoard({
               </button>
             </div>
           )}
+
+          <BoardPreferences />
 
           {sidebarSlot ??
             (battleScene && (

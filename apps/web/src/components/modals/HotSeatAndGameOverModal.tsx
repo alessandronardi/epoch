@@ -58,7 +58,7 @@ export function HotSeatHandoverModal({
   const storeAwaiting = useGameStore((s) => s.awaitingHotSeatHandover);
   const handoverBusy = useGameStore((state) => state.isPlaying);
   const storeNextPlayer = useGameStore((s) => s.hotSeatNextPlayer);
-  const storeView = useGameStore((s) => s.view);
+  const storeView = useGameStore((s) => s.presentationView ?? s.view);
   const setHotSeatHandover = useGameStore((s) => s.setHotSeatHandover);
 
   const awaiting = propAwaiting !== undefined ? propAwaiting : storeAwaiting;
@@ -181,7 +181,7 @@ export function GameOverModal({
   onRematch,
   onReturnHome,
 }: GameOverModalProps): ReactElement | null {
-  const storeView = useGameStore((s) => s.view);
+  const storeView = useGameStore((s) => s.presentationView ?? s.view);
   const skipToEnd = useGameStore((s) => s.skipToEnd);
   const isPlaying = useGameStore((s) => s.isPlaying);
   const [dismissedForStateVersion, setDismissedForStateVersion] = useState<number | null>(null);

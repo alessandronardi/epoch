@@ -68,6 +68,7 @@ export {
   type EraStartedEvent,
   type GameEndedEvent,
   type GameEvent,
+  type BattleContribution,
   type GameStartedEvent,
   type HandLimitDiscardedEvent,
   type InitiativeAssignedEvent,
@@ -111,17 +112,9 @@ export {
 
 export { canonicalizeJson, sha256Hex, stateHash } from './hash.js';
 
-export {
-  MAX_COPIES_PER_CARD,
-  SUBDECK_SIZE,
-  validateDeck,
-} from './deck.js';
+export { MAX_COPIES_PER_CARD, SUBDECK_SIZE, validateDeck } from './deck.js';
 
-export {
-  HAND_LIMIT,
-  autoDiscard,
-  getTotalCardCost,
-} from './discard-policy.js';
+export { HAND_LIMIT, autoDiscard, getTotalCardCost } from './discard-policy.js';
 
 export {
   INITIAL_RESOURCES,

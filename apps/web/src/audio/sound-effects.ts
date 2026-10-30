@@ -259,7 +259,11 @@ export function connectGameAudio(store: GameStoreApi, audio: SoundEffects): () =
       (state.currentEvent === null && state.playedEvents !== previous.playedEvents)
     ) {
       audio.stop();
-    } else if (state.currentEvent !== null && state.currentEvent !== previous.currentEvent) {
+    } else if (
+      state.currentEvent !== null &&
+      ((state.currentEvent !== previous.currentEvent && state.playbackMoment === null) ||
+        (state.playbackMoment === 'impact' && previous.playbackMoment === 'announce'))
+    ) {
       audio.playEvent(state.currentEvent, state.speed);
     }
   });
