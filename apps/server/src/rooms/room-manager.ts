@@ -2,7 +2,7 @@
 // validazione mazzi ('INVALID_DECK'), routing comandi/resync e ricostruzione partite ACTIVE al riavvio.
 
 import { randomBytes, randomInt, randomUUID } from 'node:crypto';
-import { CARDS_RULES } from '@epochs/content';
+import { CARDS_RULES, getCatalog } from '@epochs/content';
 import {
   DEFAULT_RULES_CONFIG,
   createGame,
@@ -85,12 +85,9 @@ export class RoomManager {
     this.rulesConfig = options.rulesConfig;
     this.clock = options.clock ?? (() => Date.now());
     this.enableTimers = options.enableTimers ?? true;
-    this.disconnectGraceMs =
-      options.disconnectGraceMs ?? DEFAULT_DISCONNECT_GRACE_MS;
-    this.seedGenerator =
-      options.seedGenerator ?? (() => randomBytes(16).toString('hex'));
-    this.roomCodeGenerator =
-      options.roomCodeGenerator ?? (() => this.generateUniqueRoomCode());
+    this.disconnectGraceMs = options.disconnectGraceMs ?? DEFAULT_DISCONNECT_GRACE_MS;
+    this.seedGenerator = options.seedGenerator ?? (() => randomBytes(16).toString('hex'));
+    this.roomCodeGenerator = options.roomCodeGenerator ?? (() => this.generateUniqueRoomCode());
 
     if (options.autoRestoreActiveGames !== false) {
       this.restoreActiveGames();
@@ -160,12 +157,12 @@ export class RoomManager {
       );
     }
 
-    const engineIssues = validateDeck(schemaCheck.data, this.catalog);
+    const engineIssues = validateDeck(
+      schemaCheck.data,
+      schemaCheck.data.catalogVersion === '2.0' ? getCatalog('2.0').rulesById : this.catalog,
+    );
     if (engineIssues.length > 0) {
-      return createGameErrorMessage(
-        'INVALID_DECK',
-        engineIssues[0]!.message,
-      );
+      return createGameErrorMessage('INVALID_DECK', engineIssues[0]!.message);
     }
 
     return null;
@@ -240,6 +237,14 @@ export class RoomManager {
         return { ok: false, error };
       }
 
+      if ((pending.hostDeck.catalogVersion ?? '1.0') !== (payload.deck.catalogVersion ?? '1.0')) {
+        const error = createGameErrorMessage(
+          'INVALID_DECK',
+          'I mazzi devono usare la stessa versione.',
+        );
+        sink.send(error);
+        return { ok: false, error };
+      }
       this.privateRooms.delete(code);
       this.removeWaitingPlayer(playerId);
 
@@ -260,7 +265,9 @@ export class RoomManager {
     this.removeWaitingPlayer(playerId);
 
     const opponentIdx = this.quickQueue.findIndex(
-      (entry) => entry.playerId !== playerId,
+      (entry) =>
+        entry.playerId !== playerId &&
+        (entry.deck.catalogVersion ?? '1.0') === (payload.deck.catalogVersion ?? '1.0'),
     );
     if (opponentIdx === -1) {
       this.quickQueue.push({
@@ -295,11 +302,7 @@ export class RoomManager {
   ): Promise<HandleCommandOutcome> {
     const room = this.getOrLoadRoom(payload.gameId);
     if (room === null) {
-      const error = createGameErrorMessage(
-        'MATCH_NOT_ACCESSIBLE',
-        undefined,
-        payload.commandId,
-      );
+      const error = createGameErrorMessage('MATCH_NOT_ACCESSIBLE', undefined, payload.commandId);
       sink.send(error);
       return { ok: false, error };
     }
@@ -342,10 +345,7 @@ export class RoomManager {
    * Gestisce la disconnessione di un socket client rimuovendolo dalle code d'attesa
    * e attivando il grace period nelle stanze attive a cui partecipa.
    */
-  public handleClientDisconnect(
-    playerId: string,
-    sink?: RoomClientSink,
-  ): void {
+  public handleClientDisconnect(playerId: string, sink?: RoomClientSink): void {
     this.removeWaitingPlayer(playerId, sink);
 
     for (const room of this.rooms.values()) {
@@ -410,8 +410,12 @@ export class RoomManager {
 
     const created = createGame({
       seed,
-      catalog: this.catalog,
-      rules: this.rulesConfig ?? DEFAULT_RULES_CONFIG,
+      catalog:
+        params.p1Deck.catalogVersion === '2.0' ? { ...getCatalog('2.0').rulesById } : this.catalog,
+      rules: {
+        ...(this.rulesConfig ?? DEFAULT_RULES_CONFIG),
+        gddVersion: params.p1Deck.rulesetVersion ?? '1.0',
+      },
       decks: {
         P1: params.p1Deck,
         P2: params.p2Deck,
@@ -457,25 +461,16 @@ export class RoomManager {
     return room;
   }
 
-  private removeWaitingPlayer(
-    playerId: string,
-    sink?: RoomClientSink,
-  ): void {
+  private removeWaitingPlayer(playerId: string, sink?: RoomClientSink): void {
     for (let i = this.quickQueue.length - 1; i >= 0; i--) {
       const entry = this.quickQueue[i]!;
-      if (
-        entry.playerId === playerId &&
-        (sink === undefined || entry.sink === sink)
-      ) {
+      if (entry.playerId === playerId && (sink === undefined || entry.sink === sink)) {
         this.quickQueue.splice(i, 1);
       }
     }
 
     for (const [code, pending] of this.privateRooms.entries()) {
-      if (
-        pending.hostPlayerId === playerId &&
-        (sink === undefined || pending.hostSink === sink)
-      ) {
+      if (pending.hostPlayerId === playerId && (sink === undefined || pending.hostSink === sink)) {
         this.privateRooms.delete(code);
       }
     }

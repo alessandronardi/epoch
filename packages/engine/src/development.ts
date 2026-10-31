@@ -3,6 +3,7 @@
 // (PlayCard, PlayConversion, Pass, avanzamento cicli, rendite periodiche e ingresso in prebattle).
 
 import { produce } from 'immer';
+import { effectiveCardCost, eraWallsBonus } from './civilizations.js';
 import type {
   PassCommand,
   PlayCardCommand,
@@ -91,10 +92,7 @@ export function calculateTotalEffectiveDem(
  * `reason: 'no_legal_play'` il giocatore di turno finché il giocatore attivo non ha alcuna
  * carta legalmente giocabile in `development`.
  */
-export function autoPassIfConfigured(
-  draft: GameState,
-  events: GameEvent[],
-): void {
+export function autoPassIfConfigured(draft: GameState, events: GameEvent[]): void {
   if (!draft.rules.autoPassWhenNoLegalPlay) {
     return;
   }
@@ -103,6 +101,7 @@ export function autoPassIfConfigured(
     const activePlayer = draft.toAct;
     const legal = legalCommands(draft, activePlayer);
     const hasPlayableCard =
+      (legal.marketCommands?.length ?? 0) > 0 ||
       legal.playableFieldCardUids.length > 0 ||
       legal.playableConversionUids.length > 0;
     if (hasPlayableCard) {
@@ -116,10 +115,7 @@ export function autoPassIfConfigured(
  * Entra in `hand_limit` se almeno un giocatore supera le 10 carte in mano dopo la pesca d'apertura d'Era;
  * altrimenti esegue direttamente il Raccolto d'apertura e apre il Ciclo 1 di `development` (TECH-SPEC §4.4 passi 5–7).
  */
-export function enterEraHandLimitOrDevelopment(
-  draft: GameState,
-  events: GameEvent[],
-): void {
+export function enterEraHandLimitOrDevelopment(draft: GameState, events: GameEvent[]): void {
   const p1Exceeds = draft.players.P1.hand.length > HAND_LIMIT;
   const p2Exceeds = draft.players.P2.hand.length > HAND_LIMIT;
 
@@ -139,11 +135,7 @@ export function enterEraHandLimitOrDevelopment(
  * Avvia la nuova Era (Era II o Era III): aggiorna Mura, Centro Città, iniziativa e contatori d'Era,
  * pesca 5 carte per ciascun giocatore ed entra in `hand_limit` o `development` (GDD §2.2, §6, TECH-SPEC §4.4, §4.9).
  */
-export function startNextEra(
-  draft: GameState,
-  events: GameEvent[],
-  nextEra: 2 | 3,
-): void {
+export function startNextEra(draft: GameState, events: GameEvent[], nextEra: 2 | 3): void {
   draft.era = nextEra;
   draft.initiative = getInitiativeForEra(nextEra);
   draft.cycle = 0;
@@ -156,6 +148,11 @@ export function startNextEra(
     p.passed = false;
     p.demBonus = 0;
     p.walls = ERA_BASE_WALLS[nextEra] + Math.floor(p.walls / 2);
+    p.walls += eraWallsBonus(draft, p);
+    if (draft.rulesetVersion === '2.0') {
+      p.organizationUsed = false;
+      p.marketUsed = false;
+    }
     p.cityMax = ERA_CITY_MAX[nextEra];
   }
 
@@ -360,9 +357,7 @@ export function mutateSubmitDiscard(
       const playerState = draft.players[player];
       const handByUid = new Map(playerState.hand.map((c) => [c.uid, c]));
       const discardSet = new Set(commit.cardUids);
-      const discardedCards: CardInstance[] = commit.cardUids.map(
-        (uid) => handByUid.get(uid)!,
-      );
+      const discardedCards: CardInstance[] = commit.cardUids.map((uid) => handByUid.get(uid)!);
       const keptCards = playerState.hand.filter((c) => !discardSet.has(c.uid));
 
       playerState.hand = keptCards;
@@ -456,7 +451,7 @@ export function validatePlayCard(
   const rules = state.catalog[cardInHand.cardId];
   if (
     rules === undefined ||
-    (rules.type !== 'economy' && rules.type !== 'unit')
+    (rules.type !== 'economy' && rules.type !== 'unit' && rules.type !== 'structure')
   ) {
     return {
       code: 'INVALID_PHASE',
@@ -472,7 +467,9 @@ export function validatePlayCard(
     };
   }
 
-  if (!canAfford(playerState.resources, rules.cost)) {
+  if (
+    !canAfford(playerState.resources, effectiveCardCost(rules, playerState, state.rulesetVersion))
+  ) {
     return {
       code: 'INSUFFICIENT_RESOURCES',
       message: `Player ${cmd.player} cannot afford card "${cardInHand.cardId}".`,
@@ -501,11 +498,19 @@ export function mutatePlayCard(
   const cardInstance = card!;
   const rules = draft.catalog[cardInstance.cardId]!;
 
-  spendPlayerResources(draft, events, cmd.player, rules.cost);
+  spendPlayerResources(
+    draft,
+    events,
+    cmd.player,
+    effectiveCardCost(rules, playerState, draft.rulesetVersion),
+  );
+  if (draft.rulesetVersion === '2.0' && rules.type === 'unit') playerState.organizationUsed = true;
   playerState.slotsUsed += 1;
 
   if (rules.type === 'economy') {
     playerState.buildings.push(cardInstance);
+  } else if (rules.type === 'structure') {
+    playerState.structures!.push(cardInstance);
   } else {
     const unitInstance: UnitInstance = {
       uid: cardInstance.uid,
@@ -521,10 +526,8 @@ export function mutatePlayCard(
     playerState.units.push(unitInstance);
   }
 
-  const coveredCount =
-    playerState.units.length + playerState.buildings.length;
-  const cardType: 'economy' | 'unit' =
-    rules.type === 'economy' ? 'economy' : 'unit';
+  const coveredCount = playerState.units.length + playerState.buildings.length;
+  const cardType = rules.type as 'economy' | 'unit' | 'structure';
 
   events.push({
     n: ++draft.counters.event,
@@ -616,9 +619,7 @@ export function validatePlayConversion(
     };
   }
 
-  const buildingInField = playerState.buildings.find(
-    (b) => b.uid === cmd.sacrificeUid,
-  );
+  const buildingInField = playerState.buildings.find((b) => b.uid === cmd.sacrificeUid);
   if (buildingInField === undefined) {
     return {
       code: 'NO_BUILDING_TO_SACRIFICE',
@@ -662,9 +663,7 @@ export function mutatePlayConversion(
   const preSacrificeBuildingCount = playerState.buildings.length;
 
   // 3. Rimuovi l'edificio sacrificato e sposta edificio + carta Riconversione in discard
-  const buildingIdx = playerState.buildings.findIndex(
-    (b) => b.uid === cmd.sacrificeUid,
-  );
+  const buildingIdx = playerState.buildings.findIndex((b) => b.uid === cmd.sacrificeUid);
   const [sacrificedRaw] = playerState.buildings.splice(buildingIdx, 1);
   const sacrificedBuilding = sacrificedRaw!;
 
@@ -680,10 +679,7 @@ export function mutatePlayConversion(
   let demBonusGained = 0;
 
   if (rules.effect?.kind === 'gain_per_building') {
-    gain = scaleResources(
-      rules.effect.perBuilding,
-      preSacrificeBuildingCount,
-    );
+    gain = scaleResources(rules.effect.perBuilding, preSacrificeBuildingCount);
   } else if (rules.effect?.kind === 'gain_and_dem_bonus') {
     gain = cloneResources(rules.effect.gain);
     demBonusGained = rules.effect.demBonus;
@@ -692,8 +688,7 @@ export function mutatePlayConversion(
 
   creditPlayerResources(draft, events, cmd.player, gain, 'conversion');
 
-  const coveredCount =
-    playerState.units.length + playerState.buildings.length;
+  const coveredCount = playerState.units.length + playerState.buildings.length;
 
   events.push({
     n: ++draft.counters.event,
@@ -745,10 +740,7 @@ export function playConversion(
 /**
  * Valida in modo puro il comando `Pass` in fase `development`.
  */
-export function validatePass(
-  state: Readonly<GameState>,
-  cmd: PassCommand,
-): RuleError | null {
+export function validatePass(state: Readonly<GameState>, cmd: PassCommand): RuleError | null {
   if (state.phase !== 'development') {
     return {
       code: 'INVALID_PHASE',

@@ -1,0 +1,13 @@
+{
+  "renamed": {
+    "u2_cav_l": "u2_lancer",
+    "u3_arc_h": "u3_crossbow",
+    "u3_cav_l": "u3_knight",
+    "u3_sig_h": "u3_ram"
+  },
+  "exclusiveReplacements": {
+    "u3_inf_l": "u3_inf_h",
+    "u3_cav_h": "u3_knight"
+  },
+  "policy": "Explicit civilization required; never overwrite v1. Report all replacements and validation errors, including copy-limit collisions."
+}

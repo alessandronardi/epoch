@@ -1,3 +1,5 @@
+import { useCatalogVersion } from '../../content/use-catalog-version.js';
+import type { ContentVersion } from '@epochs/content';
 import { getCard, type CatalogCard } from '@epochs/content';
 import type { ReactElement } from 'react';
 
@@ -5,6 +7,7 @@ export const CARD_ART_WIDTHS = Object.freeze([256, 512, 1024] as const);
 export type CardArtFormat = 'avif' | 'webp';
 
 export interface CardArtPictureProps {
+  readonly version?: ContentVersion | undefined;
   readonly cardId?: string | undefined;
   readonly card?: CatalogCard | undefined;
   readonly sizes?: string | undefined;
@@ -25,10 +28,7 @@ export function getCardArtVariantUrl(
   return `/cards/${cardId}-${width}.${format}`;
 }
 
-export function getCardArtSrcSet(
-  cardId: string,
-  format: CardArtFormat,
-): string {
+export function getCardArtSrcSet(cardId: string, format: CardArtFormat): string {
   return CARD_ART_WIDTHS.map(
     (width) => `${getCardArtVariantUrl(cardId, width, format)} ${width}w`,
   ).join(', ');
@@ -37,19 +37,19 @@ export function getCardArtSrcSet(
 function resolveArtCard(
   cardId: string | undefined,
   card: CatalogCard | undefined,
+  version: ContentVersion = '1.0',
 ): CatalogCard {
   if (card !== undefined) {
     return card;
   }
   if (cardId !== undefined) {
-    return getCard(cardId);
+    return getCard(cardId, version);
   }
-  throw new Error(
-    'CardArtPicture requires either a card or cardId prop to render.',
-  );
+  throw new Error('CardArtPicture requires either a card or cardId prop to render.');
 }
 
 export function CardArtPicture({
+  version,
   cardId,
   card,
   sizes = '(max-width: 640px) 256px, (max-width: 1100px) 512px, 1024px',
@@ -57,8 +57,10 @@ export function CardArtPicture({
   imgClassName = 'epochs-card__art-img',
   loading = 'lazy',
 }: CardArtPictureProps): ReactElement {
-  const resolved = resolveArtCard(cardId, card);
+  const catalogVersion = useCatalogVersion(version);
+  const resolved = resolveArtCard(cardId, card, catalogVersion);
   const { id, art } = resolved;
+  const artId = art.file.match(/^cards\/(.+)-1024\.webp$/)?.[1] ?? id;
 
   return (
     <picture
@@ -66,16 +68,8 @@ export function CardArtPicture({
       data-testid={`card-art-picture-${id}`}
       data-card-art-status={art.status}
     >
-      <source
-        type="image/avif"
-        srcSet={getCardArtSrcSet(id, 'avif')}
-        sizes={sizes}
-      />
-      <source
-        type="image/webp"
-        srcSet={getCardArtSrcSet(id, 'webp')}
-        sizes={sizes}
-      />
+      <source type="image/avif" srcSet={getCardArtSrcSet(artId, 'avif')} sizes={sizes} />
+      <source type="image/webp" srcSet={getCardArtSrcSet(artId, 'webp')} sizes={sizes} />
       <img
         className={imgClassName}
         src={getCardPlaceholderUrl(id)}

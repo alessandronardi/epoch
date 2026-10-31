@@ -1,0 +1,2562 @@
+{
+  "e1_farm": {
+    "rules": {
+      "id": "e1_farm",
+      "era": 1,
+      "type": "economy",
+      "cost": {
+        "food": 0,
+        "wood": 2,
+        "metal": 0
+      },
+      "production": {
+        "food": 1,
+        "wood": 0,
+        "metal": 0
+      },
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Fattoria",
+      "typeLine": "Economia",
+      "flavor": "Il primo raccolto non sfama un esercito. Insegna a un villaggio a restare."
+    },
+    "art": {
+      "file": "cards/e1_farm-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una fattoria in legno all'alba con campo di grano e carro trainato da buoi."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Small timber farmstead at dawn, wheat field, ox cart, smoke rising from a thatched roof",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: economy",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "e1_lumb": {
+    "rules": {
+      "id": "e1_lumb",
+      "era": 1,
+      "type": "economy",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      },
+      "production": {
+        "food": 0,
+        "wood": 1,
+        "metal": 0
+      },
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Segheria",
+      "typeLine": "Economia",
+      "flavor": "Ogni palizzata comincia come un albero che qualcuno ha deciso di abbattere."
+    },
+    "art": {
+      "file": "cards/e1_lumb-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una segheria rustica ai margini del bosco con due uomini e tronchi accatastati."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Rustic sawing pit at a forest edge, two men with a long saw, stacked logs",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: economy",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "e1_mine": {
+    "rules": {
+      "id": "e1_mine",
+      "era": 1,
+      "type": "economy",
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "metal": 0
+      },
+      "production": {
+        "food": 0,
+        "wood": 0,
+        "metal": 1
+      },
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Cava Grezza",
+      "typeLine": "Economia",
+      "flavor": "Sotto la collina il ferro dorme. I minatori lo svegliano a colpi di piccone."
+    },
+    "art": {
+      "file": "cards/e1_mine-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una cava di roccia a cielo aperto con impalcature in legno e minatori al lavoro."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Open rock quarry with crude timber scaffolds, miners with pickaxes, torchlight",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: economy",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "e2_fnd": {
+    "rules": {
+      "id": "e2_fnd",
+      "era": 2,
+      "type": "economy",
+      "cost": {
+        "food": 2,
+        "wood": 3,
+        "metal": 0
+      },
+      "production": {
+        "food": 0,
+        "wood": 0,
+        "metal": 2
+      },
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Fonderia",
+      "typeLine": "Economia",
+      "flavor": "Il ferro, quando è rosso, accetta qualsiasi idea."
+    },
+    "art": {
+      "file": "cards/e2_fnd-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una fonderia con crogioli incandescenti, mantici e metallo fuso colato negli stampi."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Foundry with glowing crucibles and bellows, molten metal poured into molds, sparks",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: economy",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "e2_mill": {
+    "rules": {
+      "id": "e2_mill",
+      "era": 2,
+      "type": "economy",
+      "cost": {
+        "food": 1,
+        "wood": 3,
+        "metal": 1
+      },
+      "production": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      },
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Mulino Idraulico",
+      "typeLine": "Economia",
+      "flavor": "Il fiume lavora per tutti, anche quando i soldati dormono."
+    },
+    "art": {
+      "file": "cards/e2_mill-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un mulino in pietra con grande ruota idraulica in legno accanto a un torrente."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Stone watermill with a large wooden wheel beside a stream, flour sacks, bright afternoon",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: economy",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "e2_saw": {
+    "rules": {
+      "id": "e2_saw",
+      "era": 2,
+      "type": "economy",
+      "cost": {
+        "food": 3,
+        "wood": 1,
+        "metal": 1
+      },
+      "production": {
+        "food": 0,
+        "wood": 2,
+        "metal": 0
+      },
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Segheria Grande",
+      "typeLine": "Economia",
+      "flavor": "Una sola lama sostituisce dieci braccia e non chiede il cambio."
+    },
+    "art": {
+      "file": "cards/e2_saw-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una grande segheria ad acqua con lama alternativa che taglia un tronco imponente."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Water-powered sawmill with a reciprocating blade cutting a huge log",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: economy",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "e3_frn": {
+    "rules": {
+      "id": "e3_frn",
+      "era": 3,
+      "type": "conversion",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "gain_and_dem_bonus",
+        "gain": {
+          "food": 0,
+          "wood": 2,
+          "metal": 3
+        },
+        "demBonus": 1
+      },
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Altoforno Reale",
+      "typeLine": "Riconversione",
+      "flavor": "Le risorse e il coraggio sostengono la città."
+    },
+    "art": {
+      "file": "cards/e3_frn-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un imponente altoforno reale che cola ferro fuso tra fumo denso e bagliori arancioni."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Massive blast furnace pouring molten iron, workers in silhouette, orange glow, smoke",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: conversion",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "e3_gld": {
+    "rules": {
+      "id": "e3_gld",
+      "era": 3,
+      "type": "conversion",
+      "cost": {
+        "food": 0,
+        "wood": 1,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "gain_per_building",
+        "perBuilding": {
+          "food": 1,
+          "wood": 1,
+          "metal": 1
+        }
+      },
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Gilda dei Mercanti",
+      "typeLine": "Riconversione",
+      "flavor": "Chi vende il proprio banco ha di solito già comprato la nave."
+    },
+    "art": {
+      "file": "cards/e3_gld-1024.webp",
+      "alt": {
+        "it": "Illustrazione dell'interno di una gilda dei mercanti con registri, monete d'oro e un atto sigillato."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Merchant guild hall interior, ledgers and gold coins on a table, a trader signing a deed with a wax seal",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: conversion",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "i1_arr": {
+    "rules": {
+      "id": "i1_arr",
+      "era": 1,
+      "type": "instant",
+      "cost": {
+        "food": 0,
+        "wood": 2,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "atk_mod",
+        "target": "own_archers",
+        "amount": 2
+      },
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Pioggia di Frecce",
+      "typeLine": "Istantanea",
+      "flavor": "Il cielo si fece scuro a mezzogiorno, e non per le nuvole."
+    },
+    "art": {
+      "file": "cards/i1_arr-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una fitta salva di frecce che oscura il cielo sopra il campo di battaglia."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Dense volley of arrows darkening the sky above a battlefield",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: instant",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "i1_wall": {
+    "rules": {
+      "id": "i1_wall",
+      "era": 1,
+      "type": "instant",
+      "cost": {
+        "food": 0,
+        "wood": 2,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "walls_mod",
+        "target": "own",
+        "amount": 3
+      },
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Palizzata Extra",
+      "typeLine": "Istantanea",
+      "flavor": "Una notte di lavoro vale un anno di assedio."
+    },
+    "art": {
+      "file": "cards/i1_wall-1024.webp",
+      "alt": {
+        "it": "Illustrazione di soldati che piantano pali appuntiti su un terrapieno di notte alla luce delle torce."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Soldiers driving sharpened stakes into an earthen rampart at night by torchlight",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: instant",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "i2_mor": {
+    "rules": {
+      "id": "i2_mor",
+      "era": 2,
+      "type": "instant",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 1
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "atk_mod",
+        "target": "own_front",
+        "amount": 2
+      },
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Grido di Guerra",
+      "typeLine": "Istantanea",
+      "flavor": "Una voce sola, mille spade che la seguono."
+    },
+    "art": {
+      "file": "cards/i2_mor-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un comandante che lancia il grido di guerra dai bastioni con lo stendardo sollevato."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Commander roaring on a rampart with a raised banner, soldiers surging behind",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: instant",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "i2_sab": {
+    "rules": {
+      "id": "i2_sab",
+      "era": 2,
+      "type": "instant",
+      "cost": {
+        "food": 1,
+        "wood": 0,
+        "metal": 2
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "walls_mod",
+        "target": "enemy",
+        "amount": -4
+      },
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Mina Sotterranea",
+      "typeLine": "Istantanea",
+      "flavor": "Il crollo fu preceduto da un silenzio troppo lungo."
+    },
+    "art": {
+      "file": "cards/i2_sab-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una galleria sotterranea con puntelli in legno e genieri sotto le mura di una fortezza."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Tunnel beneath fortress walls with timber props and sappers by candlelight, cracks above",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: instant",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "i3_fir": {
+    "rules": {
+      "id": "i3_fir",
+      "era": 3,
+      "type": "instant",
+      "cost": {
+        "food": 0,
+        "wood": 2,
+        "metal": 3
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "walls_mod",
+        "target": "enemy",
+        "amount": -6
+      },
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Fuoco Greco",
+      "typeLine": "Istantanea",
+      "flavor": "L'acqua lo alimenta. Solo il tempo lo sazia."
+    },
+    "art": {
+      "file": "cards/i3_fir-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un sifone di bronzo che proietta getti di fuoco greco liquido contro le mura."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Bronze siphon spraying streams of liquid fire across a wall, flames reflected on armor",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: instant",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "i3_ral": {
+    "rules": {
+      "id": "i3_ral",
+      "era": 3,
+      "type": "instant",
+      "cost": {
+        "food": 3,
+        "wood": 0,
+        "metal": 2
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "atk_mod",
+        "target": "own_front",
+        "amount": 2
+      },
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Carica Eroica",
+      "typeLine": "Istantanea",
+      "flavor": "Il primo a correre non ha coraggio: ha fretta di non pensare."
+    },
+    "art": {
+      "file": "cards/i3_ral-1024.webp",
+      "alt": {
+        "it": "Illustrazione di fanteria e picchieri che caricano su un pendio dietro un alfiere nella luce dorata."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Infantry and spearmen charging up a slope behind a standard-bearer, golden backlight",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: instant",
+      "counterplay": "Costo di opportunità, risorse e slot limitati."
+    }
+  },
+  "u1_arc_h": {
+    "rules": {
+      "id": "u1_arc_h",
+      "era": 1,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "atk": 3,
+      "dem": 0,
+      "hp": 2,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 1
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Arciere d'Ordinanza",
+      "typeLine": "Unità — Arciere · Retroguardia",
+      "flavor": "Cento frecce nello stesso istante diventano una sola decisione."
+    },
+    "art": {
+      "file": "cards/u1_arc_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una linea disciplinata di arcieri d'ordinanza in livrea che scoccano una salva."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Disciplined line of longbow archers in matching livery drawing together, volley rising",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: archer",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u1_arc_l": {
+    "rules": {
+      "id": "u1_arc_l",
+      "era": 1,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 1,
+        "wood": 1,
+        "metal": 0
+      },
+      "atk": 2,
+      "dem": 0,
+      "hp": 1,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 1
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Cacciatore",
+      "typeLine": "Unità — Arciere · Retroguardia",
+      "flavor": "Conosce il vento meglio di quanto gli altri conoscano il proprio nome."
+    },
+    "art": {
+      "file": "cards/u1_arc_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un cacciatore incappucciato che mira con un arco corto da una collina boscosa."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Hooded hunter-archer aiming a short bow from a wooded hillside",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: archer",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u1_cav_h": {
+    "rules": {
+      "id": "u1_cav_h",
+      "era": 1,
+      "type": "unit",
+      "category": "cavalry",
+      "line": "center",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 1
+      },
+      "atk": 4,
+      "dem": 1,
+      "hp": 3,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 1
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Cavaliere Feudale",
+      "typeLine": "Unità — Cavalleria · Centro",
+      "flavor": "Il suo stemma è più antico del castello che difende."
+    },
+    "art": {
+      "file": "cards/u1_cav_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un cavaliere feudale in cotta di maglia e sopravveste araldica con lancia abbassata."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Feudal knight in mail and heraldic surcoat on a caparisoned horse, lance lowered",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: cavalry",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u1_cav_l": {
+    "rules": {
+      "id": "u1_cav_l",
+      "era": 1,
+      "type": "unit",
+      "category": "cavalry",
+      "line": "center",
+      "cost": {
+        "food": 3,
+        "wood": 0,
+        "metal": 0
+      },
+      "atk": 2,
+      "dem": 1,
+      "hp": 3,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 1
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Esploratore a Cavallo",
+      "typeLine": "Unità — Cavalleria · Centro",
+      "flavor": "Le risorse e il coraggio sostengono la città."
+    },
+    "art": {
+      "file": "cards/u1_cav_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un esploratore a cavallo al galoppo lungo un crinale che solleva una scia di polvere."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Light scout rider on a lean horse at full gallop along a ridge, dust trail",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: cavalry",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u1_inf_h": {
+    "rules": {
+      "id": "u1_inf_h",
+      "era": 1,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 2,
+        "wood": 1,
+        "metal": 0
+      },
+      "atk": 2,
+      "dem": 1,
+      "hp": 5,
+      "isCombatant": true,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Fante con Scudo",
+      "typeLine": "Unità — Fanteria · Fronte",
+      "flavor": "Chi regge lo scudo non vede la battaglia: la sente arrivare."
+    },
+    "art": {
+      "file": "cards/u1_inf_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un fante con cotta di maglia e spada corta saldo dietro un grande scudo a goccia."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Infantryman braced behind a large kite shield, mail coif, short sword, impact imminent",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: infantry",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u1_inf_l": {
+    "rules": {
+      "id": "u1_inf_l",
+      "era": 1,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      },
+      "atk": 2,
+      "dem": 1,
+      "hp": 3,
+      "isCombatant": true,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Milizia Cittadina",
+      "typeLine": "Unità — Fanteria · Fronte",
+      "flavor": "Ieri erano fabbri e fornai. Oggi la porta della città è affar loro."
+    },
+    "art": {
+      "file": "cards/u1_inf_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di miliziani cittadini con giubbotti imbottiti e scudi rotondi davanti alla porta."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Townsmen militia in mismatched leather and quilted jackets, round wooden shields, behind a town gate",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: infantry",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u1_sig_h": {
+    "rules": {
+      "id": "u1_sig_h",
+      "era": 1,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 3,
+        "metal": 1
+      },
+      "atk": 0,
+      "dem": 6,
+      "hp": 3,
+      "isCombatant": false,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Ariete Batteria",
+      "typeLine": "Unità — Assedio · Retroguardia",
+      "flavor": "Non bussa. Spiega alla porta come andrà a finire."
+    },
+    "art": {
+      "file": "cards/u1_sig_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un ariete da assedio coperto con trave ferrata spinto verso una porta fortificata."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Roofed battering ram with an iron-capped log being pushed toward a gate",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: siege",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u1_sig_l": {
+    "rules": {
+      "id": "u1_sig_l",
+      "era": 1,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "atk": 0,
+      "dem": 2,
+      "hp": 2,
+      "isCombatant": false,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Squadra Genieri",
+      "typeLine": "Unità — Assedio · Retroguardia",
+      "flavor": "Dove gli altri vedono un muro, loro vedono un problema di leve."
+    },
+    "art": {
+      "file": "cards/u1_sig_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una squadra di genieri militari con leve e puntelli che scalzano un muro di pietra."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Military engineers with crowbars and wooden props undermining a stone wall",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: siege",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u1_spr_h": {
+    "rules": {
+      "id": "u1_spr_h",
+      "era": 1,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "atk": 2,
+      "dem": 1,
+      "hp": 4,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 3
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Lanciere Pesante",
+      "typeLine": "Unità — Lanciere · Fronte",
+      "flavor": "Il cavaliere carica contro l'orizzonte. La lancia gli ricorda dov'è la terra."
+    },
+    "art": {
+      "file": "cards/u1_spr_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un lanciere pesante inginocchiato con il calcio della lancia piantato nel terreno."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Armored spearman kneeling with spear butt planted in the ground, aimed at charging horsemen",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: spearman",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u1_spr_l": {
+    "rules": {
+      "id": "u1_spr_l",
+      "era": 1,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 1,
+        "wood": 1,
+        "metal": 0
+      },
+      "atk": 1,
+      "dem": 0,
+      "hp": 3,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 3
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Picchiere di Leva",
+      "typeLine": "Unità — Lanciere · Fronte",
+      "flavor": "Una lancia lunga fa sembrare coraggioso anche chi non lo è."
+    },
+    "art": {
+      "file": "cards/u1_spr_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un picchiere di leva con lunga lancia davanti a una schiera di compagni d'arme."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Levy spearman in a plain cap holding a long spear, field and line of spears behind him",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: spearman",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u2_arc_h": {
+    "rules": {
+      "id": "u2_arc_h",
+      "era": 2,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 1,
+        "wood": 3,
+        "metal": 1
+      },
+      "atk": 5,
+      "dem": 0,
+      "hp": 3,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 2
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Balestriere Pesante",
+      "typeLine": "Unità — Arciere · Retroguardia",
+      "flavor": "Si carica in un respiro. Non perdona in nessuno."
+    },
+    "art": {
+      "file": "cards/u2_arc_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un balestriere pesante che carica una balestra d'acciaio dietro un grande pavese."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Crossbowman winding a heavy steel crossbow behind a large pavise shield",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: archer",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u2_arc_l": {
+    "rules": {
+      "id": "u2_arc_l",
+      "era": 2,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 1,
+        "wood": 3,
+        "metal": 0
+      },
+      "atk": 4,
+      "dem": 0,
+      "hp": 2,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 2
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Arciere Composto",
+      "typeLine": "Unità — Arciere · Retroguardia",
+      "flavor": "L'arco è fatto di corno, legno e tendini. La pazienza, di sola pazienza."
+    },
+    "art": {
+      "file": "cards/u2_arc_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un arciere che tende un arco composito ricurvo sotto un cielo terso color acciaio."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Archer drawing a recurved composite bow, horn and sinew detail, cold steel sky",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: archer",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u2_cav_h": {
+    "rules": {
+      "id": "u2_cav_h",
+      "era": 2,
+      "type": "unit",
+      "category": "cavalry",
+      "line": "center",
+      "cost": {
+        "food": 3,
+        "wood": 0,
+        "metal": 2
+      },
+      "atk": 6,
+      "dem": 2,
+      "hp": 6,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 2
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Cavaliere Corazzato",
+      "typeLine": "Unità — Cavalleria · Centro",
+      "flavor": "Quando carica, l'orizzonte arretra."
+    },
+    "art": {
+      "file": "cards/u2_cav_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un cavaliere in armatura completa a piastre alla carica su un destriero corazzato."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Fully plated knight on an armored warhorse charging, sunlit steel",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: cavalry",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u2_lancer": {
+    "rules": {
+      "id": "u2_lancer",
+      "era": 2,
+      "type": "unit",
+      "category": "cavalry",
+      "line": "center",
+      "cost": {
+        "food": 3,
+        "wood": 1,
+        "metal": 1
+      },
+      "atk": 5,
+      "dem": 2,
+      "hp": 4,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 2
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Lanciere a Cavallo",
+      "typeLine": "Unità — Cavalleria · Centro",
+      "flavor": "Legno, ferro e addestramento decidono la sorte della battaglia."
+    },
+    "art": {
+      "file": "cards/u2_lancer-1024.webp",
+      "alt": {
+        "it": "Lanciere a Cavallo in un campo medievale prima delle armi da fuoco."
+      },
+      "prompt": "Medieval Lanciere a Cavallo, wood and iron, no firearms, no cannon, no modern uniforms.",
+      "negative": "firearms, gunpowder, cannon, wings, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: cavalry",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u2_inf_h": {
+    "rules": {
+      "id": "u2_inf_h",
+      "era": 2,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 3,
+        "wood": 1,
+        "metal": 1
+      },
+      "atk": 4,
+      "dem": 2,
+      "hp": 8,
+      "isCombatant": true,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Uomo d'Arme",
+      "typeLine": "Unità — Fanteria · Fronte",
+      "flavor": "Pesa quanto un muro e cammina meglio."
+    },
+    "art": {
+      "file": "cards/u2_inf_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un uomo d'arme in armatura completa d'acciaio con azza a due mani e stendardo."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Man-at-arms in full steel harness with a poleaxe, visor open, banner behind",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: infantry",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u2_inf_l": {
+    "rules": {
+      "id": "u2_inf_l",
+      "era": 2,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 3,
+        "wood": 0,
+        "metal": 1
+      },
+      "atk": 5,
+      "dem": 2,
+      "hp": 5,
+      "isCombatant": true,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Spadaccino Scelto",
+      "typeLine": "Unità — Fanteria · Fronte",
+      "flavor": "Ogni cicatrice è una lezione che ha già superato."
+    },
+    "art": {
+      "file": "cards/u2_inf_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di uno spadaccino scelto veterano in mezza armatura in guardia con la spada lunga."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Veteran swordsman in a half-plate cuirass in a longsword guard stance, scarred face",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: infantry",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u2_sig_h": {
+    "rules": {
+      "id": "u2_sig_h",
+      "era": 2,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 4,
+        "metal": 2
+      },
+      "atk": 0,
+      "dem": 10,
+      "hp": 5,
+      "isCombatant": false,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Mangano Pesante",
+      "typeLine": "Unità — Assedio · Retroguardia",
+      "flavor": "Il contrappeso cade. Un secolo di mura cade con lui."
+    },
+    "art": {
+      "file": "cards/u2_sig_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un mangano pesante a contrappeso nell'istante in cui scaglia un masso nel cielo."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Counterweight mangonel mid-throw, boulder against the sky, crew hauling ropes",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: siege",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u2_sig_l": {
+    "rules": {
+      "id": "u2_sig_l",
+      "era": 2,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 3,
+        "metal": 1
+      },
+      "atk": 0,
+      "dem": 6,
+      "hp": 3,
+      "isCombatant": false,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Scorpione d'Assedio",
+      "typeLine": "Unità — Assedio · Retroguardia",
+      "flavor": "Un dardo grande come un uomo ha sempre ragione."
+    },
+    "art": {
+      "file": "cards/u2_sig_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di uno scorpione d'assedio a torsione su affusto ruotato mentre l'equipaggio carica un dardo."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Large torsion siege crossbow on a wheeled wooden frame, crew loading a huge bolt",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: siege",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u2_spr_h": {
+    "rules": {
+      "id": "u2_spr_h",
+      "era": 2,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 2,
+        "wood": 3,
+        "metal": 1
+      },
+      "atk": 3,
+      "dem": 2,
+      "hp": 6,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 5
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Guardia Svizzera",
+      "typeLine": "Unità — Lanciere · Fronte",
+      "flavor": "Il contratto dura tre mesi. La disciplina, da sempre."
+    },
+    "art": {
+      "file": "cards/u2_spr_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una guardia svizzera con farsetto tagliato, cappello piumato e picca in formazione."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Mercenary pikeman in slashed doublet and plumed cap with a long pike, tight formation",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: spearman",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u2_spr_l": {
+    "rules": {
+      "id": "u2_spr_l",
+      "era": 2,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "metal": 0
+      },
+      "atk": 3,
+      "dem": 1,
+      "hp": 5,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 5
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Alabardiere",
+      "typeLine": "Unità — Lanciere · Fronte",
+      "flavor": "L'alabarda decide quanto lontano si può stare dal pericolo."
+    },
+    "art": {
+      "file": "cards/u2_spr_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un alabardiere con elmo morione che avanza tenendo l'alabarda in diagonale."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Halberdier in a morion helmet advancing, halberd held diagonally",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: spearman",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u3_crossbow": {
+    "rules": {
+      "id": "u3_crossbow",
+      "era": 3,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 2,
+        "wood": 3,
+        "metal": 3
+      },
+      "atk": 8,
+      "dem": 1,
+      "hp": 4,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 3
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Balestriere a Staffa",
+      "typeLine": "Unità — Arciere · Retroguardia",
+      "flavor": "Legno, ferro e addestramento decidono la sorte della battaglia."
+    },
+    "art": {
+      "file": "cards/u3_crossbow-1024.webp",
+      "alt": {
+        "it": "Balestriere a Staffa in un campo medievale prima delle armi da fuoco."
+      },
+      "prompt": "Medieval Balestriere a Staffa, wood and iron, no firearms, no cannon, no modern uniforms.",
+      "negative": "firearms, gunpowder, cannon, wings, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: archer",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u3_arc_l": {
+    "rules": {
+      "id": "u3_arc_l",
+      "era": 3,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 2,
+        "wood": 4,
+        "metal": 1
+      },
+      "atk": 6,
+      "dem": 0,
+      "hp": 4,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 3
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Arciere Lungo Reale",
+      "typeLine": "Unità — Arciere · Retroguardia",
+      "flavor": "La corona paga l'arco. Il resto lo mette lui."
+    },
+    "art": {
+      "file": "cards/u3_arc_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un arciere lungo reale in mezza armatura che scocca con un alto arco da guerra al tramonto."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Royal longbowman in partial plate with a tall war bow, sunset volley",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: archer",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u3_knight": {
+    "rules": {
+      "id": "u3_knight",
+      "era": 3,
+      "type": "unit",
+      "category": "cavalry",
+      "line": "center",
+      "cost": {
+        "food": 4,
+        "wood": 1,
+        "metal": 2
+      },
+      "atk": 7,
+      "dem": 2,
+      "hp": 6,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 3
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Cavaliere Veterano",
+      "typeLine": "Unità — Cavalleria · Centro",
+      "flavor": "Legno, ferro e addestramento decidono la sorte della battaglia."
+    },
+    "art": {
+      "file": "cards/u3_knight-1024.webp",
+      "alt": {
+        "it": "Cavaliere Veterano in un campo medievale prima delle armi da fuoco."
+      },
+      "prompt": "Medieval Cavaliere Veterano, wood and iron, no firearms, no cannon, no modern uniforms.",
+      "negative": "firearms, gunpowder, cannon, wings, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: cavalry",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u3_inf_h": {
+    "rules": {
+      "id": "u3_inf_h",
+      "era": 3,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 4,
+        "wood": 1,
+        "metal": 3
+      },
+      "atk": 6,
+      "dem": 3,
+      "hp": 12,
+      "isCombatant": true,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Campione Imperiale",
+      "typeLine": "Unità — Fanteria · Fronte",
+      "flavor": "L'impero gli diede un nome. Lui gli diede una frontiera."
+    },
+    "art": {
+      "file": "cards/u3_inf_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un campione imperiale in armatura pesante dorata con spadone e stendardo imperiale."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Champion in gilded heavy armor with a greatsword, imperial standard behind",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: infantry",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u3_ram": {
+    "rules": {
+      "id": "u3_ram",
+      "era": 3,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 7,
+        "metal": 3
+      },
+      "atk": 0,
+      "dem": 16,
+      "hp": 9,
+      "isCombatant": false,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Ariete da Breccia",
+      "typeLine": "Unità — Assedio · Retroguardia",
+      "flavor": "Legno, ferro e addestramento decidono la sorte della battaglia."
+    },
+    "art": {
+      "file": "cards/u3_ram-1024.webp",
+      "alt": {
+        "it": "Ariete da Breccia in un campo medievale prima delle armi da fuoco."
+      },
+      "prompt": "Medieval Ariete da Breccia, wood and iron, no firearms, no cannon, no modern uniforms.",
+      "negative": "firearms, gunpowder, cannon, wings, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: siege",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u3_sig_l": {
+    "rules": {
+      "id": "u3_sig_l",
+      "era": 3,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 5,
+        "metal": 2
+      },
+      "atk": 0,
+      "dem": 11,
+      "hp": 8,
+      "isCombatant": false,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Torre d'Assedio",
+      "typeLine": "Unità — Assedio · Retroguardia",
+      "flavor": "Avanzava lenta. Le mura, ferme, ebbero più tempo per pensarci."
+    },
+    "art": {
+      "file": "cards/u3_sig_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una torre d'assedio in legno rivestita di pelli che avanza verso le mura di una fortezza."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Wooden siege tower covered in hides rolling up to a fortress wall, archers on the top deck",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: siege",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u3_sig_m": {
+    "rules": {
+      "id": "u3_sig_m",
+      "era": 3,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 6,
+        "metal": 3
+      },
+      "atk": 0,
+      "dem": 15,
+      "hp": 5,
+      "isCombatant": false,
+      "abilities": [],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Trabucco Gigante",
+      "typeLine": "Unità — Assedio · Retroguardia",
+      "flavor": "Il suo contrappeso peserebbe quanto un villaggio."
+    },
+    "art": {
+      "file": "cards/u3_sig_m-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un gigantesco trabucco nel momento del rilascio con un'enorme cassa di contrappeso."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Gigantic trebuchet at the moment of release, massive counterweight box, dust and stones",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: siege",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u3_spr_h": {
+    "rules": {
+      "id": "u3_spr_h",
+      "era": 3,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 3,
+        "wood": 4,
+        "metal": 2
+      },
+      "atk": 5,
+      "dem": 2,
+      "hp": 9,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 7
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Falange Imperiale",
+      "typeLine": "Unità — Lanciere · Fronte",
+      "flavor": "Quando la falange avanza, anche la storia fa un passo indietro."
+    },
+    "art": {
+      "file": "cards/u3_spr_h-1024.webp",
+      "alt": {
+        "it": "Illustrazione di una falange imperiale compatta con scudi alti e lunghe lance nella luce dorata."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Tight phalanx with tall shields and long spears advancing, golden light",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: spearman",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "u3_spr_l": {
+    "rules": {
+      "id": "u3_spr_l",
+      "era": 3,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 3,
+        "wood": 3,
+        "metal": 1
+      },
+      "atk": 4,
+      "dem": 2,
+      "hp": 7,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 7
+        }
+      ],
+      "affiliation": "common"
+    },
+    "text": {
+      "name": "Picchiere Reale",
+      "typeLine": "Unità — Lanciere · Fronte",
+      "flavor": "Dietro la picca, la formazione pensa al posto suo."
+    },
+    "art": {
+      "file": "cards/u3_spr_l-1024.webp",
+      "alt": {
+        "it": "Illustrazione di un picchiere reale in formazione picca e moschetto circondato da una selva di picche."
+      },
+      "prompt": "Historical oil painting, visible brushwork, dramatic side lighting, cinematic 4:3 composition, no text, no watermark, no frame, no recognizable real person or third-party IP. Royal pikeman in a pike-and-shot formation, forest of tall pikes, livery coats",
+      "negative": "text, watermark, signature, logo, frame, border, modern elements, blurry, low quality, deformed anatomy",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Nucleo comune: spearman",
+      "counterplay": "Composizione avversaria e ordine FIFO; assedio vulnerabile senza combattenti."
+    }
+  },
+  "n1_raider": {
+    "rules": {
+      "id": "n1_raider",
+      "era": 1,
+      "affiliation": "norse",
+      "type": "unit",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      },
+      "abilities": [
+        {
+          "kind": "fury",
+          "amount": 2
+        }
+      ],
+      "category": "infantry",
+      "line": "front",
+      "atk": 2,
+      "dem": 1,
+      "hp": 2,
+      "isCombatant": true
+    },
+    "text": {
+      "name": "Razziatore Costiero",
+      "typeLine": "unit",
+      "flavor": "Pressione precoce, fragile al tiro."
+    },
+    "art": {
+      "file": "cards/n1_raider-1024.webp",
+      "alt": {
+        "it": "Razziatore Costiero: guerriero con ascia e scudo rotondo sulla costa."
+      },
+      "prompt": "Medieval illustration: guerriero con ascia e scudo rotondo sulla costa; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Pressione precoce, fragile al tiro.",
+      "counterplay": "Arcieri e fronti resistenti.",
+      "artDirection": "guerriero con ascia e scudo rotondo sulla costa"
+    }
+  },
+  "n1_longhouse": {
+    "rules": {
+      "id": "n1_longhouse",
+      "era": 1,
+      "affiliation": "norse",
+      "type": "economy",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "abilities": [],
+      "production": {
+        "food": 1,
+        "wood": 0,
+        "metal": 0
+      }
+    },
+    "text": {
+      "name": "Casa Lunga",
+      "typeLine": "economy",
+      "flavor": "Sostiene la fanteria con un investimento iniziale."
+    },
+    "art": {
+      "file": "cards/n1_longhouse-1024.webp",
+      "alt": {
+        "it": "Casa Lunga: sala in legno con tetto erboso."
+      },
+      "prompt": "Medieval illustration: sala in legno con tetto erboso; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Sostiene la fanteria con un investimento iniziale.",
+      "counterplay": "Occupa uno dei quattro slot iniziali.",
+      "artDirection": "sala in legno con tetto erboso"
+    }
+  },
+  "n1_thing": {
+    "rules": {
+      "id": "n1_thing",
+      "era": 1,
+      "affiliation": "norse",
+      "type": "instant",
+      "cost": {
+        "food": 1,
+        "wood": 1,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "atk_mod",
+        "target": "own_infantry",
+        "amount": 1
+      }
+    },
+    "text": {
+      "name": "Chiamata del Thing",
+      "typeLine": "instant",
+      "flavor": "Rafforza soltanto la Fanteria per questa battaglia."
+    },
+    "art": {
+      "file": "cards/n1_thing-1024.webp",
+      "alt": {
+        "it": "Chiamata del Thing: assemblea di guerrieri presso pietre erette."
+      },
+      "prompt": "Medieval illustration: assemblea di guerrieri presso pietre erette; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Rafforza soltanto la Fanteria per questa battaglia.",
+      "counterplay": "Non sostiene Lancieri, Cavalleria o Assedio.",
+      "artDirection": "assemblea di guerrieri presso pietre erette"
+    }
+  },
+  "n2_huscarl": {
+    "rules": {
+      "id": "n2_huscarl",
+      "era": 2,
+      "affiliation": "norse",
+      "type": "unit",
+      "cost": {
+        "food": 3,
+        "wood": 1,
+        "metal": 1
+      },
+      "abilities": [
+        {
+          "kind": "fury",
+          "amount": 2
+        }
+      ],
+      "category": "infantry",
+      "line": "front",
+      "atk": 5,
+      "dem": 2,
+      "hp": 6,
+      "isCombatant": true
+    },
+    "text": {
+      "name": "Huscarl",
+      "typeLine": "unit",
+      "flavor": "Punta offensiva del fronte norreno."
+    },
+    "art": {
+      "file": "cards/n2_huscarl-1024.webp",
+      "alt": {
+        "it": "Huscarl: guardia in cotta di maglia con ascia lunga."
+      },
+      "prompt": "Medieval illustration: guardia in cotta di maglia con ascia lunga; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Punta offensiva del fronte norreno.",
+      "counterplay": "Tiro e resistenza oltre il primo ciclo.",
+      "artDirection": "guardia in cotta di maglia con ascia lunga"
+    }
+  },
+  "n2_landing": {
+    "rules": {
+      "id": "n2_landing",
+      "era": 2,
+      "affiliation": "norse",
+      "type": "economy",
+      "cost": {
+        "food": 2,
+        "wood": 3,
+        "metal": 0
+      },
+      "abilities": [],
+      "production": {
+        "food": 1,
+        "wood": 1,
+        "metal": 0
+      }
+    },
+    "text": {
+      "name": "Approdo Mercantile",
+      "typeLine": "economy",
+      "flavor": "Produzione mista senza introdurre combattimento navale."
+    },
+    "art": {
+      "file": "cards/n2_landing-1024.webp",
+      "alt": {
+        "it": "Approdo Mercantile: magazzini in legno e merci su un molo."
+      },
+      "prompt": "Medieval illustration: magazzini in legno e merci su un molo; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Produzione mista senza introdurre combattimento navale.",
+      "counterplay": "Consuma uno slot militare e non produce Metallo.",
+      "artDirection": "magazzini in legno e merci su un molo"
+    }
+  },
+  "n2_axeman": {
+    "rules": {
+      "id": "n2_axeman",
+      "era": 2,
+      "affiliation": "norse",
+      "type": "unit",
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "metal": 1
+      },
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 5
+        }
+      ],
+      "category": "spearman",
+      "line": "front",
+      "atk": 2,
+      "dem": 1,
+      "hp": 7,
+      "isCombatant": true
+    },
+    "text": {
+      "name": "Portascudo del Jarl",
+      "typeLine": "unit",
+      "flavor": "Contromisura difensiva alla cavalleria."
+    },
+    "art": {
+      "file": "cards/n2_axeman-1024.webp",
+      "alt": {
+        "it": "Portascudo del Jarl: lancia e scudo rotondo dipinto."
+      },
+      "prompt": "Medieval illustration: lancia e scudo rotondo dipinto; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Contromisura difensiva alla cavalleria.",
+      "counterplay": "Tiro e basso ATK contro fanteria.",
+      "artDirection": "lancia e scudo rotondo dipinto"
+    }
+  },
+  "u3_inf_l": {
+    "rules": {
+      "id": "u3_inf_l",
+      "era": 3,
+      "affiliation": "norse",
+      "type": "unit",
+      "cost": {
+        "food": 4,
+        "wood": 0,
+        "metal": 2
+      },
+      "abilities": [
+        {
+          "kind": "fury",
+          "amount": 2
+        }
+      ],
+      "category": "infantry",
+      "line": "front",
+      "atk": 8,
+      "dem": 3,
+      "hp": 8,
+      "isCombatant": true
+    },
+    "text": {
+      "name": "Berserker d'Élite",
+      "typeLine": "unit",
+      "flavor": "Conclude lo scontro con una prima mischia violenta."
+    },
+    "art": {
+      "file": "cards/u3_inf_l-v2-1024.webp",
+      "alt": {
+        "it": "Berserker d'Élite: guerriero con ascia, lana e maglia, elmo senza corna."
+      },
+      "prompt": "Medieval illustration: guerriero con ascia, lana e maglia, elmo senza corna; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Conclude lo scontro con una prima mischia violenta.",
+      "counterplay": "Tiro e difensori capaci di sopravvivere.",
+      "artDirection": "guerriero con ascia, lana e maglia, elmo senza corna"
+    }
+  },
+  "n3_guard": {
+    "rules": {
+      "id": "n3_guard",
+      "era": 3,
+      "affiliation": "norse",
+      "type": "unit",
+      "cost": {
+        "food": 4,
+        "wood": 2,
+        "metal": 2
+      },
+      "abilities": [],
+      "category": "infantry",
+      "line": "front",
+      "atk": 6,
+      "dem": 2,
+      "hp": 11,
+      "isCombatant": true
+    },
+    "text": {
+      "name": "Guardia del Jarl",
+      "typeLine": "unit",
+      "flavor": "Protegge i Berserker più fragili."
+    },
+    "art": {
+      "file": "cards/n3_guard-1024.webp",
+      "alt": {
+        "it": "Guardia del Jarl: scudi sovrapposti e cotte di maglia."
+      },
+      "prompt": "Medieval illustration: scudi sovrapposti e cotte di maglia; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Protegge i Berserker più fragili.",
+      "counterplay": "Investimento di risorse e ATK moderato.",
+      "artDirection": "scudi sovrapposti e cotte di maglia"
+    }
+  },
+  "n3_oath": {
+    "rules": {
+      "id": "n3_oath",
+      "era": 3,
+      "affiliation": "norse",
+      "type": "instant",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 1
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "atk_mod",
+        "target": "own_infantry",
+        "amount": 2
+      }
+    },
+    "text": {
+      "name": "Giuramento del Seguito",
+      "typeLine": "instant",
+      "flavor": "Premia un fronte di fanteria superstite."
+    },
+    "art": {
+      "file": "cards/n3_oath-1024.webp",
+      "alt": {
+        "it": "Giuramento del Seguito: seguito del jarl raccolto attorno a uno stendardo."
+      },
+      "prompt": "Medieval illustration: seguito del jarl raccolto attorno a uno stendardo; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Premia un fronte di fanteria superstite.",
+      "counterplay": "Non migliora DEM né le altre categorie.",
+      "artDirection": "seguito del jarl raccolto attorno a uno stendardo"
+    }
+  },
+  "b1_spearman": {
+    "rules": {
+      "id": "b1_spearman",
+      "era": 1,
+      "affiliation": "byzantine",
+      "type": "unit",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 3
+        }
+      ],
+      "category": "spearman",
+      "line": "front",
+      "atk": 1,
+      "dem": 1,
+      "hp": 5,
+      "isCombatant": true
+    },
+    "text": {
+      "name": "Lanciere di Frontiera",
+      "typeLine": "unit",
+      "flavor": "Ancora difensiva e supporto alla Disciplina."
+    },
+    "art": {
+      "file": "cards/b1_spearman-1024.webp",
+      "alt": {
+        "it": "Lanciere di Frontiera: soldato con lancia e scudo ovale presso una fortificazione."
+      },
+      "prompt": "Medieval illustration: soldato con lancia e scudo ovale presso una fortificazione; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Ancora difensiva e supporto alla Disciplina.",
+      "counterplay": "Arcieri con Tiro e pressione economica.",
+      "artDirection": "soldato con lancia e scudo ovale presso una fortificazione"
+    }
+  },
+  "b1_granary": {
+    "rules": {
+      "id": "b1_granary",
+      "era": 1,
+      "affiliation": "byzantine",
+      "type": "economy",
+      "cost": {
+        "food": 0,
+        "wood": 3,
+        "metal": 0
+      },
+      "abilities": [],
+      "production": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      }
+    },
+    "text": {
+      "name": "Granaio Imperiale",
+      "typeLine": "economy",
+      "flavor": "Investimento di Legno in Cibo per le Ere successive."
+    },
+    "art": {
+      "file": "cards/b1_granary-1024.webp",
+      "alt": {
+        "it": "Granaio Imperiale: magazzino in pietra con anfore di cereali."
+      },
+      "prompt": "Medieval illustration: magazzino in pietra con anfore di cereali; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Investimento di Legno in Cibo per le Ere successive.",
+      "counterplay": "Slot consumato e vulnerabilità iniziale.",
+      "artDirection": "magazzino in pietra con anfore di cereali"
+    }
+  },
+  "b1_watch": {
+    "rules": {
+      "id": "b1_watch",
+      "era": 1,
+      "affiliation": "byzantine",
+      "type": "unit",
+      "cost": {
+        "food": 2,
+        "wood": 1,
+        "metal": 0
+      },
+      "abilities": [
+        {
+          "kind": "discipline",
+          "amount": 1
+        }
+      ],
+      "category": "infantry",
+      "line": "front",
+      "atk": 1,
+      "dem": 1,
+      "hp": 5,
+      "isCombatant": true
+    },
+    "text": {
+      "name": "Guardia di Frontiera",
+      "typeLine": "unit",
+      "flavor": "Difende il Lanciere e beneficia della sua presenza."
+    },
+    "art": {
+      "file": "cards/b1_watch-1024.webp",
+      "alt": {
+        "it": "Guardia di Frontiera: fante con scudo ovale e tunica sotto la maglia."
+      },
+      "prompt": "Medieval illustration: fante con scudo ovale e tunica sotto la maglia; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Difende il Lanciere e beneficia della sua presenza.",
+      "counterplay": "Eliminare i Lancieri interrompe Disciplina.",
+      "artDirection": "fante con scudo ovale e tunica sotto la maglia"
+    }
+  },
+  "b2_skoutatos": {
+    "rules": {
+      "id": "b2_skoutatos",
+      "era": 2,
+      "affiliation": "byzantine",
+      "type": "unit",
+      "cost": {
+        "food": 3,
+        "wood": 1,
+        "metal": 2
+      },
+      "abilities": [
+        {
+          "kind": "discipline",
+          "amount": 1
+        }
+      ],
+      "category": "infantry",
+      "line": "front",
+      "atk": 4,
+      "dem": 2,
+      "hp": 9,
+      "isCombatant": true
+    },
+    "text": {
+      "name": "Skoutatos",
+      "typeLine": "unit",
+      "flavor": "Fanteria resistente ma costosa in Metallo."
+    },
+    "art": {
+      "file": "cards/b2_skoutatos-1024.webp",
+      "alt": {
+        "it": "Skoutatos: fante in maglia con grande scudo e lancia."
+      },
+      "prompt": "Medieval illustration: fante in maglia con grande scudo e lancia; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Fanteria resistente ma costosa in Metallo.",
+      "counterplay": "Rimuovere il Lanciere e sfruttare il costo elevato.",
+      "artDirection": "fante in maglia con grande scudo e lancia"
+    }
+  },
+  "b2_cistern": {
+    "rules": {
+      "id": "b2_cistern",
+      "era": 2,
+      "affiliation": "byzantine",
+      "type": "structure",
+      "cost": {
+        "food": 1,
+        "wood": 3,
+        "metal": 1
+      },
+      "abilities": [],
+      "structureEffect": {
+        "kind": "era_walls",
+        "amount": 2
+      }
+    },
+    "text": {
+      "name": "Cisterna Fortificata",
+      "typeLine": "structure",
+      "flavor": "Aumenta le Mura delle aperture successive, senza produzione."
+    },
+    "art": {
+      "file": "cards/b2_cistern-1024.webp",
+      "alt": {
+        "it": "Cisterna Fortificata: cisterna in muratura dietro una cinta difensiva."
+      },
+      "prompt": "Medieval illustration: cisterna in muratura dietro una cinta difensiva; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Aumenta le Mura delle aperture successive, senza produzione.",
+      "counterplay": "Consuma uno slot e non aiuta nella battaglia corrente.",
+      "artDirection": "cisterna in muratura dietro una cinta difensiva"
+    }
+  },
+  "b2_archer": {
+    "rules": {
+      "id": "b2_archer",
+      "era": 2,
+      "affiliation": "byzantine",
+      "type": "unit",
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "metal": 1
+      },
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 2
+        },
+        {
+          "kind": "discipline",
+          "amount": 1
+        }
+      ],
+      "category": "archer",
+      "line": "rear",
+      "atk": 4,
+      "dem": 0,
+      "hp": 4,
+      "isCombatant": true
+    },
+    "text": {
+      "name": "Arciere dei Temi",
+      "typeLine": "unit",
+      "flavor": "Tiro resistente con supporto in mischia."
+    },
+    "art": {
+      "file": "cards/b2_archer-1024.webp",
+      "alt": {
+        "it": "Arciere dei Temi: arco composito, faretra e scudo appeso."
+      },
+      "prompt": "Medieval illustration: arco composito, faretra e scudo appeso; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Tiro resistente con supporto in mischia.",
+      "counterplay": "Cavalleria e perdita dei Lancieri alleati.",
+      "artDirection": "arco composito, faretra e scudo appeso"
+    }
+  },
+  "u3_cav_h": {
+    "rules": {
+      "id": "u3_cav_h",
+      "era": 3,
+      "affiliation": "byzantine",
+      "type": "unit",
+      "cost": {
+        "food": 5,
+        "wood": 0,
+        "metal": 4
+      },
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 3
+        },
+        {
+          "kind": "discipline",
+          "amount": 1
+        }
+      ],
+      "category": "cavalry",
+      "line": "center",
+      "atk": 9,
+      "dem": 3,
+      "hp": 8,
+      "isCombatant": true
+    },
+    "text": {
+      "name": "Catafratto",
+      "typeLine": "unit",
+      "flavor": "Contrattacco pesante sostenuto dallo sviluppo."
+    },
+    "art": {
+      "file": "cards/u3_cav_h-v2-1024.webp",
+      "alt": {
+        "it": "Catafratto: cavaliere con armatura lamellare e cavallo protetto."
+      },
+      "prompt": "Medieval illustration: cavaliere con armatura lamellare e cavallo protetto; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Contrattacco pesante sostenuto dallo sviluppo.",
+      "counterplay": "Impalamento e costo elevato in Metallo.",
+      "artDirection": "cavaliere con armatura lamellare e cavallo protetto"
+    }
+  },
+  "b3_arsenal": {
+    "rules": {
+      "id": "b3_arsenal",
+      "era": 3,
+      "affiliation": "byzantine",
+      "type": "conversion",
+      "cost": {
+        "food": 1,
+        "wood": 1,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "gain_and_dem_bonus",
+        "gain": {
+          "food": 0,
+          "wood": 1,
+          "metal": 4
+        },
+        "demBonus": 1
+      }
+    },
+    "text": {
+      "name": "Arsenale Imperiale",
+      "typeLine": "conversion",
+      "flavor": "Trasforma un produttore in Metallo e DEM fino a fine Era III."
+    },
+    "art": {
+      "file": "cards/b3_arsenal-1024.webp",
+      "alt": {
+        "it": "Arsenale Imperiale: officina con armi, incudini e travi, senza cannoni."
+      },
+      "prompt": "Medieval illustration: officina con armi, incudini e travi, senza cannoni; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Trasforma un produttore in Metallo e DEM fino a fine Era III.",
+      "counterplay": "Richiede un edificio Economia attivo da sacrificare.",
+      "artDirection": "officina con armi, incudini e travi, senza cannoni"
+    }
+  },
+  "b3_standard": {
+    "rules": {
+      "id": "b3_standard",
+      "era": 3,
+      "affiliation": "byzantine",
+      "type": "instant",
+      "cost": {
+        "food": 2,
+        "wood": 1,
+        "metal": 1
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "walls_mod",
+        "target": "own",
+        "amount": 4
+      }
+    },
+    "text": {
+      "name": "Ordine Imperiale",
+      "typeLine": "instant",
+      "flavor": "Sostiene le Mura durante la battaglia finale."
+    },
+    "art": {
+      "file": "cards/b3_standard-1024.webp",
+      "alt": {
+        "it": "Ordine Imperiale: stendardo imperiale sopra difensori sulle mura."
+      },
+      "prompt": "Medieval illustration: stendardo imperiale sopra difensori sulle mura; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Sostiene le Mura durante la battaglia finale.",
+      "counterplay": "Non protegge le truppe né ripara il Centro Città.",
+      "artDirection": "stendardo imperiale sopra difensori sulle mura"
+    }
+  },
+  "f2_market": {
+    "rules": {
+      "id": "f2_market",
+      "era": 2,
+      "affiliation": "feudal",
+      "type": "structure",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "abilities": [],
+      "structureEffect": {
+        "kind": "market"
+      }
+    },
+    "text": {
+      "name": "Mercato",
+      "typeLine": "structure",
+      "flavor": "Converte eccedenze a costo di una azione, senza produzione."
+    },
+    "art": {
+      "file": "cards/f2_market-1024.webp",
+      "alt": {
+        "it": "Mercato: banchi di mercato, sacchi e bilance in una città medievale."
+      },
+      "prompt": "Medieval illustration: banchi di mercato, sacchi e bilance in una città medievale; no firearms or cannon.",
+      "negative": "firearms, gunpowder, horned helmets, text, watermark",
+      "status": "final",
+      "credit": "The Epochs Art Pipeline (image-generator)"
+    },
+    "design": {
+      "role": "Converte eccedenze a costo di una azione, senza produzione.",
+      "counterplay": "Rapporto 2:1 e una sola attivazione per Era per giocatore.",
+      "artDirection": "banchi di mercato, sacchi e bilance in una città medievale"
+    }
+  }
+}

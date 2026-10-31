@@ -1,4 +1,8 @@
 // TECH-SPEC §4.6 — API pubblica del package @epochs/engine e riesportazione completa dei tipi e moduli.
+export { CIVILIZATIONS, type CivilizationId, type ContentVersion } from '../../../data/versions.js';
+export { effectiveCardCost, eraWallsBonus } from './civilizations.js';
+export { validateMarket, legalMarketCommands } from './structures.js';
+export type { ActivateMarketClientCommand, ActivateMarketCommand } from './commands.js';
 
 export {
   DEFAULT_RULES_CONFIG,

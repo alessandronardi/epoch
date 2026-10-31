@@ -207,7 +207,7 @@ export const TimeoutPolicyConfigSchema: z.ZodType<TimeoutPolicyConfig> = z
 
 export const RulesConfigSchema: z.ZodType<RulesConfig> = z
   .object({
-    gddVersion: z.literal('1.0'),
+    gddVersion: z.enum(['1.0', '2.0']),
     eraScalingSource: z.enum(['card', 'current_era']),
     archerMeleeUsesEffectiveAtk: z.boolean(),
     seqAssignedAt: z.enum(['play', 'reveal']),
@@ -287,6 +287,14 @@ export const ConcedeClientCommandSchema: z.ZodType<ConcedeClientCommand> = z
   .strict();
 
 export const ClientCommandSchema: z.ZodType<ClientCommand> = z.discriminatedUnion('type', [
+  z
+    .object({
+      type: z.literal('ActivateMarket'),
+      structureUid: NonEmptyIdSchema,
+      give: z.enum(['food', 'wood', 'metal']),
+      receive: z.enum(['food', 'wood', 'metal']),
+    })
+    .strict(),
   SubmitMulliganClientCommandSchema as z.ZodObject<{
     type: z.ZodLiteral<'SubmitMulligan'>;
     cardUids: z.ZodType<string[]>;
@@ -377,6 +385,18 @@ export const CardPlayabilitySchema: z.ZodType<CardPlayability> = z
 
 export const LegalCommandsSchema: z.ZodType<LegalCommands> = z
   .object({
+    marketCommands: z
+      .array(
+        z
+          .object({
+            type: z.literal('ActivateMarket'),
+            structureUid: NonEmptyIdSchema,
+            give: z.enum(['food', 'wood', 'metal']),
+            receive: z.enum(['food', 'wood', 'metal']),
+          })
+          .strict(),
+      )
+      .optional(),
     phase: PhaseSchema,
     canAct: z.boolean(),
     canSubmitMulligan: z.boolean(),
@@ -391,7 +411,7 @@ export const LegalCommandsSchema: z.ZodType<LegalCommands> = z
     playableInstantUids: z.array(NonEmptyIdSchema),
     handPlayability: z.record(NonEmptyIdSchema, CardPlayabilitySchema),
   })
-  .strict();
+  .strict() as unknown as z.ZodType<LegalCommands>;
 
 const SubdeckCountsSchema: z.ZodType<Record<EraNo, number>> = z
   .object({
@@ -403,6 +423,8 @@ const SubdeckCountsSchema: z.ZodType<Record<EraNo, number>> = z
 
 export const PlayerViewSchema: z.ZodType<PlayerView> = z
   .object({
+    rulesetVersion: z.enum(['1.0', '2.0']).optional(),
+    catalogVersion: z.enum(['1.0', '2.0']).optional(),
     me: PlayerIdSchema,
     stateVersion: z.number().int().min(0),
     era: EraNoSchema,
@@ -413,6 +435,10 @@ export const PlayerViewSchema: z.ZodType<PlayerView> = z
     deadline: z.number().int().min(0).nullable(),
     self: z
       .object({
+        civilizationId: z.enum(['feudal', 'norse', 'byzantine']).optional(),
+        organizationUsed: z.boolean().optional(),
+        structures: z.array(CardInstanceSchema).optional(),
+        marketUsed: z.boolean().optional(),
         hand: z.array(CardInstanceSchema),
         resources: ResourcesSchema,
         buildings: z.array(CardInstanceSchema),
@@ -432,6 +458,9 @@ export const PlayerViewSchema: z.ZodType<PlayerView> = z
       .strict(),
     opponent: z
       .object({
+        civilizationId: z.enum(['feudal', 'norse', 'byzantine']).optional(),
+        structures: z.array(CardInstanceSchema).optional(),
+        marketUsed: z.boolean().optional(),
         handCount: z.number().int().min(0),
         resources: ResourcesSchema.nullable(),
         coveredCount: z.number().int().min(0),
@@ -451,9 +480,10 @@ export const PlayerViewSchema: z.ZodType<PlayerView> = z
       .strict(),
     result: GameResultSchema.nullable(),
   })
-  .strict();
+  .strict() as unknown as z.ZodType<PlayerView>;
 
 export const ResourceChangeReasonSchema: z.ZodType<ResourceChangeReason> = z.enum([
+  'market',
   'initial',
   'harvest',
   'rent',
@@ -463,6 +493,7 @@ export const ResourceChangeReasonSchema: z.ZodType<ResourceChangeReason> = z.enu
 ]);
 
 export const ResourceOverflowReasonSchema: z.ZodType<ResourceOverflowReason> = z.enum([
+  'market',
   'harvest',
   'rent',
   'conversion',
@@ -506,10 +537,20 @@ export const GameEventSchema: z.ZodType<GameEvent> = z.discriminatedUnion('type'
   z
     .object({
       n: z.number().int().min(1),
+      type: z.literal('MarketActivated'),
+      player: PlayerIdSchema,
+      structureUid: NonEmptyIdSchema,
+      give: z.enum(['food', 'wood', 'metal']).optional(),
+      receive: z.enum(['food', 'wood', 'metal']).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      n: z.number().int().min(1),
       type: z.literal('GameStarted'),
       era: EraNoSchema,
-      rulesetVersion: z.literal('1.0'),
-      catalogVersion: z.literal('1.0'),
+      rulesetVersion: z.enum(['1.0', '2.0']),
+      catalogVersion: z.enum(['1.0', '2.0']),
     })
     .strict(),
   z
@@ -606,7 +647,7 @@ export const GameEventSchema: z.ZodType<GameEvent> = z.discriminatedUnion('type'
       coveredCount: z.number().int().min(0),
       uid: NonEmptyIdSchema.optional(),
       cardId: NonEmptyIdSchema.optional(),
-      cardType: z.enum(['economy', 'unit']).optional(),
+      cardType: z.enum(['economy', 'unit', 'structure']).optional(),
     })
     .strict(),
   z
@@ -708,6 +749,8 @@ export const GameEventSchema: z.ZodType<GameEvent> = z.discriminatedUnion('type'
               .object({
                 uid: NonEmptyIdSchema,
                 cardId: NonEmptyIdSchema,
+                furyBonus: z.number().int().min(0).optional(),
+                disciplineBonus: z.number().int().min(0).optional(),
                 baseDamage: z.number(),
                 bonus: z.number(),
                 totalDamage: z.number(),
@@ -722,6 +765,8 @@ export const GameEventSchema: z.ZodType<GameEvent> = z.discriminatedUnion('type'
               .object({
                 uid: NonEmptyIdSchema,
                 cardId: NonEmptyIdSchema,
+                furyBonus: z.number().int().min(0).optional(),
+                disciplineBonus: z.number().int().min(0).optional(),
                 baseDamage: z.number(),
                 bonus: z.number(),
                 totalDamage: z.number(),

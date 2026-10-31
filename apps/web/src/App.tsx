@@ -1,3 +1,8 @@
+import {
+  DEFAULT_PLAYER_DECK_ID,
+  DEFAULT_OPPONENT_DECK_ID,
+  presetOption,
+} from './content/presets.js';
 import { ConcedeButton } from './components/board/ConcedeButton.js';
 import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { AudioControls } from './audio/AudioControls.js';
@@ -57,6 +62,8 @@ export function App(): ReactElement {
   const [replayHttpBaseUrl, setReplayHttpBaseUrl] = useState<string | undefined>(undefined);
   const matchCounterRef = useRef<number>(1);
   const savedDecks = useDeckBuilderStore((state) => state.savedDecks);
+  const draftVersion = useDeckBuilderStore((state) => state.draft.catalogVersion ?? '1.0');
+  const [replayVersion, setReplayVersion] = useState<'1.0' | '2.0'>('1.0');
   const availableDecks = [
     ...PRESET_DECK_OPTIONS,
     ...savedDecks.flatMap((deck) =>
@@ -74,6 +81,14 @@ export function App(): ReactElement {
   ];
 
   const view = useGameStore((s) => s.presentationView ?? s.view);
+  const inspectionVersion =
+    activeScreen === 'archive' || activeScreen === 'rules'
+      ? '2.0'
+      : activeScreen === 'deck-builder'
+        ? draftVersion
+        : activeScreen === 'replay'
+          ? replayVersion
+          : (view?.catalogVersion ?? '1.0');
   const inspectedCardId = useGameStore((s) => s.inspectedCardId);
   const setInspectedCardId = useGameStore((s) => s.setInspectedCardId);
   const resetStore = useGameStore((s) => s.resetStore);
@@ -200,11 +215,11 @@ export function App(): ReactElement {
       return;
     }
 
-    const defaultDeck = PRESET_DECK_OPTIONS[0]!.payload;
+    const defaultDeck = presetOption(DEFAULT_PLAYER_DECK_ID).payload;
     startBotMatch({
       botKind: 'greedy',
       playerDeck: defaultDeck,
-      botDeck: PRESET_DECK_OPTIONS[1]?.payload ?? defaultDeck,
+      botDeck: presetOption(DEFAULT_OPPONENT_DECK_ID).payload,
       seed: `epochs-rematch-${suffix}`,
     });
   };
@@ -219,7 +234,11 @@ export function App(): ReactElement {
           onStartHotSeatMatch={startHotSeatMatch}
           onNavigate={(screen) => setActiveScreen(screen)}
         />
-        <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
+        <CardInspectModal
+          version={inspectionVersion}
+          cardId={inspectedCardId}
+          onClose={() => setInspectedCardId(null)}
+        />
       </>
     );
   }
@@ -231,11 +250,11 @@ export function App(): ReactElement {
         <TutorialScreen
           onBackHome={handleReturnHome}
           onStartFreeMatch={() => {
-            const deck = PRESET_DECK_OPTIONS[0]!.payload;
+            const deck = presetOption(DEFAULT_PLAYER_DECK_ID).payload;
             startBotMatch({
               botKind: 'greedy',
               playerDeck: deck,
-              botDeck: PRESET_DECK_OPTIONS[1]?.payload ?? deck,
+              botDeck: presetOption(DEFAULT_OPPONENT_DECK_ID).payload,
               seed: `epochs-after-tutorial-${Date.now()}`,
             });
           }}
@@ -333,7 +352,10 @@ export function App(): ReactElement {
                   onInspectCard={(cardId) => setInspectedCardId(cardId)}
                 />
               </div>
-              <details className="match-audio-settings"><summary>Impostazioni audio</summary><AudioControls /></details>
+              <details className="match-audio-settings">
+                <summary>Impostazioni audio</summary>
+                <AudioControls />
+              </details>
             </div>
           }
         />
@@ -351,7 +373,11 @@ export function App(): ReactElement {
           onOpenReplayViewer={handleOpenReplayViewer}
           onBackHome={handleReturnHome}
         />
-        <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
+        <CardInspectModal
+          version={inspectionVersion}
+          cardId={inspectedCardId}
+          onClose={() => setInspectedCardId(null)}
+        />
       </>
     );
   }
@@ -361,12 +387,17 @@ export function App(): ReactElement {
       <>
         <style>{A11Y_CONTRAST_OVERRIDES_CSS}</style>
         <ReplayViewerScreen
+          onCatalogVersion={setReplayVersion}
           initialGameId={replayTargetGameId}
           httpBaseUrl={replayHttpBaseUrl}
           onInspectCard={(cardId) => setInspectedCardId(cardId)}
           onBack={() => setActiveScreen('online')}
         />
-        <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
+        <CardInspectModal
+          version={inspectionVersion}
+          cardId={inspectedCardId}
+          onClose={() => setInspectedCardId(null)}
+        />
       </>
     );
   }
@@ -379,7 +410,11 @@ export function App(): ReactElement {
           onBackHome={handleReturnHome}
           onInspectCard={(cardId) => setInspectedCardId(cardId)}
         />
-        <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
+        <CardInspectModal
+          version={inspectionVersion}
+          cardId={inspectedCardId}
+          onClose={() => setInspectedCardId(null)}
+        />
       </>
     );
   }
@@ -389,7 +424,11 @@ export function App(): ReactElement {
       <>
         <style>{A11Y_CONTRAST_OVERRIDES_CSS}</style>
         <QuickRulesScreen onBackHome={handleReturnHome} />
-        <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
+        <CardInspectModal
+          version={inspectionVersion}
+          cardId={inspectedCardId}
+          onClose={() => setInspectedCardId(null)}
+        />
       </>
     );
   }
@@ -400,7 +439,11 @@ export function App(): ReactElement {
         onBackHome={handleReturnHome}
         onInspectCard={(cardId) => setInspectedCardId(cardId)}
       />
-      <CardInspectModal cardId={inspectedCardId} onClose={() => setInspectedCardId(null)} />
+      <CardInspectModal
+        version={inspectionVersion}
+        cardId={inspectedCardId}
+        onClose={() => setInspectedCardId(null)}
+      />
     </>
   );
 }

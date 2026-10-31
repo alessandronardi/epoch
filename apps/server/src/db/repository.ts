@@ -30,7 +30,7 @@ export interface DeckRecord {
   playerId: string;
   name: string;
   payload: DeckPayload;
-  catalogVersion: '1.0';
+  catalogVersion: '1.0' | '2.0';
   updatedAt: number;
 }
 
@@ -39,7 +39,7 @@ export interface UpsertDeckInput {
   playerId: string;
   name: string;
   payload: DeckPayload;
-  catalogVersion?: '1.0';
+  catalogVersion?: '1.0' | '2.0';
   updatedAt?: number;
 }
 
@@ -154,10 +154,7 @@ export interface GameRepository {
     commandLogRecord: GameCommandLogRecord,
   ): GameRecord;
 
-  getCommandByCommandId(
-    gameId: string,
-    commandId: string,
-  ): GameCommandLogRecord | null;
+  getCommandByCommandId(gameId: string, commandId: string): GameCommandLogRecord | null;
 
   listCommandsByGame(gameId: string): GameCommandLogRecord[];
 

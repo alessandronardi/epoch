@@ -149,26 +149,37 @@ export function applyPlaybackView(
   return view;
 }
 
-function name(cardId: string): string {
+function name(cardId: string, version: PlayerView['catalogVersion']): string {
   try {
-    return getCard(cardId).text.name;
+    return getCard(cardId, version).text.name;
   } catch {
     return cardId;
   }
 }
 
-export function describeBattleDetails(event: GameEvent, units: PlaybackUnits): string[] {
+export function describeBattleDetails(
+  event: GameEvent,
+  units: PlaybackUnits,
+  version: PlayerView['catalogVersion'] = '1.0',
+): string[] {
   if (event.type !== 'BattlePhaseResolved') return [];
   const details: string[] = [];
   for (const attacker of ['P1', 'P2'] as const) {
     const defender = attacker === 'P1' ? 'P2' : 'P1';
     for (const contribution of event.contributions?.[attacker] ?? []) {
       const reason =
-        contribution.rule === 'volley'
-          ? 'contro Lancieri'
-          : contribution.rule === 'flank'
-            ? 'contro Arcieri'
-            : 'bonus';
+        contribution.furyBonus || contribution.disciplineBonus
+          ? [
+              contribution.furyBonus ? `Furia ${contribution.furyBonus}` : '',
+              contribution.disciplineBonus ? `Disciplina ${contribution.disciplineBonus}` : '',
+            ]
+              .filter(Boolean)
+              .join(' + ')
+          : contribution.rule === 'volley'
+            ? 'contro Lancieri'
+            : contribution.rule === 'flank'
+              ? 'contro Arcieri'
+              : 'bonus';
       const calculation = contribution.bonus
         ? `${contribution.baseDamage} + ${contribution.bonus} ${reason} = ${contribution.totalDamage}`
         : String(contribution.totalDamage);
@@ -180,7 +191,9 @@ export function describeBattleDetails(event: GameEvent, units: PlaybackUnits): s
             : contribution.rule === 'flank'
               ? ' (Accerchiamento)'
               : '';
-      details.push(`${attacker} · ${name(contribution.cardId)}: ${calculation} danni${rule}.`);
+      details.push(
+        `${attacker} · ${name(contribution.cardId, version)}: ${calculation} danni${rule}.`,
+      );
     }
     let assigned = 0;
     for (const assignment of event.assignments[attacker]) {
@@ -188,7 +201,7 @@ export function describeBattleDetails(event: GameEvent, units: PlaybackUnits): s
       const target = units[defender].find((unit) => unit.uid === assignment.uid);
       const fallen = event.casualties[defender].includes(assignment.uid);
       details.push(
-        `${defender} · ${target ? name(target.cardId) : assignment.uid}: ${assignment.damage} danni${target ? `, HP ${target.hp} → ${Math.max(0, target.hp - assignment.damage)}` : ''}${fallen ? ', caduto' : ''}.`,
+        `${defender} · ${target ? name(target.cardId, version) : assignment.uid}: ${assignment.damage} danni${target ? `, HP ${target.hp} → ${Math.max(0, target.hp - assignment.damage)}` : ''}${fallen ? ', caduto' : ''}.`,
       );
     }
     const excess = event.damageDealt[attacker] - assigned;

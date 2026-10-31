@@ -366,7 +366,10 @@ function GuidedTutorialMatch({
                     : undefined
                 }
               />
-              <details><summary>Impostazioni audio</summary><AudioControls /></details>
+              <details>
+                <summary>Impostazioni audio</summary>
+                <AudioControls />
+              </details>
             </>
           }
         />
@@ -389,11 +392,13 @@ function readProgress(): Set<string> {
 export function TutorialScreen({
   onBackHome,
   onStartFreeMatch,
+  initialModule = 'civilizations',
 }: {
   readonly onBackHome: () => void;
   readonly onStartFreeMatch?: (() => void) | undefined;
+  readonly initialModule?: TutorialModuleId;
 }): ReactElement {
-  const [moduleId, setModuleId] = useState<TutorialModuleId | null>('main');
+  const [moduleId, setModuleId] = useState<TutorialModuleId | null>(initialModule);
   const [completed, setCompleted] = useState(readProgress);
   const complete = (id: TutorialModuleId): void => {
     setCompleted((previous) => {

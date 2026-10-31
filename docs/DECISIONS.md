@@ -2,6 +2,16 @@
 
 Questo documento traccia le interpretazioni normative del GDD e le decisioni architetturali adottate secondo il formato della sezione 13.3 di `docs/TECH-SPEC.md`.
 
+## DEC-008 — Espansione versionata delle civiltà
+
+- **Stato:** SPECIFICA P0 FINALIZZATA; implementazione tracciata in DECK-EXPANSION-PLAN.md.
+- **Data:** 2026-10-30, su richiesta dell'utente.
+- **Scelta:** Regni feudali, Norreni e Bizantini; catalogo v2 separato di 62 carte (43 comuni e 19 caratteristiche). Regole, schede, arte da produrre e 180 occorrenze sono in GDD-v2.md e data/v2/.
+- **Compatibilità:** nessuna sovrascrittura del catalogo o dei mazzi v1. Migrazione esplicita in copia; collisioni del limite di tre copie sono errori da correggere, mai tagli automatici. Replay selezionato per versione e catalogo originario.
+- **Timing:** Disciplina si applica dopo il dimezzamento ATK degli Arcieri in mischia. Mercato vietato se la risorsa ricevuta è al cap. Organizzazione è privata durante sviluppo per non rivelare il tipo delle carte coperte. Cisterna non cumulabile fra copie.
+- **Revisione storica:** quattro nuovi ID sostituiscono Archibugiere, Dragone, Ussaro Alato e Bombarda; quest'ultima diventa Ariete da Breccia con statistiche diverse. Berserker e Catafratto diventano esclusivi soltanto in v2. Restano alternative comuni con ruoli distinti.
+- **Verifica iniziale:** suite pre-modifiche, 34 file e 283 test superati. Statistiche e copie v2 restano sperimentali fino a P6.
+
 ## DEC-007 — Separazione fra vista autorevole e presentazione della battaglia
 
 - **Stato:** IMPLEMENTATA

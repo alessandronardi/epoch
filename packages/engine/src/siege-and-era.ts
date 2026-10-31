@@ -5,10 +5,7 @@
 import { produce } from 'immer';
 import { resolveFieldBattle } from './battle.js';
 import type { LockInstantsCommand, Result, RuleError } from './commands.js';
-import {
-  calculateTotalEffectiveDem,
-  startNextEra,
-} from './development.js';
+import { calculateTotalEffectiveDem, startNextEra } from './development.js';
 import {
   PLAYERS_ORDER,
   ZERO_RESOURCES,
@@ -20,13 +17,7 @@ import {
 } from './economy.js';
 import type { GameEvent } from './events.js';
 import { ERA_BASE_WALLS, ERA_CITY_MAX, getOpponent } from './setup.js';
-import type {
-  CardInstance,
-  EraNo,
-  GameState,
-  PlayerId,
-  Resources,
-} from './types.js';
+import type { CardInstance, EraNo, GameState, PlayerId, Resources } from './types.js';
 
 export interface SiegeCalculation {
   D: number;
@@ -45,10 +36,7 @@ export interface RaidCalculation {
  * Calcola gli HP delle Mura all'inizio di una nuova Era (Era II o Era III) con la formula
  * `Base_nuovaEra + floor(walls_residui / 2)` (GDD §6, TECH-SPEC §4.9, TV-04, TV-04b).
  */
-export function calculateWallCarryover(
-  nextEra: 2 | 3,
-  remainingWalls: number,
-): number {
+export function calculateWallCarryover(nextEra: 2 | 3, remainingWalls: number): number {
   return ERA_BASE_WALLS[nextEra] + Math.floor(remainingWalls / 2);
 }
 
@@ -97,15 +85,16 @@ export function calculateRaidTransfer(
   attackerResources: Readonly<Resources>,
   defenderResources: Readonly<Resources>,
   era: EraNo,
+  limit = 1,
 ): RaidCalculation {
   const cap = getStorageCap(era);
   const foodTransferred = Math.min(
-    1,
+    limit,
     defenderResources.food,
     Math.max(0, cap - attackerResources.food),
   );
   const woodTransferred = Math.min(
-    1,
+    limit,
     defenderResources.wood,
     Math.max(0, cap - attackerResources.wood),
   );
@@ -177,6 +166,7 @@ export function resolveSiegeAndRaid(
       attackerState.resources,
       defenderState.resources,
       draft.era,
+      draft.rulesetVersion === '2.0' && attackerState.civilizationId === 'norse' ? 2 : 1,
     );
 
     if (foodTransferred > 0 || woodTransferred > 0) {
@@ -450,15 +440,11 @@ export function mutateLockInstants(
         if (effect.kind === 'atk_mod') {
           for (const unit of ownUnits) {
             const unitRules = draft.catalog[unit.cardId]!;
-            if (
-              effect.target === 'own_archers' &&
-              unitRules.category === 'archer'
-            ) {
+            if (effect.target === 'own_archers' && unitRules.category === 'archer') {
               unit.atkMod += effect.amount;
-            } else if (
-              effect.target === 'own_front' &&
-              unit.line === 'front'
-            ) {
+            } else if (effect.target === 'own_infantry' && unitRules.category === 'infantry') {
+              unit.atkMod += effect.amount;
+            } else if (effect.target === 'own_front' && unit.line === 'front') {
               unit.atkMod += effect.amount;
             }
           }
@@ -496,15 +482,8 @@ export function mutateLockInstants(
     const battleOutcome = resolveFieldBattle(draft, events);
 
     // Fase 4 (Demolizione, Breccia, Razzia) solo se c'è un vincitore campale
-    if (
-      battleOutcome.kind === 'winner' &&
-      battleOutcome.winner !== undefined
-    ) {
-      const gameEndedByAnnihilation = resolveSiegeAndRaid(
-        draft,
-        events,
-        battleOutcome.winner,
-      );
+    if (battleOutcome.kind === 'winner' && battleOutcome.winner !== undefined) {
+      const gameEndedByAnnihilation = resolveSiegeAndRaid(draft, events, battleOutcome.winner);
       if (gameEndedByAnnihilation) {
         return { ok: true, value: undefined };
       }

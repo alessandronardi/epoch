@@ -1,7 +1,4 @@
-import {
-  getCard,
-  type SupportedLocale,
-} from '@epochs/content';
+import { getCard, type SupportedLocale, type ContentVersion } from '@epochs/content';
 import type {
   BattleOutcomeKind,
   BattlePhaseId,
@@ -16,20 +13,18 @@ import type {
   Resources,
 } from '@epochs/engine';
 
-export const ERA_ROMAN_BY_NO: Readonly<Record<EraNo, 'I' | 'II' | 'III'>> =
-  Object.freeze({
-    1: 'I',
-    2: 'II',
-    3: 'III',
-  });
+export const ERA_ROMAN_BY_NO: Readonly<Record<EraNo, 'I' | 'II' | 'III'>> = Object.freeze({
+  1: 'I',
+  2: 'II',
+  3: 'III',
+});
 
-export const BATTLE_PHASE_LABELS_IT: Readonly<Record<BattlePhaseId, string>> =
-  Object.freeze({
-    phase1_volley: 'Fase 1: Tiro',
-    phase2a_impale: 'Fase 2A: Impalamento',
-    phase2b_impact: 'Fase 2B: Impatto/Accerchiamento',
-    phase3_melee: 'Fase 3: Mischia',
-  });
+export const BATTLE_PHASE_LABELS_IT: Readonly<Record<BattlePhaseId, string>> = Object.freeze({
+  phase1_volley: 'Fase 1: Tiro',
+  phase2a_impale: 'Fase 2A: Impalamento',
+  phase2b_impact: 'Fase 2B: Impatto/Accerchiamento',
+  phase3_melee: 'Fase 3: Mischia',
+});
 
 const RESOURCE_ORDER: readonly Resource[] = ['food', 'wood', 'metal'];
 
@@ -39,61 +34,59 @@ const RESOURCE_NAMES_IT: Readonly<Record<Resource, string>> = Object.freeze({
   metal: 'Metallo',
 });
 
-const RESOURCE_REASON_LABELS_IT: Readonly<Record<ResourceChangeReason, string>> =
-  Object.freeze({
-    initial: 'Dotazione iniziale',
-    harvest: "Raccolto d'apertura",
-    rent: 'Rendita periodica',
-    cost: 'Costo giocata',
-    conversion: 'Riconversione',
-    raid: 'Razzia',
-  });
+const RESOURCE_REASON_LABELS_IT: Readonly<Record<ResourceChangeReason, string>> = Object.freeze({
+  initial: 'Dotazione iniziale',
+  market: 'Mercato',
+  harvest: "Raccolto d'apertura",
+  rent: 'Rendita periodica',
+  cost: 'Costo giocata',
+  conversion: 'Riconversione',
+  raid: 'Razzia',
+});
 
-const OVERFLOW_REASON_LABELS_IT: Readonly<
-  Record<ResourceOverflowReason, string>
-> = Object.freeze({
+const OVERFLOW_REASON_LABELS_IT: Readonly<Record<ResourceOverflowReason, string>> = Object.freeze({
+  market: 'Mercato',
   harvest: "Raccolto d'apertura",
   rent: 'Rendita periodica',
   conversion: 'Riconversione',
   raid: 'Razzia',
 });
 
-const PENDING_WINDOW_LABELS_IT: Readonly<Record<PendingWindow, string>> =
-  Object.freeze({
-    mulligan: 'il mulligan iniziale',
-    hand_limit: 'lo scarto per limite di mano',
-    prebattle: 'le scelte segrete di Pre-Battaglia',
-  });
+const PENDING_WINDOW_LABELS_IT: Readonly<Record<PendingWindow, string>> = Object.freeze({
+  mulligan: 'il mulligan iniziale',
+  hand_limit: 'lo scarto per limite di mano',
+  prebattle: 'le scelte segrete di Pre-Battaglia',
+});
 
-const PASS_REASON_LABELS_IT: Readonly<Record<PassReason, string>> =
-  Object.freeze({
-    chosen: 'scelta volontaria',
-    no_legal_play: 'nessuna mossa legale disponibile',
-    timeout: 'tempo scaduto',
-  });
+const PASS_REASON_LABELS_IT: Readonly<Record<PassReason, string>> = Object.freeze({
+  chosen: 'scelta volontaria',
+  no_legal_play: 'nessuna mossa legale disponibile',
+  timeout: 'tempo scaduto',
+});
 
-const BATTLE_OUTCOME_LABELS_IT: Readonly<Record<BattleOutcomeKind, string>> =
-  Object.freeze({
-    winner: 'vittoria campale',
-    mutual_annihilation: 'annientamento reciproco',
-    stalemate: 'stallo dopo 6 cicli di Mischia',
-  });
+const BATTLE_OUTCOME_LABELS_IT: Readonly<Record<BattleOutcomeKind, string>> = Object.freeze({
+  winner: 'vittoria campale',
+  mutual_annihilation: 'annientamento reciproco',
+  stalemate: 'stallo dopo 6 cicli di Mischia',
+});
 
-const GAME_RESULT_KIND_LABELS_IT: Readonly<Record<GameResultKind, string>> =
-  Object.freeze({
-    annihilation: 'annientamento del Centro Città',
-    points: 'vittoria ai punti a fine Era III',
-    draw: 'pareggio perfetto dopo tutti gli spareggi',
-    concession: 'resa avversaria',
-    timeout: 'abbandono per timeout consecutivi',
-  });
+const GAME_RESULT_KIND_LABELS_IT: Readonly<Record<GameResultKind, string>> = Object.freeze({
+  annihilation: 'annientamento del Centro Città',
+  points: 'vittoria ai punti a fine Era III',
+  draw: 'pareggio perfetto dopo tutti gli spareggi',
+  concession: 'resa avversaria',
+  timeout: 'abbandono per timeout consecutivi',
+});
 
-function resolveCardDisplayName(cardId: string | undefined): string {
+function resolveCardDisplayName(
+  cardId: string | undefined,
+  version: ContentVersion = '1.0',
+): string {
   if (!cardId) {
     return 'carta coperta';
   }
   try {
-    return getCard(cardId).text.name;
+    return getCard(cardId, version).text.name;
   } catch {
     return cardId;
   }
@@ -146,8 +139,11 @@ export function getBattleStageLabel(
 export function describeEvent(
   event: GameEvent,
   _locale: SupportedLocale = 'it',
+  version: ContentVersion = '1.0',
 ): string {
   switch (event.type) {
+    case 'MarketActivated':
+      return `${event.player} attiva il Mercato${event.give && event.receive ? `: 2 ${RESOURCE_NAMES_IT[event.give]} → 1 ${RESOURCE_NAMES_IT[event.receive]}` : ''}.`;
     case 'GameStarted':
       return `Partita avviata in Era ${ERA_ROMAN_BY_NO[event.era]} (Regolamento v${event.rulesetVersion}).`;
 
@@ -157,9 +153,7 @@ export function describeEvent(
     case 'CardsDrawn': {
       const noun = event.count === 1 ? 'carta' : 'carte';
       if (event.cards && event.cards.length > 0) {
-        const names = event.cards
-          .map((c) => resolveCardDisplayName(c.cardId))
-          .join(', ');
+        const names = event.cards.map((c) => resolveCardDisplayName(c.cardId, version)).join(', ');
         return `${event.player} pesca ${event.count} ${noun} dal mazzo di Era ${ERA_ROMAN_BY_NO[event.era]} (${names}).`;
       }
       return `${event.player} pesca ${event.count} ${noun} dal mazzo di Era ${ERA_ROMAN_BY_NO[event.era]}.`;
@@ -204,25 +198,24 @@ export function describeEvent(
       return `Era ${ERA_ROMAN_BY_NO[event.era]} · Ciclo ${event.cycle}: tocca a ${event.toAct}.`;
 
     case 'CardPlayed': {
+      if (event.cardType === 'structure' && event.cardId)
+        return `${event.player} costruisce ${resolveCardDisplayName(event.cardId, version)} (Struttura pubblica, nessuna produzione).`;
       if (event.cardId !== undefined) {
-        const cardName = resolveCardDisplayName(event.cardId);
-        const typeLabel =
-          event.cardType === 'economy' ? 'Edificio Economico' : 'Unità';
+        const cardName = resolveCardDisplayName(event.cardId, version);
+        const typeLabel = event.cardType === 'economy' ? 'Edificio Economico' : 'Unità';
         return `${event.player} schiera coperto ${cardName} (${typeLabel}, Slot usati: ${event.slotsUsed}).`;
       }
       return `${event.player} schiera una carta coperta nella Città (Slot usati: ${event.slotsUsed}, carte coperte: ${event.coveredCount}).`;
     }
 
     case 'ConversionActivated': {
-      const convName = resolveCardDisplayName(event.cardId);
+      const convName = resolveCardDisplayName(event.cardId, version);
       const sacrificePart = event.sacrificeCardId
-        ? ` sacrificando ${resolveCardDisplayName(event.sacrificeCardId)}`
+        ? ` sacrificando ${resolveCardDisplayName(event.sacrificeCardId, version)}`
         : ' sacrificando un Edificio Economico';
       const gainText = formatResourcesDeltaIt(event.gain);
       const demPart =
-        event.demBonusGained > 0
-          ? ` e ottiene +${event.demBonusGained} DEM per l'Era III`
-          : '';
+        event.demBonusGained > 0 ? ` e ottiene +${event.demBonusGained} DEM per l'Era III` : '';
       return `${event.player} attiva la Riconversione ${convName}${sacrificePart}: ${gainText}${demPart}.`;
     }
 
@@ -237,11 +230,11 @@ export function describeEvent(
       const p2Units = event.units.P2;
       const p1Names =
         p1Units.length > 0
-          ? p1Units.map((u) => resolveCardDisplayName(u.cardId)).join(', ')
+          ? p1Units.map((u) => resolveCardDisplayName(u.cardId, version)).join(', ')
           : 'nessuna unità';
       const p2Names =
         p2Units.length > 0
-          ? p2Units.map((u) => resolveCardDisplayName(u.cardId)).join(', ')
+          ? p2Units.map((u) => resolveCardDisplayName(u.cardId, version)).join(', ')
           : 'nessuna unità';
       return `Rivelazione delle Unità in Era ${ERA_ROMAN_BY_NO[event.era]}: P1 schiera ${p1Units.length} unità (${p1Names}); P2 schiera ${p2Units.length} unità (${p2Names}).`;
     }
@@ -249,15 +242,11 @@ export function describeEvent(
     case 'InstantsRevealed': {
       const p1List =
         event.played.P1.length > 0
-          ? event.played.P1
-              .map((item) => resolveCardDisplayName(item.cardId))
-              .join(', ')
+          ? event.played.P1.map((item) => resolveCardDisplayName(item.cardId, version)).join(', ')
           : 'nessuna';
       const p2List =
         event.played.P2.length > 0
-          ? event.played.P2
-              .map((item) => resolveCardDisplayName(item.cardId))
-              .join(', ')
+          ? event.played.P2.map((item) => resolveCardDisplayName(item.cardId, version)).join(', ')
           : 'nessuna';
       return `Istantanee rivelate in Pre-Battaglia (Era ${ERA_ROMAN_BY_NO[event.era]}): P1 [${p1List}], P2 [${p2List}].`;
     }
@@ -269,8 +258,7 @@ export function describeEvent(
       return `Inizia la Battaglia Campale dell'Era ${ERA_ROMAN_BY_NO[event.era]}.`;
 
     case 'BattlePhaseResolved': {
-      const stageLabel =
-        getBattleStageLabel(event) ?? BATTLE_PHASE_LABELS_IT[event.phase];
+      const stageLabel = getBattleStageLabel(event) ?? BATTLE_PHASE_LABELS_IT[event.phase];
       const p1Dead = event.casualties.P1.length;
       const p2Dead = event.casualties.P2.length;
       return `${stageLabel} — Danni inflitti: P1 ${event.damageDealt.P1}, P2 ${event.damageDealt.P2} (Caduti: P1 ${p1Dead}, P2 ${p2Dead}).`;
@@ -286,7 +274,7 @@ export function describeEvent(
     case 'SiegeResolved': {
       const breachText = event.breach
         ? 'Breccia aperta nelle Mura!'
-        : 'Le Mura assorbono l\'impatto.';
+        : "Le Mura assorbono l'impatto.";
       return `Fase 4: Assedio e Razzia — ${event.attacker} colpisce ${event.defender} con DEM ${event.D} contro Mura ${event.W}: ${breachText} Mura residue: ${event.wallsAfter}, danno al Centro Città: ${event.directDamage} (HP residui: ${event.cityHpAfter}).`;
     }
 

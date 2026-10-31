@@ -11,14 +11,17 @@
   padding: 8px 14px;
   border: 1px solid rgba(181, 142, 72, 0.45);
   border-radius: 6px;
-  background: rgba(20, 30, 39, 0.92);
-  color: var(--chalk, #e9e5d6);
+  background: var(--panel);
+  color: var(--chalk);
   text-decoration: none;
 }
 
-.rules-index a:hover, .rules-index a:focus-visible {
-  border-color: var(--brass, #b58e48);
-  color: var(--brass, #b58e48);
+.rules-index a:hover,
+.rules-index a:focus-visible {
+  border-color: var(--brass);
+  color: var(--brass);
 }
 
-.quick-rules-screen section { scroll-margin-top: 16px; }
+.quick-rules-screen section {
+  scroll-margin-top: 16px;
+}

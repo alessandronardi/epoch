@@ -26,6 +26,9 @@ pnpm-debug.log*
 .env.*
 !.env.example
 
+# Avvio personale per test locali
+/avvia-gioco-locale.bat
+
 # OS files
 .DS_Store
 Thumbs.db

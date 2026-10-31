@@ -62,6 +62,9 @@ export function playerView(state: Readonly<GameState>, viewer: PlayerId): Player
 
   return {
     me: viewer,
+    ...(state.rulesetVersion === '2.0'
+      ? { rulesetVersion: state.rulesetVersion, catalogVersion: state.catalogVersion }
+      : {}),
     stateVersion: state.stateVersion,
     era: state.era,
     phase: state.phase,
@@ -70,6 +73,14 @@ export function playerView(state: Readonly<GameState>, viewer: PlayerId): Player
     toAct: state.toAct,
     deadline: null,
     self: {
+      ...(selfState.civilizationId
+        ? {
+            civilizationId: selfState.civilizationId,
+            organizationUsed: selfState.organizationUsed ?? false,
+            structures: (selfState.structures ?? []).map((c) => ({ ...c })),
+            marketUsed: selfState.marketUsed ?? false,
+          }
+        : {}),
       hand: selfState.hand.map((c) => ({ ...c })),
       resources: cloneResources(selfState.resources),
       buildings: selfState.buildings.map((b) => ({ ...b })),
@@ -91,6 +102,13 @@ export function playerView(state: Readonly<GameState>, viewer: PlayerId): Player
       legal: legalCommands(state, viewer),
     },
     opponent: {
+      ...(oppState.civilizationId
+        ? {
+            civilizationId: oppState.civilizationId,
+            structures: (oppState.structures ?? []).map((c) => ({ ...c })),
+            marketUsed: oppState.marketUsed ?? false,
+          }
+        : {}),
       handCount: oppState.hand.length,
       resources: revealedStage ? cloneResources(oppState.resources) : null,
       coveredCount: opponentCoveredCount,
@@ -122,6 +140,10 @@ export function playerView(state: Readonly<GameState>, viewer: PlayerId): Player
  */
 export function projectEvent(event: GameEvent, viewer: PlayerId): GameEvent | null {
   switch (event.type) {
+    case 'MarketActivated':
+      return event.player === viewer
+        ? { ...event }
+        : { n: event.n, type: event.type, player: event.player, structureUid: event.structureUid };
     case 'GameStarted':
     case 'InitiativeAssigned':
     case 'PlayerCommitted':
@@ -191,7 +213,7 @@ export function projectEvent(event: GameEvent, viewer: PlayerId): GameEvent | nu
       return null;
 
     case 'CardPlayed':
-      if (event.player === viewer) {
+      if (event.player === viewer || event.cardType === 'structure') {
         return structuredClone(event);
       }
       // Per l'avversario: solo player, slotsUsed e coveredCount (nessun uid, cardId né cardType)

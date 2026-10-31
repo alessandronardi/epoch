@@ -28,9 +28,23 @@ export async function ingestCardArt(options: IngestOptions): Promise<string> {
   const rawArt = JSON.parse(fs.readFileSync(artJsonPath, 'utf8'));
   const artMap = CardsArtFileSchema.parse(rawArt);
 
-  const existingEntry = artMap[cardId];
+  const v2ArtJsonPath = path.join(rootDir, 'data', 'v2', 'cards.art.json');
+  let targetArtJsonPath = artJsonPath;
+  let targetArtMap = artMap;
+
+  let existingEntry = artMap[cardId];
+  if (!existingEntry && fs.existsSync(v2ArtJsonPath)) {
+    const rawV2Art = JSON.parse(fs.readFileSync(v2ArtJsonPath, 'utf8'));
+    const v2ArtMap = CardsArtFileSchema.parse(rawV2Art);
+    if (v2ArtMap[cardId]) {
+      existingEntry = v2ArtMap[cardId];
+      targetArtJsonPath = v2ArtJsonPath;
+      targetArtMap = v2ArtMap;
+    }
+  }
+
   if (!existingEntry) {
-    throw new Error(`Card "${cardId}" not found in cards.art.json.`);
+    throw new Error(`Card "${cardId}" not found in cards.art.json or v2/cards.art.json.`);
   }
 
   const masterDir = path.join(rootDir, 'data', 'art', 'src');
@@ -56,7 +70,7 @@ export async function ingestCardArt(options: IngestOptions): Promise<string> {
   };
 
   const updatedArtMap: CardsArtFile = {
-    ...artMap,
+    ...targetArtMap,
     [cardId]: updatedEntry,
   };
 
@@ -67,10 +81,23 @@ export async function ingestCardArt(options: IngestOptions): Promise<string> {
   }
 
   fs.writeFileSync(
-    artJsonPath,
+    targetArtJsonPath,
     `${JSON.stringify(sortedMap, null, 2)}\n`,
     'utf8',
   );
+
+  const v2SourceJsonPath = path.join(rootDir, 'data', 'v2', 'catalog.source.json');
+  if (targetArtJsonPath === v2ArtJsonPath && fs.existsSync(v2SourceJsonPath)) {
+    const rawSource = JSON.parse(fs.readFileSync(v2SourceJsonPath, 'utf8'));
+    if (rawSource[cardId]) {
+      rawSource[cardId].art = updatedEntry;
+      fs.writeFileSync(
+        v2SourceJsonPath,
+        `${JSON.stringify(rawSource, null, 2)}\n`,
+        'utf8',
+      );
+    }
+  }
 
   return targetMasterPath;
 }

@@ -32,19 +32,10 @@ export const LAST_FINISHED_GAME_STORAGE_KEY = 'epochs_last_finished_game_id';
 export const CLIENT_PROTOCOL_VERSION = '1.0.0';
 
 export type RemoteConnectionStatus =
-  | 'disconnected'
-  | 'connecting'
-  | 'authenticating'
-  | 'authenticated'
-  | 'reconnecting';
+  'disconnected' | 'connecting' | 'authenticating' | 'authenticated' | 'reconnecting';
 
 export type OnlineLobbyStatus =
-  | 'idle'
-  | 'searching_quick'
-  | 'creating_room'
-  | 'waiting_room'
-  | 'joining_room'
-  | 'in_match';
+  'idle' | 'searching_quick' | 'creating_room' | 'waiting_room' | 'joining_room' | 'in_match';
 
 export interface RemoteControllerSnapshot {
   readonly connectionStatus: RemoteConnectionStatus;
@@ -85,22 +76,17 @@ export interface RemoteGameControllerOptions {
   readonly autoReconnect?: boolean | undefined;
   readonly reconnectDelayMs?: number | undefined;
   readonly onStateChange?: ((snapshot: RemoteControllerSnapshot) => void) | undefined;
-  readonly onMatchFound?: ((info: {
-    gameId: string;
-    me: PlayerId;
-    rules: RulesConfig;
-    roomCode?: string;
-  }) => void) | undefined;
-  readonly onGameEnded?: ((info: {
-    gameId: string;
-    view: PlayerView;
-  }) => void) | undefined;
+  readonly onMatchFound?:
+    | ((info: { gameId: string; me: PlayerId; rules: RulesConfig; roomCode?: string }) => void)
+    | undefined;
+  readonly onGameEnded?: ((info: { gameId: string; view: PlayerView }) => void) | undefined;
 }
 
 function getDefaultWsUrl(): string {
   if (typeof window !== 'undefined' && window.location) {
-    const envWs = (import.meta as unknown as { env?: Record<string, string> })
-      .env?.['VITE_SERVER_WS_URL'];
+    const envWs = (import.meta as unknown as { env?: Record<string, string> }).env?.[
+      'VITE_SERVER_WS_URL'
+    ];
     if (typeof envWs === 'string' && envWs.trim().length > 0) {
       return envWs.trim();
     }
@@ -114,8 +100,9 @@ function getDefaultWsUrl(): string {
 
 function getDefaultHttpBaseUrl(wsUrl: string): string {
   if (typeof window !== 'undefined') {
-    const envHttp = (import.meta as unknown as { env?: Record<string, string> })
-      .env?.['VITE_SERVER_HTTP_URL'];
+    const envHttp = (import.meta as unknown as { env?: Record<string, string> }).env?.[
+      'VITE_SERVER_HTTP_URL'
+    ];
     if (typeof envHttp === 'string' && envHttp.trim().length > 0) {
       return envHttp.trim().replace(/\/+$/, '');
     }
@@ -151,10 +138,7 @@ function writeLocalStorageSafe(key: string, value: string): void {
 }
 
 function generateCommandId(prefix: string, counter: number): string {
-  if (
-    typeof crypto !== 'undefined' &&
-    typeof crypto.randomUUID === 'function'
-  ) {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return `${prefix}_${crypto.randomUUID()}`;
   }
   return `${prefix}_${Date.now()}_${counter}`;
@@ -211,17 +195,13 @@ export class RemoteGameController implements GameController {
 
   public constructor(options: RemoteGameControllerOptions = {}) {
     this.#wsUrl = options.wsUrl ?? getDefaultWsUrl();
-    this.#httpBaseUrl =
-      options.httpBaseUrl ?? getDefaultHttpBaseUrl(this.#wsUrl);
-    this.#tokenStorageKey =
-      options.tokenStorageKey ?? DEFAULT_GUEST_TOKEN_STORAGE_KEY;
-    this.#token =
-      options.initialToken ?? readLocalStorageSafe(this.#tokenStorageKey);
+    this.#httpBaseUrl = options.httpBaseUrl ?? getDefaultHttpBaseUrl(this.#wsUrl);
+    this.#tokenStorageKey = options.tokenStorageKey ?? DEFAULT_GUEST_TOKEN_STORAGE_KEY;
+    this.#token = options.initialToken ?? readLocalStorageSafe(this.#tokenStorageKey);
     this.#store = options.store ?? useGameStore;
     this.#clock = options.clock ?? (() => Date.now());
     this.#webSocketFactory =
-      options.webSocketFactory ??
-      ((url: string) => new WebSocket(url) as unknown as WebSocketLike);
+      options.webSocketFactory ?? ((url: string) => new WebSocket(url) as unknown as WebSocketLike);
     this.#autoReconnect = options.autoReconnect ?? true;
     this.#reconnectDelayMs = options.reconnectDelayMs ?? 300;
     this.#onMatchFound = options.onMatchFound;
@@ -275,8 +255,7 @@ export class RemoteGameController implements GameController {
    * Restituisce i millisecondi residui alla `deadline` autoritativa del server per la finestra attiva (§6.3).
    */
   public getRemainingDeadlineMs(): number | null {
-    const deadline =
-      this.#deadlineEpochMs ?? this.#store.getState().view?.deadline ?? null;
+    const deadline = this.#deadlineEpochMs ?? this.#store.getState().view?.deadline ?? null;
     if (deadline === null) {
       return null;
     }
@@ -301,9 +280,7 @@ export class RemoteGameController implements GameController {
     };
   }
 
-  public subscribe(
-    listener: (snapshot: RemoteControllerSnapshot) => void,
-  ): () => void {
+  public subscribe(listener: (snapshot: RemoteControllerSnapshot) => void): () => void {
     this.#listeners.add(listener);
     listener(this.getSnapshot());
     return () => {
@@ -323,9 +300,7 @@ export class RemoteGameController implements GameController {
    */
   public connect(): Promise<RemoteControllerSnapshot> {
     if (this.#disposed) {
-      return Promise.reject(
-        new Error('RemoteGameController è stato disposto.'),
-      );
+      return Promise.reject(new Error('RemoteGameController è stato disposto.'));
     }
 
     if (
@@ -370,9 +345,7 @@ export class RemoteGameController implements GameController {
       const helloMsg: ClientToServerMessage = {
         type: 'hello',
         clientVersion: CLIENT_PROTOCOL_VERSION,
-        ...(this.#token !== null && this.#token.trim().length > 0
-          ? { token: this.#token }
-          : {}),
+        ...(this.#token !== null && this.#token.trim().length > 0 ? { token: this.#token } : {}),
       };
       this.#sendMessage(helloMsg);
     };
@@ -381,8 +354,7 @@ export class RemoteGameController implements GameController {
       if (this.#socket !== socket || this.#disposed) {
         return;
       }
-      const rawText =
-        typeof event.data === 'string' ? event.data : String(event.data);
+      const rawText = typeof event.data === 'string' ? event.data : String(event.data);
       const parsed = parseServerMessage(rawText);
       if (!parsed.ok) {
         return;
@@ -411,10 +383,7 @@ export class RemoteGameController implements GameController {
       ) {
         this.#scheduleReconnect();
       } else if (this.#welcomeWaiters.length > 0) {
-        const waiters = this.#welcomeWaiters.splice(
-          0,
-          this.#welcomeWaiters.length,
-        );
+        const waiters = this.#welcomeWaiters.splice(0, this.#welcomeWaiters.length);
         for (const w of waiters) {
           w.reject(new Error('Connessione WebSocket chiusa prima di welcome.'));
         }
@@ -460,10 +429,7 @@ export class RemoteGameController implements GameController {
         this.#connectionStatus = 'authenticated';
         writeLocalStorageSafe(this.#tokenStorageKey, msg.token);
 
-        const waiters = this.#welcomeWaiters.splice(
-          0,
-          this.#welcomeWaiters.length,
-        );
+        const waiters = this.#welcomeWaiters.splice(0, this.#welcomeWaiters.length);
         for (const w of waiters) {
           w.resolve(this.getSnapshot());
         }
@@ -523,7 +489,8 @@ export class RemoteGameController implements GameController {
         this.#store.getState().setMode('remote');
         this.#store.getState().setHotSeatHandover(false, null);
         this.#store.getState().receiveTransition(msg.view, [], {
-          resetLog, resync: !resetLog,
+          resetLog,
+          resync: !resetLog,
         });
 
         // Se lo snapshot arriva in seguito a STALE_STATE_VERSION, riallinea e ritenta se appropriato
@@ -533,10 +500,7 @@ export class RemoteGameController implements GameController {
           const pendingEntry = this.#inFlightCommands.get(staleCmdId);
           if (pendingEntry !== undefined && !pendingEntry.retriedOnStale) {
             pendingEntry.retriedOnStale = true;
-            this.#retryCommandOnAlignedSnapshot(
-              pendingEntry.command,
-              msg.view,
-            );
+            this.#retryCommandOnAlignedSnapshot(pendingEntry.command, msg.view);
           }
         }
 
@@ -553,10 +517,7 @@ export class RemoteGameController implements GameController {
         this.#gameId = msg.gameId;
         this.#seat = msg.view.me;
         this.#stateVersion = msg.stateVersion;
-        const maxEvN = msg.events.reduce(
-          (acc, ev) => Math.max(acc, ev.n),
-          msg.fromN,
-        );
+        const maxEvN = msg.events.reduce((acc, ev) => Math.max(acc, ev.n), msg.fromN);
         this.#lastEventN = Math.max(this.#lastEventN, maxEvN);
         this.#deadlineEpochMs = msg.view.deadline;
         this.#deadlinePhase = msg.view.phase;
@@ -628,15 +589,23 @@ export class RemoteGameController implements GameController {
     }
   }
 
-  #retryCommandOnAlignedSnapshot(
-    command: ClientCommand,
-    freshView: PlayerView,
-  ): void {
+  #retryCommandOnAlignedSnapshot(command: ClientCommand, freshView: PlayerView): void {
     if (!freshView.self.legal.canAct) {
       return;
     }
 
     switch (command.type) {
+      case 'ActivateMarket':
+        if (
+          freshView.self.legal.marketCommands?.some(
+            (c) =>
+              c.structureUid === command.structureUid &&
+              c.give === command.give &&
+              c.receive === command.receive,
+          )
+        )
+          this.dispatch(command);
+        return;
       case 'SubmitMulligan':
         if (freshView.self.legal.canSubmitMulligan) {
           this.dispatch(command);
@@ -661,20 +630,14 @@ export class RemoteGameController implements GameController {
         }
         return;
       case 'PlayCard':
-        if (
-          freshView.self.legal.playableFieldCardUids.includes(command.cardUid)
-        ) {
+        if (freshView.self.legal.playableFieldCardUids.includes(command.cardUid)) {
           this.dispatch(command);
         }
         return;
       case 'PlayConversion':
         if (
-          freshView.self.legal.playableConversionUids.includes(
-            command.cardUid,
-          ) &&
-          freshView.self.legal.sacrificableBuildingUids.includes(
-            command.sacrificeUid,
-          )
+          freshView.self.legal.playableConversionUids.includes(command.cardUid) &&
+          freshView.self.legal.sacrificableBuildingUids.includes(command.sacrificeUid)
         ) {
           this.dispatch(command);
         }
@@ -720,10 +683,7 @@ export class RemoteGameController implements GameController {
   /**
    * Entra in una stanza privata esistente tramite `roomCode` (`queue.join` con `mode: 'private'`).
    */
-  public async joinPrivateRoom(
-    roomCode: string,
-    deck: DeckPayload,
-  ): Promise<void> {
+  public async joinPrivateRoom(roomCode: string, deck: DeckPayload): Promise<void> {
     await this.connect();
     const normalizedCode = roomCode.trim().toUpperCase();
     this.#lobbyStatus = 'joining_room';
@@ -742,10 +702,7 @@ export class RemoteGameController implements GameController {
   /**
    * Richiede il riallineamento della vista (`game.resync`) al server (§6.2, §6.4).
    */
-  public requestResync(
-    gameId = this.#gameId,
-    lastEventN = this.#lastEventN,
-  ): boolean {
+  public requestResync(gameId = this.#gameId, lastEventN = this.#lastEventN): boolean {
     if (gameId === null) {
       return false;
     }
@@ -827,9 +784,7 @@ export class RemoteGameController implements GameController {
     this.#store.getState().setHotSeatHandover(false, null);
     const currentView = this.#store.getState().view;
     if (currentView === null) {
-      throw new Error(
-        'La vista della partita remota non è ancora stata ricevuta dal server.',
-      );
+      throw new Error('La vista della partita remota non è ancora stata ricevuta dal server.');
     }
     return currentView;
   }
@@ -854,10 +809,7 @@ export class RemoteGameController implements GameController {
       return { ok: false, error: err };
     }
 
-    const commandId = generateCommandId(
-      this.#playerId ?? 'client',
-      ++this.#commandCounter,
-    );
+    const commandId = generateCommandId(this.#playerId ?? 'client', ++this.#commandCounter);
     const expectedStateVersion = this.#stateVersion;
 
     this.#inFlightCommands.set(commandId, {

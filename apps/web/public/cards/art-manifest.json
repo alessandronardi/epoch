@@ -6,6 +6,206 @@
     1024
   ],
   "cards": {
+    "b1_granary": {
+      "id": "b1_granary",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/b1_granary-256.avif",
+        "512": "/cards/b1_granary-512.avif",
+        "1024": "/cards/b1_granary-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/b1_granary-256.webp",
+        "512": "/cards/b1_granary-512.webp",
+        "1024": "/cards/b1_granary-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/b1_granary.svg",
+      "alt": {
+        "it": "Granaio Imperiale: magazzino in pietra con anfore di cereali."
+      }
+    },
+    "b1_spearman": {
+      "id": "b1_spearman",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/b1_spearman-256.avif",
+        "512": "/cards/b1_spearman-512.avif",
+        "1024": "/cards/b1_spearman-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/b1_spearman-256.webp",
+        "512": "/cards/b1_spearman-512.webp",
+        "1024": "/cards/b1_spearman-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/b1_spearman.svg",
+      "alt": {
+        "it": "Lanciere di Frontiera: soldato con lancia e scudo ovale presso una fortificazione."
+      }
+    },
+    "b1_watch": {
+      "id": "b1_watch",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/b1_watch-256.avif",
+        "512": "/cards/b1_watch-512.avif",
+        "1024": "/cards/b1_watch-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/b1_watch-256.webp",
+        "512": "/cards/b1_watch-512.webp",
+        "1024": "/cards/b1_watch-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/b1_watch.svg",
+      "alt": {
+        "it": "Guardia di Frontiera: fante con scudo ovale e tunica sotto la maglia."
+      }
+    },
+    "b2_archer": {
+      "id": "b2_archer",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/b2_archer-256.avif",
+        "512": "/cards/b2_archer-512.avif",
+        "1024": "/cards/b2_archer-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/b2_archer-256.webp",
+        "512": "/cards/b2_archer-512.webp",
+        "1024": "/cards/b2_archer-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/b2_archer.svg",
+      "alt": {
+        "it": "Arciere dei Temi: arco composito, faretra e scudo appeso."
+      }
+    },
+    "b2_cistern": {
+      "id": "b2_cistern",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/b2_cistern-256.avif",
+        "512": "/cards/b2_cistern-512.avif",
+        "1024": "/cards/b2_cistern-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/b2_cistern-256.webp",
+        "512": "/cards/b2_cistern-512.webp",
+        "1024": "/cards/b2_cistern-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/b2_cistern.svg",
+      "alt": {
+        "it": "Cisterna Fortificata: cisterna in muratura dietro una cinta difensiva."
+      }
+    },
+    "b2_skoutatos": {
+      "id": "b2_skoutatos",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/b2_skoutatos-256.avif",
+        "512": "/cards/b2_skoutatos-512.avif",
+        "1024": "/cards/b2_skoutatos-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/b2_skoutatos-256.webp",
+        "512": "/cards/b2_skoutatos-512.webp",
+        "1024": "/cards/b2_skoutatos-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/b2_skoutatos.svg",
+      "alt": {
+        "it": "Skoutatos: fante in maglia con grande scudo e lancia."
+      }
+    },
+    "b3_arsenal": {
+      "id": "b3_arsenal",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/b3_arsenal-256.avif",
+        "512": "/cards/b3_arsenal-512.avif",
+        "1024": "/cards/b3_arsenal-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/b3_arsenal-256.webp",
+        "512": "/cards/b3_arsenal-512.webp",
+        "1024": "/cards/b3_arsenal-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/b3_arsenal.svg",
+      "alt": {
+        "it": "Arsenale Imperiale: officina con armi, incudini e travi, senza cannoni."
+      }
+    },
+    "b3_standard": {
+      "id": "b3_standard",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/b3_standard-256.avif",
+        "512": "/cards/b3_standard-512.avif",
+        "1024": "/cards/b3_standard-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/b3_standard-256.webp",
+        "512": "/cards/b3_standard-512.webp",
+        "1024": "/cards/b3_standard-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/b3_standard.svg",
+      "alt": {
+        "it": "Ordine Imperiale: stendardo imperiale sopra difensori sulle mura."
+      }
+    },
     "e1_farm": {
       "id": "e1_farm",
       "source": "master",
@@ -206,6 +406,31 @@
         "it": "Illustrazione dell'interno di una gilda dei mercanti con registri, monete d'oro e un atto sigillato."
       }
     },
+    "f2_market": {
+      "id": "f2_market",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/f2_market-256.avif",
+        "512": "/cards/f2_market-512.avif",
+        "1024": "/cards/f2_market-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/f2_market-256.webp",
+        "512": "/cards/f2_market-512.webp",
+        "1024": "/cards/f2_market-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/f2_market.svg",
+      "alt": {
+        "it": "Mercato: banchi di mercato, sacchi e bilance in una città medievale."
+      }
+    },
     "i1_arr": {
       "id": "i1_arr",
       "source": "master",
@@ -354,6 +579,206 @@
       "fallbackSvg": "/cards/placeholders/i3_ral.svg",
       "alt": {
         "it": "Illustrazione di fanteria e picchieri che caricano su un pendio dietro un alfiere nella luce dorata."
+      }
+    },
+    "n1_longhouse": {
+      "id": "n1_longhouse",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/n1_longhouse-256.avif",
+        "512": "/cards/n1_longhouse-512.avif",
+        "1024": "/cards/n1_longhouse-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/n1_longhouse-256.webp",
+        "512": "/cards/n1_longhouse-512.webp",
+        "1024": "/cards/n1_longhouse-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/n1_longhouse.svg",
+      "alt": {
+        "it": "Casa Lunga: sala in legno con tetto erboso."
+      }
+    },
+    "n1_raider": {
+      "id": "n1_raider",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/n1_raider-256.avif",
+        "512": "/cards/n1_raider-512.avif",
+        "1024": "/cards/n1_raider-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/n1_raider-256.webp",
+        "512": "/cards/n1_raider-512.webp",
+        "1024": "/cards/n1_raider-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/n1_raider.svg",
+      "alt": {
+        "it": "Razziatore Costiero: guerriero con ascia e scudo rotondo sulla costa."
+      }
+    },
+    "n1_thing": {
+      "id": "n1_thing",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/n1_thing-256.avif",
+        "512": "/cards/n1_thing-512.avif",
+        "1024": "/cards/n1_thing-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/n1_thing-256.webp",
+        "512": "/cards/n1_thing-512.webp",
+        "1024": "/cards/n1_thing-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/n1_thing.svg",
+      "alt": {
+        "it": "Chiamata del Thing: assemblea di guerrieri presso pietre erette."
+      }
+    },
+    "n2_axeman": {
+      "id": "n2_axeman",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/n2_axeman-256.avif",
+        "512": "/cards/n2_axeman-512.avif",
+        "1024": "/cards/n2_axeman-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/n2_axeman-256.webp",
+        "512": "/cards/n2_axeman-512.webp",
+        "1024": "/cards/n2_axeman-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/n2_axeman.svg",
+      "alt": {
+        "it": "Portascudo del Jarl: lancia e scudo rotondo dipinto."
+      }
+    },
+    "n2_huscarl": {
+      "id": "n2_huscarl",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/n2_huscarl-256.avif",
+        "512": "/cards/n2_huscarl-512.avif",
+        "1024": "/cards/n2_huscarl-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/n2_huscarl-256.webp",
+        "512": "/cards/n2_huscarl-512.webp",
+        "1024": "/cards/n2_huscarl-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/n2_huscarl.svg",
+      "alt": {
+        "it": "Huscarl: guardia in cotta di maglia con ascia lunga."
+      }
+    },
+    "n2_landing": {
+      "id": "n2_landing",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/n2_landing-256.avif",
+        "512": "/cards/n2_landing-512.avif",
+        "1024": "/cards/n2_landing-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/n2_landing-256.webp",
+        "512": "/cards/n2_landing-512.webp",
+        "1024": "/cards/n2_landing-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/n2_landing.svg",
+      "alt": {
+        "it": "Approdo Mercantile: magazzini in legno e merci su un molo."
+      }
+    },
+    "n3_guard": {
+      "id": "n3_guard",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/n3_guard-256.avif",
+        "512": "/cards/n3_guard-512.avif",
+        "1024": "/cards/n3_guard-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/n3_guard-256.webp",
+        "512": "/cards/n3_guard-512.webp",
+        "1024": "/cards/n3_guard-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/n3_guard.svg",
+      "alt": {
+        "it": "Guardia del Jarl: scudi sovrapposti e cotte di maglia."
+      }
+    },
+    "n3_oath": {
+      "id": "n3_oath",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/n3_oath-256.avif",
+        "512": "/cards/n3_oath-512.avif",
+        "1024": "/cards/n3_oath-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/n3_oath-256.webp",
+        "512": "/cards/n3_oath-512.webp",
+        "1024": "/cards/n3_oath-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/n3_oath.svg",
+      "alt": {
+        "it": "Giuramento del Seguito: seguito del jarl raccolto attorno a uno stendardo."
       }
     },
     "u1_arc_h": {
@@ -756,6 +1181,31 @@
         "it": "Illustrazione di uno spadaccino scelto veterano in mezza armatura in guardia con la spada lunga."
       }
     },
+    "u2_lancer": {
+      "id": "u2_lancer",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u2_lancer-256.avif",
+        "512": "/cards/u2_lancer-512.avif",
+        "1024": "/cards/u2_lancer-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u2_lancer-256.webp",
+        "512": "/cards/u2_lancer-512.webp",
+        "1024": "/cards/u2_lancer-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u2_lancer.svg",
+      "alt": {
+        "it": "Lanciere a Cavallo in un campo medievale prima delle armi da fuoco."
+      }
+    },
     "u2_sig_h": {
       "id": "u2_sig_h",
       "source": "master",
@@ -956,6 +1406,31 @@
         "it": "Illustrazione di un dragone imperiale a cavallo che spara con una carabina tra il fumo della battaglia."
       }
     },
+    "u3_crossbow": {
+      "id": "u3_crossbow",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_crossbow-256.avif",
+        "512": "/cards/u3_crossbow-512.avif",
+        "1024": "/cards/u3_crossbow-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_crossbow-256.webp",
+        "512": "/cards/u3_crossbow-512.webp",
+        "1024": "/cards/u3_crossbow-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_crossbow.svg",
+      "alt": {
+        "it": "Balestriere a Staffa in un campo medievale prima delle armi da fuoco."
+      }
+    },
     "u3_inf_h": {
       "id": "u3_inf_h",
       "source": "master",
@@ -1004,6 +1479,56 @@
       "fallbackSvg": "/cards/placeholders/u3_inf_l.svg",
       "alt": {
         "it": "Illustrazione di un berserker d'élite con due asce da guerra e pellicce nel fumo della battaglia."
+      }
+    },
+    "u3_knight": {
+      "id": "u3_knight",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_knight-256.avif",
+        "512": "/cards/u3_knight-512.avif",
+        "1024": "/cards/u3_knight-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_knight-256.webp",
+        "512": "/cards/u3_knight-512.webp",
+        "1024": "/cards/u3_knight-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_knight.svg",
+      "alt": {
+        "it": "Cavaliere Veterano in un campo medievale prima delle armi da fuoco."
+      }
+    },
+    "u3_ram": {
+      "id": "u3_ram",
+      "source": "master",
+      "status": "final",
+      "aspectRatio": "4:3",
+      "widths": [
+        256,
+        512,
+        1024
+      ],
+      "avif": {
+        "256": "/cards/u3_ram-256.avif",
+        "512": "/cards/u3_ram-512.avif",
+        "1024": "/cards/u3_ram-1024.avif"
+      },
+      "webp": {
+        "256": "/cards/u3_ram-256.webp",
+        "512": "/cards/u3_ram-512.webp",
+        "1024": "/cards/u3_ram-1024.webp"
+      },
+      "fallbackSvg": "/cards/placeholders/u3_ram.svg",
+      "alt": {
+        "it": "Ariete da Breccia in un campo medievale prima delle armi da fuoco."
       }
     },
     "u3_sig_h": {

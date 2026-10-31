@@ -1,6 +1,11 @@
 import rawArtJson from '../../../data/cards.art.json' with { type: 'json' };
 import rawRulesJson from '../../../data/cards.rules.json' with { type: 'json' };
 import rawTextItJson from '../../../data/cards.text.it.json' with { type: 'json' };
+import v2Rules from '../../../data/v2/cards.rules.json' with { type: 'json' };
+import v2Text from '../../../data/v2/cards.text.it.json' with { type: 'json' };
+import v2Art from '../../../data/v2/cards.art.json' with { type: 'json' };
+import type { ContentVersion } from '../../../data/versions.js';
+export { CIVILIZATIONS, type CivilizationId, type ContentVersion } from '../../../data/versions.js';
 import {
   CardsArtFileSchema,
   CardsRulesFileSchema,
@@ -50,6 +55,8 @@ export {
 export type SupportedLocale = 'it';
 
 export type KeywordName =
+  | 'Furia'
+  | 'Disciplina'
   | 'Tiro'
   | 'Impalamento'
   | 'Accerchiamento'
@@ -57,25 +64,25 @@ export type KeywordName =
   | 'Riconversione'
   | 'Istantanea';
 
-export const KEYWORD_TOOLTIPS_IT: Readonly<Record<KeywordName, string>> =
-  Object.freeze({
-    Tiro: 'In Fase 1 gli Arcieri colpiscono prima del contatto; infliggono il bonus indicato se il nemico schiera almeno un Lanciere.',
-    Impalamento:
-      'In Fase 2A i Lancieri infliggono questo danno speciale solo alla Cavalleria nemica, prima che possa caricare.',
-    Accerchiamento:
-      'In Fase 2B, se il nemico non ha Lancieri vivi, la Cavalleria attacca per prima la Retroguardia e ottiene il bonus contro gli Arcieri.',
-    'Demolizione (DEM)':
-      'Danno strutturale: in caso di vittoria campale colpisce le Mura nemiche e, in eccesso, il Centro Città. Non danneggia le truppe.',
-    Riconversione:
-      "Giocabile solo durante lo sviluppo dell'Era III; occupa 0 slot ma richiede il sacrificio di un tuo Edificio Economico attivo.",
-    Istantanea:
-      'Si seleziona in segreto nella Finestra Pre-Battaglia (dopo la rivelazione delle unità) e si rivela simultaneamente; occupa 0 slot.',
-  });
+export const KEYWORD_TOOLTIPS_IT: Readonly<Record<KeywordName, string>> = Object.freeze({
+  Furia:
+    'Aggiunge +2 ATK soltanto nel primo ciclo di mischia effettivamente eseguito; non modifica tiro, impatto o DEM.',
+  Disciplina:
+    'Aggiunge +1 ATK in mischia se a inizio ciclo esiste un proprio Lanciere vivo; la morte simultanea vale dal ciclo successivo.',
+  Tiro: 'In Fase 1 gli Arcieri colpiscono prima del contatto; infliggono il bonus indicato se il nemico schiera almeno un Lanciere.',
+  Impalamento:
+    'In Fase 2A i Lancieri infliggono questo danno speciale solo alla Cavalleria nemica, prima che possa caricare.',
+  Accerchiamento:
+    'In Fase 2B, se il nemico non ha Lancieri vivi, la Cavalleria attacca per prima la Retroguardia e ottiene il bonus contro gli Arcieri.',
+  'Demolizione (DEM)':
+    'Danno strutturale: in caso di vittoria campale colpisce le Mura nemiche e, in eccesso, il Centro Città. Non danneggia le truppe.',
+  Riconversione:
+    "Giocabile solo durante lo sviluppo dell'Era III; occupa 0 slot ma richiede il sacrificio di un tuo Edificio Economico attivo.",
+  Istantanea:
+    'Si seleziona in segreto nella Finestra Pre-Battaglia (dopo la rivelazione delle unità) e si rivela simultaneamente; occupa 0 slot.',
+});
 
-export function getKeywordTooltip(
-  keyword: KeywordName,
-  _locale: SupportedLocale = 'it',
-): string {
+export function getKeywordTooltip(keyword: KeywordName, _locale: SupportedLocale = 'it'): string {
   return KEYWORD_TOOLTIPS_IT[keyword];
 }
 
@@ -85,14 +92,13 @@ const RESOURCE_LABELS_IT: Readonly<Record<Resource, string>> = Object.freeze({
   metal: 'Metallo',
 });
 
-const CATEGORY_LABELS_IT: Readonly<Record<UnitCategory, string>> =
-  Object.freeze({
-    infantry: 'Fanteria',
-    spearman: 'Lanciere',
-    cavalry: 'Cavalleria',
-    archer: 'Arciere',
-    siege: 'Assedio',
-  });
+const CATEGORY_LABELS_IT: Readonly<Record<UnitCategory, string>> = Object.freeze({
+  infantry: 'Fanteria',
+  spearman: 'Lanciere',
+  cavalry: 'Cavalleria',
+  archer: 'Arciere',
+  siege: 'Assedio',
+});
 
 const LINE_LABELS_IT: Readonly<Record<Line, string>> = Object.freeze({
   front: 'Fronte',
@@ -104,11 +110,10 @@ export function computeArcherMeleeAtk(effectiveAtk: number): number {
   return Math.max(1, Math.floor(effectiveAtk / 2));
 }
 
-export function formatTypeLine(
-  card: CardRules,
-  _locale: SupportedLocale = 'it',
-): string {
+export function formatTypeLine(card: CardRules, _locale: SupportedLocale = 'it'): string {
   switch (card.type) {
+    case 'structure':
+      return 'Struttura';
     case 'economy':
       return 'Economia';
     case 'instant':
@@ -126,10 +131,7 @@ export function formatTypeLine(
   }
 }
 
-function formatPositiveResourcesList(
-  resources: Resources,
-  includeEmoji = false,
-): string {
+function formatPositiveResourcesList(resources: Resources, includeEmoji = false): string {
   const order: readonly Resource[] = ['food', 'wood', 'metal'];
   const emojiMap: Readonly<Record<Resource, string>> = {
     food: '🍖',
@@ -147,11 +149,12 @@ function formatPositiveResourcesList(
   return parts.join(', ');
 }
 
-export function generateRulesText(
-  card: CardRules,
-  _locale: SupportedLocale = 'it',
-): string {
+export function generateRulesText(card: CardRules, _locale: SupportedLocale = 'it'): string {
   switch (card.type) {
+    case 'structure':
+      return card.structureEffect?.kind === 'market'
+        ? "Sviluppo: spendi un'azione, scambia 2 risorse uguali con 1 diversa entro il cap. Una volta per giocatore per Era. Nessuna produzione."
+        : "+2 HP Mura alle aperture d'Era successive alla costruzione. Una sola applicazione per giocatore, anche con più copie. Nessuna produzione.";
     case 'economy': {
       if (!card.production) {
         throw new Error(`Economy card "${card.id}" is missing production.`);
@@ -164,67 +167,58 @@ export function generateRulesText(
       if (card.category === 'siege' || card.isCombatant === false) {
         return 'Non combattente; solo Demolizione.';
       }
-      const ability = card.abilities[0];
-      if (!ability) {
+      if (card.abilities.length === 0) {
         return 'Unità combattente.';
       }
-      switch (ability.kind) {
-        case 'impale':
-          return `Impalamento: ${ability.damage} danni vs Cavalleria.`;
-        case 'volley': {
-          const meleeAtk = computeArcherMeleeAtk(card.atk ?? 1);
-          return `Tiro (+${ability.bonusVsSpearman} vs Lancieri); Mischia: ${meleeAtk} ATK.`;
-        }
-        case 'flank':
-          return `Accerchiamento (+${ability.bonusVsArcher} ATK vs Arcieri).`;
-      }
-      break;
+      return card.abilities
+        .map((ability) => {
+          switch (ability.kind) {
+            case 'fury':
+              return `Furia: +${ability.amount} ATK solo nel primo ciclo di mischia.`;
+            case 'discipline':
+              return `Disciplina: +${ability.amount} ATK in mischia con un tuo Lanciere vivo a inizio ciclo (dopo il dimezzamento degli Arcieri).`;
+            case 'impale':
+              return `Impalamento: ${ability.damage} danni vs Cavalleria.`;
+            case 'volley': {
+              const meleeAtk = computeArcherMeleeAtk(card.atk ?? 1);
+              return `Tiro (+${ability.bonusVsSpearman} vs Lancieri); Mischia: ${meleeAtk} ATK.`;
+            }
+            case 'flank':
+              return `Accerchiamento (+${ability.bonusVsArcher} ATK vs Arcieri).`;
+          }
+        })
+        .join(' ');
     }
 
     case 'instant': {
-      if (
-        !card.effect ||
-        (card.effect.kind !== 'atk_mod' && card.effect.kind !== 'walls_mod')
-      ) {
-        throw new Error(
-          `Instant card "${card.id}" has missing or invalid InstantEffect.`,
-        );
+      if (!card.effect || (card.effect.kind !== 'atk_mod' && card.effect.kind !== 'walls_mod')) {
+        throw new Error(`Instant card "${card.id}" has missing or invalid InstantEffect.`);
       }
       if (card.effect.kind === 'atk_mod') {
         const signVal =
-          card.effect.amount >= 0
-            ? `+${card.effect.amount}`
-            : `${card.effect.amount}`;
+          card.effect.amount >= 0 ? `+${card.effect.amount}` : `${card.effect.amount}`;
         const targetText =
           card.effect.target === 'own_archers'
             ? 'ai tuoi Arcieri'
-            : 'alle tue unità sul Fronte';
+            : card.effect.target === 'own_infantry'
+              ? 'alla tua Fanteria (esclusi i Lancieri)'
+              : 'alle tue unità sul Fronte';
         return `Pre-Battaglia (0 Slot): ${signVal} ATK ${targetText}.`;
       }
-      const signVal =
-        card.effect.amount >= 0
-          ? `+${card.effect.amount}`
-          : `${card.effect.amount}`;
-      const targetText =
-        card.effect.target === 'own' ? 'alle tue Mura' : 'alle Mura nemiche';
+      const signVal = card.effect.amount >= 0 ? `+${card.effect.amount}` : `${card.effect.amount}`;
+      const targetText = card.effect.target === 'own' ? 'alle tue Mura' : 'alle Mura nemiche';
       return `Pre-Battaglia (0 Slot): ${signVal} HP ${targetText}.`;
     }
 
     case 'conversion': {
       if (
         !card.effect ||
-        (card.effect.kind !== 'gain_per_building' &&
-          card.effect.kind !== 'gain_and_dem_bonus')
+        (card.effect.kind !== 'gain_per_building' && card.effect.kind !== 'gain_and_dem_bonus')
       ) {
-        throw new Error(
-          `Conversion card "${card.id}" has missing or invalid ConversionEffect.`,
-        );
+        throw new Error(`Conversion card "${card.id}" has missing or invalid ConversionEffect.`);
       }
       if (card.effect.kind === 'gain_per_building') {
-        const gainText = formatPositiveResourcesList(
-          card.effect.perBuilding,
-          false,
-        );
+        const gainText = formatPositiveResourcesList(card.effect.perBuilding, false);
         return `0 Slot. Sacrifica 1 tuo Edificio: ${gainText} per tuo edificio pre-sacrificio.`;
       }
       const gainText = formatPositiveResourcesList(card.effect.gain, false);
@@ -237,14 +231,13 @@ export function getCardKeywords(card: CardRules): KeywordName[] {
   const keywords: KeywordName[] = [];
 
   for (const ability of card.abilities) {
+    if (ability.kind === 'fury') keywords.push('Furia');
+    if (ability.kind === 'discipline') keywords.push('Disciplina');
     if (ability.kind === 'volley' && !keywords.includes('Tiro')) {
       keywords.push('Tiro');
     } else if (ability.kind === 'impale' && !keywords.includes('Impalamento')) {
       keywords.push('Impalamento');
-    } else if (
-      ability.kind === 'flank' &&
-      !keywords.includes('Accerchiamento')
-    ) {
+    } else if (ability.kind === 'flank' && !keywords.includes('Accerchiamento')) {
       keywords.push('Accerchiamento');
     }
   }
@@ -295,9 +288,7 @@ export function buildCardCatalog(
   const textById = CardsTextFileSchema.parse(rawText);
   const artById = CardsArtFileSchema.parse(rawArt);
 
-  const ruleIds = Object.keys(rulesById).sort((a, b) =>
-    a < b ? -1 : a > b ? 1 : 0,
-  );
+  const ruleIds = Object.keys(rulesById).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   const cardsById: Record<string, CatalogCard> = {};
   const allCards: CatalogCard[] = [];
 
@@ -349,15 +340,18 @@ export function loadCardCatalog(locale: SupportedLocale = 'it'): CardCatalog {
 }
 
 export const CARD_CATALOG: CardCatalog = loadCardCatalog('it');
-export const CARDS_RULES: Readonly<Record<string, CardRules>> =
-  CARD_CATALOG.rulesById;
-export const CARDS_TEXT_IT: Readonly<Record<string, CardText>> =
-  CARD_CATALOG.textById;
-export const CARDS_ART: Readonly<Record<string, CardArt>> =
-  CARD_CATALOG.artById;
+export const V2_CARD_CATALOG: CardCatalog = buildCardCatalog(v2Rules, v2Text, v2Art);
+export function getCatalog(version: ContentVersion): CardCatalog {
+  if (version === '1.0') return CARD_CATALOG;
+  if (version === '2.0') return V2_CARD_CATALOG;
+  throw new Error(`Unsupported catalog version: ${String(version)}`);
+}
+export const CARDS_RULES: Readonly<Record<string, CardRules>> = CARD_CATALOG.rulesById;
+export const CARDS_TEXT_IT: Readonly<Record<string, CardText>> = CARD_CATALOG.textById;
+export const CARDS_ART: Readonly<Record<string, CardArt>> = CARD_CATALOG.artById;
 
-export function getCard(cardId: string): CatalogCard {
-  const card = CARD_CATALOG.cardsById[cardId];
+export function getCard(cardId: string, version: ContentVersion = '1.0'): CatalogCard {
+  const card = getCatalog(version).cardsById[cardId];
   if (!card) {
     throw new Error(`Unknown cardId "${cardId}" in @epochs/content catalog.`);
   }

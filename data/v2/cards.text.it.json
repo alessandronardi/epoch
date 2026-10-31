@@ -1,0 +1,312 @@
+{
+  "b1_granary": {
+    "name": "Granaio Imperiale",
+    "typeLine": "Economia",
+    "flavor": "Investimento di Legno in Cibo per le Ere successive."
+  },
+  "b1_spearman": {
+    "name": "Lanciere di Frontiera",
+    "typeLine": "Unità — Lanciere · Fronte",
+    "flavor": "Ancora difensiva e supporto alla Disciplina."
+  },
+  "b1_watch": {
+    "name": "Guardia di Frontiera",
+    "typeLine": "Unità — Fanteria · Fronte",
+    "flavor": "Difende il Lanciere e beneficia della sua presenza."
+  },
+  "b2_archer": {
+    "name": "Arciere dei Temi",
+    "typeLine": "Unità — Arciere · Retroguardia",
+    "flavor": "Tiro resistente con supporto in mischia."
+  },
+  "b2_cistern": {
+    "name": "Cisterna Fortificata",
+    "typeLine": "Struttura",
+    "flavor": "Aumenta le Mura delle aperture successive, senza produzione."
+  },
+  "b2_skoutatos": {
+    "name": "Skoutatos",
+    "typeLine": "Unità — Fanteria · Fronte",
+    "flavor": "Fanteria resistente ma costosa in Metallo."
+  },
+  "b3_arsenal": {
+    "name": "Arsenale Imperiale",
+    "typeLine": "Riconversione",
+    "flavor": "Trasforma un produttore in Metallo e DEM fino a fine Era III."
+  },
+  "b3_standard": {
+    "name": "Ordine Imperiale",
+    "typeLine": "Istantanea",
+    "flavor": "Sostiene le Mura durante la battaglia finale."
+  },
+  "e1_farm": {
+    "name": "Fattoria",
+    "typeLine": "Economia",
+    "flavor": "Il primo raccolto non sfama un esercito. Insegna a un villaggio a restare."
+  },
+  "e1_lumb": {
+    "name": "Segheria",
+    "typeLine": "Economia",
+    "flavor": "Ogni palizzata comincia come un albero che qualcuno ha deciso di abbattere."
+  },
+  "e1_mine": {
+    "name": "Cava Grezza",
+    "typeLine": "Economia",
+    "flavor": "Sotto la collina il ferro dorme. I minatori lo svegliano a colpi di piccone."
+  },
+  "e2_fnd": {
+    "name": "Fonderia",
+    "typeLine": "Economia",
+    "flavor": "Il ferro, quando è rosso, accetta qualsiasi idea."
+  },
+  "e2_mill": {
+    "name": "Mulino Idraulico",
+    "typeLine": "Economia",
+    "flavor": "Il fiume lavora per tutti, anche quando i soldati dormono."
+  },
+  "e2_saw": {
+    "name": "Segheria Grande",
+    "typeLine": "Economia",
+    "flavor": "Una sola lama sostituisce dieci braccia e non chiede il cambio."
+  },
+  "e3_frn": {
+    "name": "Altoforno Reale",
+    "typeLine": "Riconversione",
+    "flavor": "Le risorse e il coraggio sostengono la città."
+  },
+  "e3_gld": {
+    "name": "Gilda dei Mercanti",
+    "typeLine": "Riconversione",
+    "flavor": "Chi vende il proprio banco ha di solito già comprato la nave."
+  },
+  "f2_market": {
+    "name": "Mercato",
+    "typeLine": "Struttura",
+    "flavor": "Converte eccedenze a costo di una azione, senza produzione."
+  },
+  "i1_arr": {
+    "name": "Pioggia di Frecce",
+    "typeLine": "Istantanea",
+    "flavor": "Il cielo si fece scuro a mezzogiorno, e non per le nuvole."
+  },
+  "i1_wall": {
+    "name": "Palizzata Extra",
+    "typeLine": "Istantanea",
+    "flavor": "Una notte di lavoro vale un anno di assedio."
+  },
+  "i2_mor": {
+    "name": "Grido di Guerra",
+    "typeLine": "Istantanea",
+    "flavor": "Una voce sola, mille spade che la seguono."
+  },
+  "i2_sab": {
+    "name": "Mina Sotterranea",
+    "typeLine": "Istantanea",
+    "flavor": "Il crollo fu preceduto da un silenzio troppo lungo."
+  },
+  "i3_fir": {
+    "name": "Fuoco Greco",
+    "typeLine": "Istantanea",
+    "flavor": "L'acqua lo alimenta. Solo il tempo lo sazia."
+  },
+  "i3_ral": {
+    "name": "Carica Eroica",
+    "typeLine": "Istantanea",
+    "flavor": "Il primo a correre non ha coraggio: ha fretta di non pensare."
+  },
+  "n1_longhouse": {
+    "name": "Casa Lunga",
+    "typeLine": "Economia",
+    "flavor": "Sostiene la fanteria con un investimento iniziale."
+  },
+  "n1_raider": {
+    "name": "Razziatore Costiero",
+    "typeLine": "Unità — Fanteria · Fronte",
+    "flavor": "Pressione precoce, fragile al tiro."
+  },
+  "n1_thing": {
+    "name": "Chiamata del Thing",
+    "typeLine": "Istantanea",
+    "flavor": "Rafforza soltanto la Fanteria per questa battaglia."
+  },
+  "n2_axeman": {
+    "name": "Portascudo del Jarl",
+    "typeLine": "Unità — Lanciere · Fronte",
+    "flavor": "Contromisura difensiva alla cavalleria."
+  },
+  "n2_huscarl": {
+    "name": "Huscarl",
+    "typeLine": "Unità — Fanteria · Fronte",
+    "flavor": "Punta offensiva del fronte norreno."
+  },
+  "n2_landing": {
+    "name": "Approdo Mercantile",
+    "typeLine": "Economia",
+    "flavor": "Produzione mista senza introdurre combattimento navale."
+  },
+  "n3_guard": {
+    "name": "Guardia del Jarl",
+    "typeLine": "Unità — Fanteria · Fronte",
+    "flavor": "Protegge i Berserker più fragili."
+  },
+  "n3_oath": {
+    "name": "Giuramento del Seguito",
+    "typeLine": "Istantanea",
+    "flavor": "Premia un fronte di fanteria superstite."
+  },
+  "u1_arc_h": {
+    "name": "Arciere d'Ordinanza",
+    "typeLine": "Unità — Arciere · Retroguardia",
+    "flavor": "Cento frecce nello stesso istante diventano una sola decisione."
+  },
+  "u1_arc_l": {
+    "name": "Cacciatore",
+    "typeLine": "Unità — Arciere · Retroguardia",
+    "flavor": "Conosce il vento meglio di quanto gli altri conoscano il proprio nome."
+  },
+  "u1_cav_h": {
+    "name": "Cavaliere Feudale",
+    "typeLine": "Unità — Cavalleria · Centro",
+    "flavor": "Il suo stemma è più antico del castello che difende."
+  },
+  "u1_cav_l": {
+    "name": "Esploratore a Cavallo",
+    "typeLine": "Unità — Cavalleria · Centro",
+    "flavor": "Le risorse e il coraggio sostengono la città."
+  },
+  "u1_inf_h": {
+    "name": "Fante con Scudo",
+    "typeLine": "Unità — Fanteria · Fronte",
+    "flavor": "Chi regge lo scudo non vede la battaglia: la sente arrivare."
+  },
+  "u1_inf_l": {
+    "name": "Milizia Cittadina",
+    "typeLine": "Unità — Fanteria · Fronte",
+    "flavor": "Ieri erano fabbri e fornai. Oggi la porta della città è affar loro."
+  },
+  "u1_sig_h": {
+    "name": "Ariete Batteria",
+    "typeLine": "Unità — Assedio · Retroguardia",
+    "flavor": "Non bussa. Spiega alla porta come andrà a finire."
+  },
+  "u1_sig_l": {
+    "name": "Squadra Genieri",
+    "typeLine": "Unità — Assedio · Retroguardia",
+    "flavor": "Dove gli altri vedono un muro, loro vedono un problema di leve."
+  },
+  "u1_spr_h": {
+    "name": "Lanciere Pesante",
+    "typeLine": "Unità — Lanciere · Fronte",
+    "flavor": "Il cavaliere carica contro l'orizzonte. La lancia gli ricorda dov'è la terra."
+  },
+  "u1_spr_l": {
+    "name": "Picchiere di Leva",
+    "typeLine": "Unità — Lanciere · Fronte",
+    "flavor": "Una lancia lunga fa sembrare coraggioso anche chi non lo è."
+  },
+  "u2_arc_h": {
+    "name": "Balestriere Pesante",
+    "typeLine": "Unità — Arciere · Retroguardia",
+    "flavor": "Si carica in un respiro. Non perdona in nessuno."
+  },
+  "u2_arc_l": {
+    "name": "Arciere Composto",
+    "typeLine": "Unità — Arciere · Retroguardia",
+    "flavor": "L'arco è fatto di corno, legno e tendini. La pazienza, di sola pazienza."
+  },
+  "u2_cav_h": {
+    "name": "Cavaliere Corazzato",
+    "typeLine": "Unità — Cavalleria · Centro",
+    "flavor": "Quando carica, l'orizzonte arretra."
+  },
+  "u2_inf_h": {
+    "name": "Uomo d'Arme",
+    "typeLine": "Unità — Fanteria · Fronte",
+    "flavor": "Pesa quanto un muro e cammina meglio."
+  },
+  "u2_inf_l": {
+    "name": "Spadaccino Scelto",
+    "typeLine": "Unità — Fanteria · Fronte",
+    "flavor": "Ogni cicatrice è una lezione che ha già superato."
+  },
+  "u2_lancer": {
+    "name": "Lanciere a Cavallo",
+    "typeLine": "Unità — Cavalleria · Centro",
+    "flavor": "Legno, ferro e addestramento decidono la sorte della battaglia."
+  },
+  "u2_sig_h": {
+    "name": "Mangano Pesante",
+    "typeLine": "Unità — Assedio · Retroguardia",
+    "flavor": "Il contrappeso cade. Un secolo di mura cade con lui."
+  },
+  "u2_sig_l": {
+    "name": "Scorpione d'Assedio",
+    "typeLine": "Unità — Assedio · Retroguardia",
+    "flavor": "Un dardo grande come un uomo ha sempre ragione."
+  },
+  "u2_spr_h": {
+    "name": "Guardia Svizzera",
+    "typeLine": "Unità — Lanciere · Fronte",
+    "flavor": "Il contratto dura tre mesi. La disciplina, da sempre."
+  },
+  "u2_spr_l": {
+    "name": "Alabardiere",
+    "typeLine": "Unità — Lanciere · Fronte",
+    "flavor": "L'alabarda decide quanto lontano si può stare dal pericolo."
+  },
+  "u3_arc_l": {
+    "name": "Arciere Lungo Reale",
+    "typeLine": "Unità — Arciere · Retroguardia",
+    "flavor": "La corona paga l'arco. Il resto lo mette lui."
+  },
+  "u3_cav_h": {
+    "name": "Catafratto",
+    "typeLine": "Unità — Cavalleria · Centro",
+    "flavor": "Contrattacco pesante sostenuto dallo sviluppo."
+  },
+  "u3_crossbow": {
+    "name": "Balestriere a Staffa",
+    "typeLine": "Unità — Arciere · Retroguardia",
+    "flavor": "Legno, ferro e addestramento decidono la sorte della battaglia."
+  },
+  "u3_inf_h": {
+    "name": "Campione Imperiale",
+    "typeLine": "Unità — Fanteria · Fronte",
+    "flavor": "L'impero gli diede un nome. Lui gli diede una frontiera."
+  },
+  "u3_inf_l": {
+    "name": "Berserker d'Élite",
+    "typeLine": "Unità — Fanteria · Fronte",
+    "flavor": "Conclude lo scontro con una prima mischia violenta."
+  },
+  "u3_knight": {
+    "name": "Cavaliere Veterano",
+    "typeLine": "Unità — Cavalleria · Centro",
+    "flavor": "Legno, ferro e addestramento decidono la sorte della battaglia."
+  },
+  "u3_ram": {
+    "name": "Ariete da Breccia",
+    "typeLine": "Unità — Assedio · Retroguardia",
+    "flavor": "Legno, ferro e addestramento decidono la sorte della battaglia."
+  },
+  "u3_sig_l": {
+    "name": "Torre d'Assedio",
+    "typeLine": "Unità — Assedio · Retroguardia",
+    "flavor": "Avanzava lenta. Le mura, ferme, ebbero più tempo per pensarci."
+  },
+  "u3_sig_m": {
+    "name": "Trabucco Gigante",
+    "typeLine": "Unità — Assedio · Retroguardia",
+    "flavor": "Il suo contrappeso peserebbe quanto un villaggio."
+  },
+  "u3_spr_h": {
+    "name": "Falange Imperiale",
+    "typeLine": "Unità — Lanciere · Fronte",
+    "flavor": "Quando la falange avanza, anche la storia fa un passo indietro."
+  },
+  "u3_spr_l": {
+    "name": "Picchiere Reale",
+    "typeLine": "Unità — Lanciere · Fronte",
+    "flavor": "Dietro la picca, la formazione pensa al posto suo."
+  }
+}

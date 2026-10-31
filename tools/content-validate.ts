@@ -10,6 +10,8 @@ import {
   type EraNo,
 } from '../packages/content/src/index.js';
 import { parseGddCatalog } from './gdd-to-cards.js';
+import { CATALOG_MANIFESTS, assertCatalogManifest } from './catalog-manifest.js';
+import { checkExpansionFiles } from './expansion-catalog.js';
 
 export interface GddRowExpectation {
   readonly id: string;
@@ -26,9 +28,7 @@ export function normalizeGddEffectTextToRulesText(rawEffect: string): string {
   return withNames.endsWith('.') ? withNames : `${withNames}.`;
 }
 
-export function extractGddExpectations(
-  gddMarkdown: string,
-): Record<string, GddRowExpectation> {
+export function extractGddExpectations(gddMarkdown: string): Record<string, GddRowExpectation> {
   const sectionIdx = gddMarkdown.indexOf('## 7. Catalogo Carte Ufficiale');
   if (sectionIdx === -1) {
     throw new Error('Could not find "## 7. Catalogo Carte Ufficiale" in GDD.');
@@ -85,10 +85,9 @@ const EXPECTED_ARCHER_MELEE: ReadonlyArray<{
   { id: 'u3_arc_h', atk: 8, melee: 4 },
 ]);
 
-export function validateContentCatalog(
-  input: ContentValidationInput,
-): ContentValidationResult {
+export function validateContentCatalog(input: ContentValidationInput): ContentValidationResult {
   const errors: string[] = [];
+  const manifest = CATALOG_MANIFESTS['1.0'];
 
   if (
     typeof input.rawRules !== 'object' ||
@@ -108,20 +107,14 @@ export function validateContentCatalog(
   const textKeys = Object.keys(input.rawText as Record<string, unknown>);
   const artKeys = Object.keys(input.rawArt as Record<string, unknown>);
 
-  if (ruleKeys.length !== 45) {
-    errors.push(
-      `Expected exactly 45 cards in cards.rules.json, found ${ruleKeys.length}.`,
-    );
+  if (ruleKeys.length !== manifest.total) {
+    errors.push(`Expected exactly 45 cards in cards.rules.json, found ${ruleKeys.length}.`);
   }
-  if (textKeys.length !== 45) {
-    errors.push(
-      `Expected exactly 45 cards in cards.text.it.json, found ${textKeys.length}.`,
-    );
+  if (textKeys.length !== manifest.total) {
+    errors.push(`Expected exactly 45 cards in cards.text.it.json, found ${textKeys.length}.`);
   }
-  if (artKeys.length !== 45) {
-    errors.push(
-      `Expected exactly 45 cards in cards.art.json, found ${artKeys.length}.`,
-    );
+  if (artKeys.length !== manifest.total) {
+    errors.push(`Expected exactly 45 cards in cards.art.json, found ${artKeys.length}.`);
   }
 
   const allIds = new Set<string>([...ruleKeys, ...textKeys, ...artKeys]);
@@ -140,18 +133,14 @@ export function validateContentCatalog(
   const rulesParse = CardsRulesFileSchema.safeParse(input.rawRules);
   if (!rulesParse.success) {
     for (const issue of rulesParse.error.issues) {
-      errors.push(
-        `cards.rules.json [${issue.path.join('.')}]: ${issue.message}`,
-      );
+      errors.push(`cards.rules.json [${issue.path.join('.')}]: ${issue.message}`);
     }
   }
 
   const textParse = CardsTextFileSchema.safeParse(input.rawText);
   if (!textParse.success) {
     for (const issue of textParse.error.issues) {
-      errors.push(
-        `cards.text.it.json [${issue.path.join('.')}]: ${issue.message}`,
-      );
+      errors.push(`cards.text.it.json [${issue.path.join('.')}]: ${issue.message}`);
     }
   }
 
@@ -167,6 +156,11 @@ export function validateContentCatalog(
   }
 
   const rulesMap = rulesParse.data;
+  try {
+    assertCatalogManifest(rulesMap, '1.0');
+  } catch (error) {
+    errors.push(String(error));
+  }
   const textMap = textParse.data;
   const artMap = artParse.data;
 
@@ -175,10 +169,8 @@ export function validateContentCatalog(
     countByEra[card.era] += 1;
   }
   for (const era of [1, 2, 3] as const) {
-    if (countByEra[era] !== 15) {
-      errors.push(
-        `Expected 15 cards in Era ${era}, found ${countByEra[era]}.`,
-      );
+    if (countByEra[era] !== manifest.byEra[era]) {
+      errors.push(`Expected 15 cards in Era ${era}, found ${countByEra[era]}.`);
     }
   }
 
@@ -188,18 +180,14 @@ export function validateContentCatalog(
     gddExpectations = extractGddExpectations(input.gddMarkdown);
     gddRulesMap = parseGddCatalog(input.gddMarkdown);
   } catch (err) {
-    errors.push(
-      `Failed to parse GDD catalog: ${err instanceof Error ? err.message : String(err)}`,
-    );
+    errors.push(`Failed to parse GDD catalog: ${err instanceof Error ? err.message : String(err)}`);
   }
 
   // Verify Archer melee formula on the 6 official archers (Appendix C.1: 2,3,4,5,6,8 -> 1,1,2,2,3,4)
   for (const expectedArcher of EXPECTED_ARCHER_MELEE) {
     const archerCard = rulesMap[expectedArcher.id];
     if (!archerCard) {
-      errors.push(
-        `Missing expected archer card "${expectedArcher.id}" in rules catalog.`,
-      );
+      errors.push(`Missing expected archer card "${expectedArcher.id}" in rules catalog.`);
       continue;
     }
     if (archerCard.atk !== expectedArcher.atk) {
@@ -207,9 +195,7 @@ export function validateContentCatalog(
         `Archer "${expectedArcher.id}" expected base ATK ${expectedArcher.atk}, got ${String(archerCard.atk)}.`,
       );
     }
-    const computedMelee = computeArcherMeleeAtk(
-      archerCard.atk ?? expectedArcher.atk,
-    );
+    const computedMelee = computeArcherMeleeAtk(archerCard.atk ?? expectedArcher.atk);
     if (computedMelee !== expectedArcher.melee) {
       errors.push(
         `Archer "${expectedArcher.id}" melee ATK mismatch: expected ${expectedArcher.melee}, got ${computedMelee}.`,
@@ -218,9 +204,7 @@ export function validateContentCatalog(
   }
 
   const checkFileExists =
-    input.fileExists ??
-    ((relPath: string) =>
-      fs.existsSync(path.resolve(process.cwd(), relPath)));
+    input.fileExists ?? ((relPath: string) => fs.existsSync(path.resolve(process.cwd(), relPath)));
 
   for (const id of Object.keys(rulesMap)) {
     const card = rulesMap[id]!;
@@ -229,9 +213,7 @@ export function validateContentCatalog(
     if (!text || !art) continue;
 
     if (text.name.length > 24) {
-      errors.push(
-        `Card "${id}" name "${text.name}" exceeds 24 characters (${text.name.length}).`,
-      );
+      errors.push(`Card "${id}" name "${text.name}" exceeds 24 characters (${text.name.length}).`);
     }
     if (text.flavor.trim().length === 0 || text.flavor.length > 120) {
       errors.push(
@@ -254,9 +236,7 @@ export function validateContentCatalog(
     const gddRow = gddExpectations[id];
     if (gddRow) {
       if (text.name !== gddRow.name) {
-        errors.push(
-          `Card "${id}" name "${text.name}" diverges from GDD §7 name "${gddRow.name}".`,
-        );
+        errors.push(`Card "${id}" name "${text.name}" diverges from GDD §7 name "${gddRow.name}".`);
       }
       const generatedRulesText = generateRulesText(card, 'it');
       if (generatedRulesText !== gddRow.expectedRulesText) {
@@ -267,20 +247,13 @@ export function validateContentCatalog(
     }
 
     const gddCardRule = gddRulesMap[id];
-    if (
-      gddCardRule &&
-      JSON.stringify(card) !== JSON.stringify(gddCardRule)
-    ) {
-      errors.push(
-        `Card "${id}" in cards.rules.json diverges from GDD §7 parsed rules.`,
-      );
+    if (gddCardRule && JSON.stringify(card) !== JSON.stringify(gddCardRule)) {
+      errors.push(`Card "${id}" in cards.rules.json diverges from GDD §7 parsed rules.`);
     }
 
     if (art.status === 'final') {
       if (!art.file.trim() || !art.credit.trim() || !art.prompt.trim()) {
-        errors.push(
-          `Card "${id}" has status "final" but is missing file or provenance metadata.`,
-        );
+        errors.push(`Card "${id}" has status "final" but is missing file or provenance metadata.`);
       } else {
         const masterPath = `data/art/src/${id}.png`;
         const publicOrDirectExists =
@@ -303,6 +276,7 @@ export function validateContentCatalog(
 }
 
 function main(): void {
+  checkExpansionFiles(true);
   const rootDir = process.cwd();
   const rulesPath = path.join(rootDir, 'data', 'cards.rules.json');
   const textPath = path.join(rootDir, 'data', 'cards.text.it.json');
@@ -335,8 +309,7 @@ function main(): void {
 }
 
 const isDirectRun =
-  process.argv[1] !== undefined &&
-  path.basename(process.argv[1]) === 'content-validate.ts';
+  process.argv[1] !== undefined && path.basename(process.argv[1]) === 'content-validate.ts';
 
 if (isDirectRun) {
   main();

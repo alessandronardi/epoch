@@ -528,13 +528,27 @@ function executePhase3MeleeCycle(state: GameState, events: GameEvent[], meleeCyc
     for (const unit of snapshot[attacker]) {
       if (isCombatantUnit(unit, state.catalog)) {
         const damage = getMeleeUnitAtk(unit, state.catalog, state.rules);
-        totalDmg += damage;
+        const abilities = getUnitRulesOrThrow(state.catalog, unit).abilities;
+        const fury =
+          state.rulesetVersion === '2.0' && meleeCycle === 1
+            ? abilities.find((a) => a.kind === 'fury')
+            : undefined;
+        const discipline =
+          state.rulesetVersion === '2.0' &&
+          hasLivingCategory(snapshot[attacker], state.catalog, 'spearman')
+            ? abilities.find((a) => a.kind === 'discipline')
+            : undefined;
+        const furyBonus = fury?.kind === 'fury' ? fury.amount : 0;
+        const disciplineBonus = discipline?.kind === 'discipline' ? discipline.amount : 0;
+        const bonus = furyBonus + disciplineBonus;
+        totalDmg += damage + bonus;
         contributions[attacker].push({
           uid: unit.uid,
           cardId: unit.cardId,
           baseDamage: damage,
-          bonus: 0,
-          totalDamage: damage,
+          bonus,
+          totalDamage: damage + bonus,
+          ...(state.rulesetVersion === '2.0' ? { furyBonus, disciplineBonus } : {}),
           rule:
             getUnitRulesOrThrow(state.catalog, unit).category === 'archer' &&
             state.rules.archerMeleeUsesEffectiveAtk

@@ -1,5 +1,10 @@
 # The Epochs — Piano di Esecuzione Atomico (`TASKS.md`)
 
+> **Espansione in pianificazione (30 ottobre 2026):** il piano per i tre mazzi
+> Regni feudali, Norreni e Bizantini è in
+> [DECK-EXPANSION-PLAN.md](DECK-EXPANSION-PLAN.md). Le fasi P0–P6 sono da iniziare;
+> non modificano lo stato dei task del prototipo riportati sotto.
+
 > **Documento generato secondo le regole di `orchestrazione.md` a partire da `docs/TECH-SPEC.md` (v2.0) e `docs/GDD.md` (v1.0).**  
 > **Ordine di esecuzione obbligatorio:** `M0 -> M1 -> M2 -> M3 -> M4 -> M5 -> M6 -> M7` (DAG topologico dai contratti e dati base fino al rilascio PWA e CI).
 

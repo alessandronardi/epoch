@@ -3,20 +3,20 @@
   grid-template-columns: minmax(280px, 330px) minmax(0, 1fr);
   height: 100dvh;
   overflow: auto;
-  color: var(--chalk, #e9e5d6);
-  background: var(--table-deep, #141e27);
+  color: var(--chalk);
+  background: var(--table-deep);
 }
 
 .tutorial-guide {
   padding: 24px 20px;
   overflow-y: auto;
-  border-right: 1px solid var(--brass, #b58e48);
+  border-right: 1px solid var(--brass);
   line-height: 1.55;
 }
 
 .tutorial-guide__eyebrow,
 .tutorial-guide__lesson {
-  color: var(--brass, #b58e48);
+  color: var(--brass);
   font-weight: 700;
 }
 
@@ -59,13 +59,13 @@
   place-items: center;
   width: 32px;
   height: 32px;
-  border: 1px solid var(--brass, #b58e48);
+  border: 1px solid var(--brass);
   border-radius: 50%;
 }
 .tutorial-progress [aria-current='step'],
 .tutorial-progress__done {
-  background: #b58e48;
-  color: #141e27;
+  background: var(--brass);
+  color: var(--table-deep);
   font-weight: 800;
 }
 .tutorial-progress [aria-current='step'] {
@@ -94,29 +94,29 @@
 .tutorial-screen .board-mobile-drawer-btn {
   padding: 6px 10px;
   border-radius: 5px;
-  border: 1px solid var(--brass, #b58e48);
-  background: var(--surface-card, #223444);
-  color: var(--chalk, #e9e5d6);
+  border: 1px solid var(--brass);
+  background: var(--surface-card);
+  color: var(--chalk);
   font-family: var(--font-numeric);
   font-weight: 700;
   cursor: pointer;
 }
 .tutorial-guide button {
-  border: 1px solid var(--brass, #b58e48);
+  border: 1px solid var(--brass);
   border-radius: 6px;
-  background: var(--surface-card, #223444);
-  color: var(--chalk, #e9e5d6);
+  background: var(--surface-card);
+  color: var(--chalk);
   padding: 8px 12px;
   font: inherit;
   cursor: pointer;
 }
 .tutorial-guide .tutorial-primary {
-  background: #b58e48;
-  color: #141e27;
+  background: var(--brass);
+  color: var(--table-deep);
   font-weight: 800;
 }
 .tutorial-guide button:disabled {
-  background: #223444;
+  background: var(--surface-card);
   color: #e9e5d6;
   cursor: wait;
 }
@@ -162,7 +162,7 @@
   .tutorial-guide {
     overflow: visible;
     border-right: 0;
-    border-bottom: 1px solid #b58e48;
+    border-bottom: 1px solid var(--brass);
     padding: 16px;
   }
   .tutorial-guide__actions {
@@ -181,7 +181,7 @@
 .tutorial-modal-guidance {
   border-left: 3px solid #f4cc78;
   padding: 10px 12px;
-  background: #223444;
+  background: var(--surface-card);
   color: #e9e5d6;
   line-height: 1.45;
 }
@@ -192,9 +192,9 @@
   margin-top: 8px;
 }
 .tutorial-modal-guidance button {
-  border: 1px solid #b58e48;
+  border: 1px solid var(--brass);
   border-radius: 6px;
-  background: #141e27;
+  background: var(--table-deep);
   color: #e9e5d6;
   padding: 6px 10px;
 }
@@ -210,10 +210,11 @@
   height: 100dvh;
   overflow: auto;
   padding: clamp(16px, 4vw, 48px);
-  color: var(--chalk, #e9e5d6);
-  background: var(--table-deep, #141e27);
+  color: var(--chalk);
+  background: var(--table-deep);
 }
 .tutorial-hub h1 {
+  color: var(--brass);
   font-family: var(--font-display);
 }
 .tutorial-hub__modules {
@@ -225,10 +226,10 @@
 .tutorial-hub button {
   min-height: 44px;
   padding: 16px;
-  border: 1px solid var(--brass, #b58e48);
+  border: 1px solid var(--panel-border);
   border-radius: 8px;
   color: inherit;
-  background: var(--surface-card, #223444);
+  background: var(--surface-card);
   cursor: pointer;
   font: inherit;
 }

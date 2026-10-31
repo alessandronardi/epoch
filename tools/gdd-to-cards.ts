@@ -10,6 +10,8 @@ import {
   type UnitCategory,
 } from '../data/schema/cards.schema.js';
 import { CARD_EFFECTS_MAP, getCardEffectMapping } from './card-effects.js';
+import { assertCatalogManifest, CATALOG_MANIFESTS } from './catalog-manifest.js';
+import { checkExpansionFiles } from './expansion-catalog.js';
 
 const ROOT_DIR = process.cwd();
 const GDD_PATH = path.join(ROOT_DIR, 'docs', 'GDD.md');
@@ -68,26 +70,18 @@ function parseCost(rawCost: string, cardId: string): Resources {
   };
 }
 
-function parseOptionalInt(
-  rawVal: string,
-  field: string,
-  cardId: string,
-): number | undefined {
+function parseOptionalInt(rawVal: string, field: string, cardId: string): number | undefined {
   const trimmed = rawVal.trim();
   if (trimmed === '—') {
     return undefined;
   }
   if (!/^\d+$/.test(trimmed)) {
-    throw new Error(
-      `Invalid integer value for ${field} on card "${cardId}": "${rawVal}"`,
-    );
+    throw new Error(`Invalid integer value for ${field} on card "${cardId}": "${rawVal}"`);
   }
   return Number.parseInt(trimmed, 10);
 }
 
-export function parseGddCatalog(
-  gddMarkdown: string,
-): Record<string, CardRules> {
+export function parseGddCatalog(gddMarkdown: string): Record<string, CardRules> {
   const sectionIdx = gddMarkdown.indexOf('## 7. Catalogo Carte Ufficiale');
   if (sectionIdx === -1) {
     throw new Error('Could not find "## 7. Catalogo Carte Ufficiale" in GDD.');
@@ -166,13 +160,9 @@ export function parseGddCatalog(
       ...(dem !== undefined ? { dem } : {}),
       ...(hp !== undefined ? { hp } : {}),
       ...(isCombatant !== undefined ? { isCombatant } : {}),
-      ...(effectMapping.production !== undefined
-        ? { production: effectMapping.production }
-        : {}),
+      ...(effectMapping.production !== undefined ? { production: effectMapping.production } : {}),
       abilities: [...effectMapping.abilities],
-      ...(effectMapping.effect !== undefined
-        ? { effect: effectMapping.effect }
-        : {}),
+      ...(effectMapping.effect !== undefined ? { effect: effectMapping.effect } : {}),
     };
 
     rawMap[id] = card;
@@ -180,46 +170,45 @@ export function parseGddCatalog(
   }
 
   const totalCards = Object.keys(rawMap).length;
-  if (totalCards !== 45) {
-    throw new Error(`Expected exactly 45 cards in GDD, found ${totalCards}.`);
+  const manifest = CATALOG_MANIFESTS['1.0'];
+  if (totalCards !== manifest.total) {
+    throw new Error(`Expected exactly ${manifest.total} cards in GDD, found ${totalCards}.`);
   }
   for (const era of [1, 2, 3] as const) {
-    if (countByEra[era] !== 15) {
+    if (countByEra[era] !== manifest.byEra[era]) {
       throw new Error(
-        `Expected 15 cards in Era ${era}, found ${countByEra[era]}.`,
+        `Expected ${manifest.byEra[era]} cards in Era ${era}, found ${countByEra[era]}.`,
       );
     }
   }
 
   const mappedEffectKeys = Object.keys(CARD_EFFECTS_MAP);
-  if (mappedEffectKeys.length !== 45) {
+  if (JSON.stringify(mappedEffectKeys.sort()) !== JSON.stringify([...manifest.ids].sort())) {
     throw new Error(
-      `Expected 45 entries in CARD_EFFECTS_MAP, found ${mappedEffectKeys.length}.`,
+      `Expected ${manifest.total} matching entries in CARD_EFFECTS_MAP, found ${mappedEffectKeys.length}.`,
     );
   }
 
-  const sortedIds = Object.keys(rawMap).sort((a, b) =>
-    a < b ? -1 : a > b ? 1 : 0,
-  );
+  const sortedIds = Object.keys(rawMap).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   const sortedRecord: Record<string, CardRules> = {};
   for (const id of sortedIds) {
     sortedRecord[id] = rawMap[id]!;
   }
 
+  assertCatalogManifest(sortedRecord, '1.0');
   return CardsRulesFileSchema.parse(sortedRecord);
 }
 
 function main(): void {
   const isCheck = process.argv.includes('--check');
+  checkExpansionFiles(isCheck);
   const gddContent = fs.readFileSync(GDD_PATH, 'utf8');
   const parsedCatalog = parseGddCatalog(gddContent);
   const serialized = `${JSON.stringify(parsedCatalog, null, 2)}\n`;
 
   if (isCheck) {
     if (!fs.existsSync(OUTPUT_PATH)) {
-      console.error(
-        `Error: ${OUTPUT_PATH} does not exist. Run "pnpm gdd:cards" first.`,
-      );
+      console.error(`Error: ${OUTPUT_PATH} does not exist. Run "pnpm gdd:cards" first.`);
       process.exit(1);
     }
     const existing = fs.readFileSync(OUTPUT_PATH, 'utf8').replace(/\r\n/g, '\n');
@@ -229,24 +218,18 @@ function main(): void {
       );
       process.exit(1);
     }
-    console.log(
-      'OK: data/cards.rules.json is valid and in sync (45 cards, 15 per Era).',
-    );
+    console.log('OK: data/cards.rules.json is valid and in sync (45 cards, 15 per Era).');
     return;
   }
 
   fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
   fs.writeFileSync(OUTPUT_PATH, serialized, 'utf8');
-  console.log(
-    `Generated ${OUTPUT_PATH} successfully (45 cards, 15 per Era).`,
-  );
+  console.log(`Generated ${OUTPUT_PATH} successfully (45 cards, 15 per Era).`);
 }
 
 const isDirectRun =
-  process.argv[1] !== undefined &&
-  path.basename(process.argv[1]) === 'gdd-to-cards.ts';
+  process.argv[1] !== undefined && path.basename(process.argv[1]) === 'gdd-to-cards.ts';
 
 if (isDirectRun) {
   main();
 }
-

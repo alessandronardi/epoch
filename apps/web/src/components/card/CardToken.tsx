@@ -1,4 +1,5 @@
 import { useBoardCardInspection } from './BoardCardInspection.js';
+import { useCatalogVersion } from '../../content/use-catalog-version.js';
 import type { CatalogCard } from '@epochs/content';
 import { useEffect, useRef, type KeyboardEvent, type MouseEvent, type ReactElement } from 'react';
 import {
@@ -33,7 +34,8 @@ export function CardToken({
   onInspect,
   className,
 }: CardTokenProps): ReactElement {
-  const resolved = resolveCatalogCard(cardId, card);
+  const version = useCatalogVersion();
+  const resolved = resolveCatalogCard(cardId, card, version);
   const { rules, text, art } = resolved;
 
   const inspection = useBoardCardInspection(

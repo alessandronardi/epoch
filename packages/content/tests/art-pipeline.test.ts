@@ -10,32 +10,36 @@ import {
   runArtBuild,
   type ArtManifest,
 } from '../../../tools/art-build.js';
-import { CARD_CATALOG } from '../src/index.js';
+import { CARD_CATALOG, V2_CARD_CATALOG } from '../src/index.js';
 
 describe('Art pipeline (tools/art-build.ts)', () => {
-  it('verifies art-manifest.json and WebP/AVIF variants for all 45 catalog cards', async () => {
+  it('verifies art-manifest.json and WebP/AVIF variants for both versioned catalogs', async () => {
     const rootDir = process.cwd();
     const outCardsDir = path.join(rootDir, 'apps', 'web', 'public', 'cards');
     const manifestPath = path.join(outCardsDir, 'art-manifest.json');
 
     if (!fs.existsSync(manifestPath)) {
-      await runArtBuild({ rootDir });
+      await runArtBuild({ rootDir, includeExpansion: true });
     }
 
     expect(fs.existsSync(manifestPath)).toBe(true);
-    const manifest = JSON.parse(
-      fs.readFileSync(manifestPath, 'utf8'),
-    ) as ArtManifest;
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ArtManifest;
 
     expect(manifest.version).toBe(1);
     expect(manifest.widths).toEqual([256, 512, 1024]);
 
     const manifestIds = Object.keys(manifest.cards).sort();
-    const catalogIds = CARD_CATALOG.allCards.map((c) => c.id).sort();
+    const catalogIds = [
+      ...new Set([...CARD_CATALOG.allCards, ...V2_CARD_CATALOG.allCards].map((c) => c.id)),
+    ].sort();
     expect(manifestIds).toEqual(catalogIds);
-    expect(manifestIds.length).toBe(45);
+    expect(manifestIds.length).toBe(66);
 
-    for (const card of CARD_CATALOG.allCards) {
+    for (const card of [
+      ...new Map(
+        [...V2_CARD_CATALOG.allCards, ...CARD_CATALOG.allCards].map((card) => [card.id, card]),
+      ).values(),
+    ]) {
       const entry = manifest.cards[card.id];
       expect(entry).toBeDefined();
       expect(entry?.id).toBe(card.id);
@@ -59,16 +63,12 @@ describe('Art pipeline (tools/art-build.ts)', () => {
     // Verify exact 4:3 dimensions on a sample card across all 3 widths
     for (const width of ART_WIDTHS) {
       const expectedHeight = computeHeightFor4x3(width);
-      const webpMeta = await sharp(
-        path.join(outCardsDir, `e1_farm-${width}.webp`),
-      ).metadata();
+      const webpMeta = await sharp(path.join(outCardsDir, `e1_farm-${width}.webp`)).metadata();
       expect(webpMeta.format).toBe('webp');
       expect(webpMeta.width).toBe(width);
       expect(webpMeta.height).toBe(expectedHeight);
 
-      const avifMeta = await sharp(
-        path.join(outCardsDir, `e1_farm-${width}.avif`),
-      ).metadata();
+      const avifMeta = await sharp(path.join(outCardsDir, `e1_farm-${width}.avif`)).metadata();
       expect(avifMeta.format).toBe('heif');
       expect(avifMeta.width).toBe(width);
       expect(avifMeta.height).toBe(expectedHeight);
@@ -94,9 +94,7 @@ describe('Art pipeline (tools/art-build.ts)', () => {
         placeholdersDir,
       });
       expect(placeholderEntry.source).toBe('placeholder');
-      expect(fs.existsSync(path.join(placeholdersDir, 'e1_farm.svg'))).toBe(
-        true,
-      );
+      expect(fs.existsSync(path.join(placeholdersDir, 'e1_farm.svg'))).toBe(true);
 
       // 2. With 1536x1152 master PNG -> source === 'master'
       const masterPngPath = path.join(masterDir, 'e1_farm.png');

@@ -98,7 +98,7 @@ test('tour Deck Builder: bozza isolata, validazione e import/export reali', asyn
   await openHub(page);
   const before = await page.evaluate(() => localStorage.getItem('epochs_deck_builder_v1'));
   await page.getByTestId('tutorial-module-deck-builder').click();
-  await page.getByTestId('deck-preset-select').selectOption('aggro-breach');
+  await page.getByTestId('deck-preset-select').selectOption('aggro-breach-v2');
   const remove = page.locator('[data-testid^="deck-remove-"]').first();
   const id = (await remove.getAttribute('data-testid'))!.replace('deck-remove-', '');
   await remove.click();

@@ -1,3 +1,5 @@
+import { useCatalogVersion } from '../../content/use-catalog-version.js';
+import type { ContentVersion } from '@epochs/content';
 import { useDialogFocus } from '../modals/use-dialog-focus.js';
 import { getCard, getKeywordTooltip, type CatalogCard, type KeywordName } from '@epochs/content';
 import { useEffect, useRef, type MouseEvent, type ReactElement } from 'react';
@@ -6,6 +8,7 @@ import { Card } from './Card.js';
 import './card.css';
 
 export interface CardInspectModalProps {
+  readonly version?: ContentVersion | undefined;
   readonly cardId?: string | null | undefined;
   readonly card?: CatalogCard | null | undefined;
   readonly atkMod?: number | undefined;
@@ -15,6 +18,7 @@ export interface CardInspectModalProps {
 }
 
 export function CardInspectModal({
+  version,
   cardId,
   card,
   atkMod = 0,
@@ -22,11 +26,12 @@ export function CardInspectModal({
   currentHp,
   onClose,
 }: CardInspectModalProps): ReactElement | null {
+  const catalogVersion = useCatalogVersion(version);
   const resolved: CatalogCard | null =
     card !== undefined && card !== null
       ? card
       : cardId !== undefined && cardId !== null
-        ? getCard(cardId)
+        ? getCard(cardId, catalogVersion)
         : null;
 
   const dialogRef = useRef<HTMLDivElement>(null);

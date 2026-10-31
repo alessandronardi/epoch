@@ -1,3 +1,4 @@
+import type { CivilizationId, ContentVersion } from '../../../data/versions.js';
 // GDD §2.1, §4.2, TECH-SPEC §4.6, §5.2, §5.3
 
 import type {
@@ -29,6 +30,7 @@ export interface CardPlayability {
 
 // TECH-SPEC §4.6 — mosse legali calcolate per il giocatore nello stato corrente
 export interface LegalCommands {
+  marketCommands?: import('./commands.js').ActivateMarketClientCommand[];
   phase: Phase;
   canAct: boolean;
   canSubmitMulligan: boolean;
@@ -58,6 +60,8 @@ export interface PublicUnitView {
 
 // TECH-SPEC §5.2 — contratto PlayerView filtrato per singolo giocatore
 export interface PlayerView {
+  rulesetVersion?: ContentVersion;
+  catalogVersion?: ContentVersion;
   me: PlayerId;
   stateVersion: number;
   era: EraNo;
@@ -67,6 +71,10 @@ export interface PlayerView {
   toAct: PlayerId | null;
   deadline: number | null; // epoch ms del server, null in locale
   self: {
+    civilizationId?: CivilizationId;
+    organizationUsed?: boolean;
+    structures?: CardInstance[];
+    marketUsed?: boolean;
     hand: CardInstance[];
     resources: Resources;
     buildings: CardInstance[];
@@ -84,6 +92,9 @@ export interface PlayerView {
     legal: LegalCommands;
   };
   opponent: {
+    civilizationId?: CivilizationId;
+    structures?: CardInstance[];
+    marketUsed?: boolean;
     handCount: number;
     resources: Resources | null; // null in 'mulligan'/'hand_limit'/'development', visibile da 'prebattle'
     coveredCount: number; // carte coperte nella città avversaria (vedi 5.3)
@@ -111,6 +122,10 @@ export interface DeckSubdecks {
 }
 
 export interface DeckPayload {
+  schemaVersion?: 1 | 2;
+  rulesetVersion?: ContentVersion;
+  catalogVersion?: ContentVersion;
+  civilizationId?: CivilizationId;
   id?: string;
   name: string;
   description?: string;
@@ -118,6 +133,8 @@ export interface DeckPayload {
 }
 
 export type DeckValidationErrorCode =
+  | 'INCOMPATIBLE_VERSION'
+  | 'WRONG_CIVILIZATION'
   | 'INVALID_SUBDECK_LENGTH'
   | 'UNKNOWN_CARD_ID'
   | 'WRONG_CARD_ERA'
@@ -133,6 +150,7 @@ export interface ValidationIssue {
 
 // TECH-SPEC §4.6, Appendice A — configurazione di avvio partita per createGame
 export interface NewGameConfig {
+  civilizations?: Record<PlayerId, CivilizationId>;
   seed: string;
   catalog: Record<string, CardRules>;
   decks?: Record<PlayerId, DeckPayload>;

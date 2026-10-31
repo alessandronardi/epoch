@@ -46,7 +46,7 @@ describe('Tutorial interattivo sul tavolo', () => {
     const onBackHome = vi.fn();
     render(
       <StrictMode>
-        <TutorialScreen onBackHome={onBackHome} />
+        <TutorialScreen initialModule="main" onBackHome={onBackHome} />
       </StrictMode>,
     );
     playMainTutorial();
@@ -82,7 +82,7 @@ describe('Tutorial interattivo sul tavolo', () => {
   it('rifiuta scelte fuori obiettivo, permette di riprovare e pulisce finestre e code al riavvio e uscita', () => {
     vi.useFakeTimers();
     const onBackHome = vi.fn();
-    const { unmount } = render(<TutorialScreen onBackHome={onBackHome} />);
+    const { unmount } = render(<TutorialScreen initialModule="main" onBackHome={onBackHome} />);
     const original = useGameStore.getState().view;
     fireEvent.click(screen.getByTestId('mulligan-submit-btn'));
     expect(useGameStore.getState().view).toEqual(original);

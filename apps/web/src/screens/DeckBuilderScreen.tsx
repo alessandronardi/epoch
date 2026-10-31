@@ -1,5 +1,5 @@
 import { useStore } from 'zustand';
-import { CARD_CATALOG } from '@epochs/content';
+import { getCatalog, CIVILIZATIONS, type CivilizationId } from '@epochs/content';
 import type { CardType, EraNo, Resource } from '@epochs/engine';
 import { useState, type ReactElement } from 'react';
 import { Card } from '../components/card/Card.js';
@@ -9,12 +9,13 @@ import {
   ResourceIcon,
 } from '../components/icons/DomainIcons.js';
 import { deckBuilderStore, type DeckBuilderStoreApi } from '../state/deck-builder-store.js';
-import { PRESET_DECK_OPTIONS } from './HomeScreen.js';
+import { PRESET_DECK_OPTIONS } from '../content/presets.js';
 import './deck-builder.css';
 
 const ERAS = [1, 2, 3] as const;
 const RESOURCES = ['food', 'wood', 'metal'] as const;
 const TYPE_LABELS: Record<CardType, string> = {
+  structure: 'Struttura',
   economy: 'Edifici',
   unit: 'Unità',
   instant: 'Istantanee',
@@ -78,6 +79,8 @@ export function DeckBuilderScreen({
   onJsonImport,
 }: DeckBuilderScreenProps): ReactElement {
   const state = useStore(store, (state) => state);
+  const CARD_CATALOG = getCatalog(state.draft.catalogVersion ?? '1.0');
+  const [migrationCivilization, setMigrationCivilization] = useState<CivilizationId>('feudal');
   const [era, setEra] = useState<EraNo>(1);
   const [type, setType] = useState<CardType | 'all'>('all');
   const [search, setSearch] = useState('');
@@ -131,6 +134,51 @@ export function DeckBuilderScreen({
 
         <section className="deck-builder__panel" aria-label="Gestione mazzo">
           <div className="deck-builder__fields">
+            <label>
+              Civiltà
+              <select
+                aria-label="Civiltà"
+                value={state.draft.civilizationId ?? ''}
+                onChange={(e) => state.setCivilization(e.target.value as CivilizationId)}
+              >
+                <option value="" disabled>
+                  Catalogo classico v1
+                </option>
+                {Object.entries(CIVILIZATIONS).map(([id, c]) => (
+                  <option key={id} value={id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {(state.draft.catalogVersion ?? '1.0') === '1.0' && (
+              <div>
+                <label>
+                  Civiltà della copia migrata
+                  <select
+                    value={migrationCivilization}
+                    onChange={(e) => setMigrationCivilization(e.target.value as CivilizationId)}
+                  >
+                    {Object.entries(CIVILIZATIONS).map(([id, c]) => (
+                      <option key={id} value={id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setNotice(
+                      state.migrateToCivilization(migrationCivilization).join('; ') ||
+                        'Copia v2 creata senza sostituzioni.',
+                    )
+                  }
+                >
+                  Crea copia v2
+                </button>
+              </div>
+            )}
             <label>
               Nome del mazzo
               <input
@@ -369,10 +417,16 @@ export function DeckBuilderScreen({
                 </select>
               </label>
             </div>
-            <p>Massimo 3 copie per carta. Tocca una carta per leggerla.</p>
+            <p>
+              Massimo 3 copie per carta. Le Strutture occupano uno slot e non producono risorse.
+            </p>
             <div className="deck-builder__catalog">
               {filteredCards.map((card) => {
                 const count = cards.filter((id) => id === card.id).length;
+                const excluded =
+                  card.rules.affiliation &&
+                  card.rules.affiliation !== 'common' &&
+                  card.rules.affiliation !== state.draft.civilizationId;
                 return (
                   <div className="deck-builder__catalog-card" key={card.id}>
                     <Card card={card} onSelect={onInspectCard} onInspect={onInspectCard} />
@@ -380,13 +434,13 @@ export function DeckBuilderScreen({
                       type="button"
                       data-testid={`deck-add-${card.id}`}
                       aria-label={`Aggiungi · ${count}/3 — ${card.text.name}`}
-                      disabled={count >= 3 || cards.length >= 20}
+                      disabled={Boolean(excluded) || count >= 3 || cards.length >= 20}
                       onClick={() => {
                         state.addCard(card.id);
                         setNotice('');
                       }}
                     >
-                      Aggiungi · {count}/3
+                      {excluded ? 'Esclusiva di un’altra civiltà' : `Aggiungi · ${count}/3`}
                     </button>
                   </div>
                 );

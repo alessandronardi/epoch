@@ -2,6 +2,8 @@
 // Calcolo puro delle mosse legali (legalCommands) e dei motivi esatti di non giocabilità (UnplayableReason).
 
 import { HAND_LIMIT } from './discard-policy.js';
+import { effectiveCardCost } from './civilizations.js';
+import { legalMarketCommands } from './structures.js';
 import { canAfford, getLogisticsCap } from './economy.js';
 import type { CardInstance, CardRules, GameState, PlayerId } from './types.js';
 import type { CardPlayability, LegalCommands } from './view-types.js';
@@ -53,7 +55,9 @@ export function evaluateCardPlayability(
     if (rules.type !== 'instant') {
       return { playable: false, reason: 'wrong_phase' };
     }
-    if (!canAfford(playerState.resources, rules.cost)) {
+    if (
+      !canAfford(playerState.resources, effectiveCardCost(rules, playerState, state.rulesetVersion))
+    ) {
       return { playable: false, reason: 'insufficient_resources' };
     }
     return { playable: true };
@@ -78,7 +82,12 @@ export function evaluateCardPlayability(
       if (playerState.buildings.length === 0) {
         return { playable: false, reason: 'no_building_to_sacrifice' };
       }
-      if (!canAfford(playerState.resources, rules.cost)) {
+      if (
+        !canAfford(
+          playerState.resources,
+          effectiveCardCost(rules, playerState, state.rulesetVersion),
+        )
+      ) {
         return { playable: false, reason: 'insufficient_resources' };
       }
       return { playable: true };
@@ -88,7 +97,9 @@ export function evaluateCardPlayability(
     if (playerState.slotsUsed >= getLogisticsCap(state.era)) {
       return { playable: false, reason: 'no_slot' };
     }
-    if (!canAfford(playerState.resources, rules.cost)) {
+    if (
+      !canAfford(playerState.resources, effectiveCardCost(rules, playerState, state.rulesetVersion))
+    ) {
       return { playable: false, reason: 'insufficient_resources' };
     }
     return { playable: true };
@@ -102,10 +113,7 @@ export function evaluateCardPlayability(
  * Calcola tutte le mosse valide per `player` nello stato corrente e, per ogni carta in mano,
  * restituisce lo stato di giocabilità o il motivo esatto di blocco (TECH-SPEC §4.6).
  */
-export function legalCommands(
-  state: Readonly<GameState>,
-  player: PlayerId,
-): LegalCommands {
+export function legalCommands(state: Readonly<GameState>, player: PlayerId): LegalCommands {
   const playerState = state.players[player];
   const hasCommitted = state.pending[player] !== undefined;
 
@@ -116,14 +124,11 @@ export function legalCommands(
     : 0;
 
   const excessHandCards = Math.max(0, playerState.hand.length - HAND_LIMIT);
-  const canSubmitDiscard =
-    state.phase === 'hand_limit' && !hasCommitted && excessHandCards > 0;
+  const canSubmitDiscard = state.phase === 'hand_limit' && !hasCommitted && excessHandCards > 0;
   const mustDiscardCount = canSubmitDiscard ? excessHandCards : 0;
 
   const isDevelopmentTurn =
-    state.phase === 'development' &&
-    state.toAct === player &&
-    !playerState.passed;
+    state.phase === 'development' && state.toAct === player && !playerState.passed;
   const canPass = isDevelopmentTurn;
 
   const canLockInstants = state.phase === 'prebattle' && !hasCommitted;
@@ -139,7 +144,7 @@ export function legalCommands(
 
     if (playability.playable) {
       const rules = state.catalog[card.cardId]!;
-      if (rules.type === 'economy' || rules.type === 'unit') {
+      if (rules.type === 'economy' || rules.type === 'unit' || rules.type === 'structure') {
         playableFieldCardUids.push(card.uid);
       } else if (rules.type === 'conversion') {
         playableConversionUids.push(card.uid);
@@ -150,18 +155,15 @@ export function legalCommands(
   }
 
   const sacrificableBuildingUids =
-    playableConversionUids.length > 0
-      ? playerState.buildings.map((b) => b.uid)
-      : [];
+    playableConversionUids.length > 0 ? playerState.buildings.map((b) => b.uid) : [];
 
-  const canAct =
-    canSubmitMulligan ||
-    canSubmitDiscard ||
-    isDevelopmentTurn ||
-    canLockInstants;
+  const canAct = canSubmitMulligan || canSubmitDiscard || isDevelopmentTurn || canLockInstants;
 
   return {
     phase: state.phase,
+    ...(state.rulesetVersion === '2.0'
+      ? { marketCommands: legalMarketCommands(state, player) }
+      : {}),
     canAct,
     canSubmitMulligan,
     maxMulliganCards,

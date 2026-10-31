@@ -1,0 +1,5173 @@
+{
+  "iteration": "01e581b903b4",
+  "rulesetVersion": "2.0",
+  "catalogVersion": "2.0",
+  "catalog": {
+    "b1_granary": {
+      "affiliation": "byzantine",
+      "id": "b1_granary",
+      "era": 1,
+      "type": "economy",
+      "cost": {
+        "food": 0,
+        "wood": 3,
+        "metal": 0
+      },
+      "production": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      },
+      "abilities": []
+    },
+    "b1_spearman": {
+      "affiliation": "byzantine",
+      "id": "b1_spearman",
+      "era": 1,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "atk": 1,
+      "dem": 1,
+      "hp": 5,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 3
+        }
+      ]
+    },
+    "b1_watch": {
+      "affiliation": "byzantine",
+      "id": "b1_watch",
+      "era": 1,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 2,
+        "wood": 1,
+        "metal": 0
+      },
+      "atk": 1,
+      "dem": 1,
+      "hp": 5,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "discipline",
+          "amount": 1
+        }
+      ]
+    },
+    "b2_archer": {
+      "affiliation": "byzantine",
+      "id": "b2_archer",
+      "era": 2,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "metal": 1
+      },
+      "atk": 4,
+      "dem": 0,
+      "hp": 4,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 2
+        },
+        {
+          "kind": "discipline",
+          "amount": 1
+        }
+      ]
+    },
+    "b2_cistern": {
+      "affiliation": "byzantine",
+      "structureEffect": {
+        "kind": "era_walls",
+        "amount": 2
+      },
+      "id": "b2_cistern",
+      "era": 2,
+      "type": "structure",
+      "cost": {
+        "food": 1,
+        "wood": 3,
+        "metal": 1
+      },
+      "abilities": []
+    },
+    "b2_skoutatos": {
+      "affiliation": "byzantine",
+      "id": "b2_skoutatos",
+      "era": 2,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 3,
+        "wood": 1,
+        "metal": 2
+      },
+      "atk": 4,
+      "dem": 2,
+      "hp": 9,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "discipline",
+          "amount": 1
+        }
+      ]
+    },
+    "b3_arsenal": {
+      "affiliation": "byzantine",
+      "id": "b3_arsenal",
+      "era": 3,
+      "type": "conversion",
+      "cost": {
+        "food": 1,
+        "wood": 1,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "gain_and_dem_bonus",
+        "gain": {
+          "food": 0,
+          "wood": 1,
+          "metal": 4
+        },
+        "demBonus": 1
+      }
+    },
+    "b3_standard": {
+      "affiliation": "byzantine",
+      "id": "b3_standard",
+      "era": 3,
+      "type": "instant",
+      "cost": {
+        "food": 2,
+        "wood": 1,
+        "metal": 1
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "walls_mod",
+        "target": "own",
+        "amount": 4
+      }
+    },
+    "e1_farm": {
+      "affiliation": "common",
+      "id": "e1_farm",
+      "era": 1,
+      "type": "economy",
+      "cost": {
+        "food": 0,
+        "wood": 2,
+        "metal": 0
+      },
+      "production": {
+        "food": 1,
+        "wood": 0,
+        "metal": 0
+      },
+      "abilities": []
+    },
+    "e1_lumb": {
+      "affiliation": "common",
+      "id": "e1_lumb",
+      "era": 1,
+      "type": "economy",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      },
+      "production": {
+        "food": 0,
+        "wood": 1,
+        "metal": 0
+      },
+      "abilities": []
+    },
+    "e1_mine": {
+      "affiliation": "common",
+      "id": "e1_mine",
+      "era": 1,
+      "type": "economy",
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "metal": 0
+      },
+      "production": {
+        "food": 0,
+        "wood": 0,
+        "metal": 1
+      },
+      "abilities": []
+    },
+    "e2_fnd": {
+      "affiliation": "common",
+      "id": "e2_fnd",
+      "era": 2,
+      "type": "economy",
+      "cost": {
+        "food": 2,
+        "wood": 3,
+        "metal": 0
+      },
+      "production": {
+        "food": 0,
+        "wood": 0,
+        "metal": 2
+      },
+      "abilities": []
+    },
+    "e2_mill": {
+      "affiliation": "common",
+      "id": "e2_mill",
+      "era": 2,
+      "type": "economy",
+      "cost": {
+        "food": 1,
+        "wood": 3,
+        "metal": 1
+      },
+      "production": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      },
+      "abilities": []
+    },
+    "e2_saw": {
+      "affiliation": "common",
+      "id": "e2_saw",
+      "era": 2,
+      "type": "economy",
+      "cost": {
+        "food": 3,
+        "wood": 1,
+        "metal": 1
+      },
+      "production": {
+        "food": 0,
+        "wood": 2,
+        "metal": 0
+      },
+      "abilities": []
+    },
+    "e3_frn": {
+      "affiliation": "common",
+      "id": "e3_frn",
+      "era": 3,
+      "type": "conversion",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "gain_and_dem_bonus",
+        "gain": {
+          "food": 0,
+          "wood": 2,
+          "metal": 3
+        },
+        "demBonus": 1
+      }
+    },
+    "e3_gld": {
+      "affiliation": "common",
+      "id": "e3_gld",
+      "era": 3,
+      "type": "conversion",
+      "cost": {
+        "food": 0,
+        "wood": 1,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "gain_per_building",
+        "perBuilding": {
+          "food": 1,
+          "wood": 1,
+          "metal": 1
+        }
+      }
+    },
+    "f2_market": {
+      "affiliation": "feudal",
+      "structureEffect": {
+        "kind": "market"
+      },
+      "id": "f2_market",
+      "era": 2,
+      "type": "structure",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "abilities": []
+    },
+    "i1_arr": {
+      "affiliation": "common",
+      "id": "i1_arr",
+      "era": 1,
+      "type": "instant",
+      "cost": {
+        "food": 0,
+        "wood": 2,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "atk_mod",
+        "target": "own_archers",
+        "amount": 2
+      }
+    },
+    "i1_wall": {
+      "affiliation": "common",
+      "id": "i1_wall",
+      "era": 1,
+      "type": "instant",
+      "cost": {
+        "food": 0,
+        "wood": 2,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "walls_mod",
+        "target": "own",
+        "amount": 3
+      }
+    },
+    "i2_mor": {
+      "affiliation": "common",
+      "id": "i2_mor",
+      "era": 2,
+      "type": "instant",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 1
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "atk_mod",
+        "target": "own_front",
+        "amount": 2
+      }
+    },
+    "i2_sab": {
+      "affiliation": "common",
+      "id": "i2_sab",
+      "era": 2,
+      "type": "instant",
+      "cost": {
+        "food": 1,
+        "wood": 0,
+        "metal": 2
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "walls_mod",
+        "target": "enemy",
+        "amount": -4
+      }
+    },
+    "i3_fir": {
+      "affiliation": "common",
+      "id": "i3_fir",
+      "era": 3,
+      "type": "instant",
+      "cost": {
+        "food": 0,
+        "wood": 2,
+        "metal": 3
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "walls_mod",
+        "target": "enemy",
+        "amount": -6
+      }
+    },
+    "i3_ral": {
+      "affiliation": "common",
+      "id": "i3_ral",
+      "era": 3,
+      "type": "instant",
+      "cost": {
+        "food": 3,
+        "wood": 0,
+        "metal": 2
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "atk_mod",
+        "target": "own_front",
+        "amount": 2
+      }
+    },
+    "n1_longhouse": {
+      "affiliation": "norse",
+      "id": "n1_longhouse",
+      "era": 1,
+      "type": "economy",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "production": {
+        "food": 1,
+        "wood": 0,
+        "metal": 0
+      },
+      "abilities": []
+    },
+    "n1_raider": {
+      "affiliation": "norse",
+      "id": "n1_raider",
+      "era": 1,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      },
+      "atk": 2,
+      "dem": 1,
+      "hp": 2,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "fury",
+          "amount": 2
+        }
+      ]
+    },
+    "n1_thing": {
+      "affiliation": "norse",
+      "id": "n1_thing",
+      "era": 1,
+      "type": "instant",
+      "cost": {
+        "food": 1,
+        "wood": 1,
+        "metal": 0
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "atk_mod",
+        "target": "own_infantry",
+        "amount": 1
+      }
+    },
+    "n2_axeman": {
+      "affiliation": "norse",
+      "id": "n2_axeman",
+      "era": 2,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "metal": 1
+      },
+      "atk": 2,
+      "dem": 1,
+      "hp": 7,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 5
+        }
+      ]
+    },
+    "n2_huscarl": {
+      "affiliation": "norse",
+      "id": "n2_huscarl",
+      "era": 2,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 3,
+        "wood": 1,
+        "metal": 1
+      },
+      "atk": 5,
+      "dem": 2,
+      "hp": 6,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "fury",
+          "amount": 2
+        }
+      ]
+    },
+    "n2_landing": {
+      "affiliation": "norse",
+      "id": "n2_landing",
+      "era": 2,
+      "type": "economy",
+      "cost": {
+        "food": 2,
+        "wood": 3,
+        "metal": 0
+      },
+      "production": {
+        "food": 1,
+        "wood": 1,
+        "metal": 0
+      },
+      "abilities": []
+    },
+    "n3_guard": {
+      "affiliation": "norse",
+      "id": "n3_guard",
+      "era": 3,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 4,
+        "wood": 2,
+        "metal": 2
+      },
+      "atk": 6,
+      "dem": 2,
+      "hp": 11,
+      "isCombatant": true,
+      "abilities": []
+    },
+    "n3_oath": {
+      "affiliation": "norse",
+      "id": "n3_oath",
+      "era": 3,
+      "type": "instant",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 1
+      },
+      "abilities": [],
+      "effect": {
+        "kind": "atk_mod",
+        "target": "own_infantry",
+        "amount": 2
+      }
+    },
+    "u1_arc_h": {
+      "affiliation": "common",
+      "id": "u1_arc_h",
+      "era": 1,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "atk": 3,
+      "dem": 0,
+      "hp": 2,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 1
+        }
+      ]
+    },
+    "u1_arc_l": {
+      "affiliation": "common",
+      "id": "u1_arc_l",
+      "era": 1,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 1,
+        "wood": 1,
+        "metal": 0
+      },
+      "atk": 2,
+      "dem": 0,
+      "hp": 1,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 1
+        }
+      ]
+    },
+    "u1_cav_h": {
+      "affiliation": "common",
+      "id": "u1_cav_h",
+      "era": 1,
+      "type": "unit",
+      "category": "cavalry",
+      "line": "center",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 1
+      },
+      "atk": 4,
+      "dem": 1,
+      "hp": 3,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 1
+        }
+      ]
+    },
+    "u1_cav_l": {
+      "affiliation": "common",
+      "id": "u1_cav_l",
+      "era": 1,
+      "type": "unit",
+      "category": "cavalry",
+      "line": "center",
+      "cost": {
+        "food": 3,
+        "wood": 0,
+        "metal": 0
+      },
+      "atk": 2,
+      "dem": 1,
+      "hp": 3,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 1
+        }
+      ]
+    },
+    "u1_inf_h": {
+      "affiliation": "common",
+      "id": "u1_inf_h",
+      "era": 1,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 2,
+        "wood": 1,
+        "metal": 0
+      },
+      "atk": 2,
+      "dem": 1,
+      "hp": 5,
+      "isCombatant": true,
+      "abilities": []
+    },
+    "u1_inf_l": {
+      "affiliation": "common",
+      "id": "u1_inf_l",
+      "era": 1,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 2,
+        "wood": 0,
+        "metal": 0
+      },
+      "atk": 2,
+      "dem": 1,
+      "hp": 3,
+      "isCombatant": true,
+      "abilities": []
+    },
+    "u1_sig_h": {
+      "affiliation": "common",
+      "id": "u1_sig_h",
+      "era": 1,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 3,
+        "metal": 1
+      },
+      "atk": 0,
+      "dem": 6,
+      "hp": 3,
+      "isCombatant": false,
+      "abilities": []
+    },
+    "u1_sig_l": {
+      "affiliation": "common",
+      "id": "u1_sig_l",
+      "era": 1,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "atk": 0,
+      "dem": 2,
+      "hp": 2,
+      "isCombatant": false,
+      "abilities": []
+    },
+    "u1_spr_h": {
+      "affiliation": "common",
+      "id": "u1_spr_h",
+      "era": 1,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 1,
+        "wood": 2,
+        "metal": 0
+      },
+      "atk": 2,
+      "dem": 1,
+      "hp": 4,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 3
+        }
+      ]
+    },
+    "u1_spr_l": {
+      "affiliation": "common",
+      "id": "u1_spr_l",
+      "era": 1,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 1,
+        "wood": 1,
+        "metal": 0
+      },
+      "atk": 1,
+      "dem": 0,
+      "hp": 3,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 3
+        }
+      ]
+    },
+    "u2_arc_h": {
+      "affiliation": "common",
+      "id": "u2_arc_h",
+      "era": 2,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 1,
+        "wood": 3,
+        "metal": 1
+      },
+      "atk": 5,
+      "dem": 0,
+      "hp": 3,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 2
+        }
+      ]
+    },
+    "u2_arc_l": {
+      "affiliation": "common",
+      "id": "u2_arc_l",
+      "era": 2,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 1,
+        "wood": 3,
+        "metal": 0
+      },
+      "atk": 4,
+      "dem": 0,
+      "hp": 2,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 2
+        }
+      ]
+    },
+    "u2_cav_h": {
+      "affiliation": "common",
+      "id": "u2_cav_h",
+      "era": 2,
+      "type": "unit",
+      "category": "cavalry",
+      "line": "center",
+      "cost": {
+        "food": 3,
+        "wood": 0,
+        "metal": 2
+      },
+      "atk": 6,
+      "dem": 2,
+      "hp": 6,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 2
+        }
+      ]
+    },
+    "u2_inf_h": {
+      "affiliation": "common",
+      "id": "u2_inf_h",
+      "era": 2,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 3,
+        "wood": 1,
+        "metal": 1
+      },
+      "atk": 4,
+      "dem": 2,
+      "hp": 8,
+      "isCombatant": true,
+      "abilities": []
+    },
+    "u2_inf_l": {
+      "affiliation": "common",
+      "id": "u2_inf_l",
+      "era": 2,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 3,
+        "wood": 0,
+        "metal": 1
+      },
+      "atk": 5,
+      "dem": 2,
+      "hp": 5,
+      "isCombatant": true,
+      "abilities": []
+    },
+    "u2_lancer": {
+      "affiliation": "common",
+      "id": "u2_lancer",
+      "era": 2,
+      "type": "unit",
+      "category": "cavalry",
+      "line": "center",
+      "cost": {
+        "food": 3,
+        "wood": 1,
+        "metal": 1
+      },
+      "atk": 5,
+      "dem": 2,
+      "hp": 4,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 2
+        }
+      ]
+    },
+    "u2_sig_h": {
+      "affiliation": "common",
+      "id": "u2_sig_h",
+      "era": 2,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 4,
+        "metal": 2
+      },
+      "atk": 0,
+      "dem": 10,
+      "hp": 5,
+      "isCombatant": false,
+      "abilities": []
+    },
+    "u2_sig_l": {
+      "affiliation": "common",
+      "id": "u2_sig_l",
+      "era": 2,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 3,
+        "metal": 1
+      },
+      "atk": 0,
+      "dem": 6,
+      "hp": 3,
+      "isCombatant": false,
+      "abilities": []
+    },
+    "u2_spr_h": {
+      "affiliation": "common",
+      "id": "u2_spr_h",
+      "era": 2,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 2,
+        "wood": 3,
+        "metal": 1
+      },
+      "atk": 3,
+      "dem": 2,
+      "hp": 6,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 5
+        }
+      ]
+    },
+    "u2_spr_l": {
+      "affiliation": "common",
+      "id": "u2_spr_l",
+      "era": 2,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "metal": 0
+      },
+      "atk": 3,
+      "dem": 1,
+      "hp": 5,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 5
+        }
+      ]
+    },
+    "u3_arc_l": {
+      "affiliation": "common",
+      "id": "u3_arc_l",
+      "era": 3,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 2,
+        "wood": 4,
+        "metal": 1
+      },
+      "atk": 6,
+      "dem": 0,
+      "hp": 4,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 3
+        }
+      ]
+    },
+    "u3_cav_h": {
+      "affiliation": "byzantine",
+      "id": "u3_cav_h",
+      "era": 3,
+      "type": "unit",
+      "category": "cavalry",
+      "line": "center",
+      "cost": {
+        "food": 5,
+        "wood": 0,
+        "metal": 4
+      },
+      "atk": 9,
+      "dem": 3,
+      "hp": 8,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 3
+        },
+        {
+          "kind": "discipline",
+          "amount": 1
+        }
+      ]
+    },
+    "u3_crossbow": {
+      "affiliation": "common",
+      "id": "u3_crossbow",
+      "era": 3,
+      "type": "unit",
+      "category": "archer",
+      "line": "rear",
+      "cost": {
+        "food": 2,
+        "wood": 3,
+        "metal": 3
+      },
+      "atk": 8,
+      "dem": 1,
+      "hp": 4,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "volley",
+          "bonusVsSpearman": 3
+        }
+      ]
+    },
+    "u3_inf_h": {
+      "affiliation": "common",
+      "id": "u3_inf_h",
+      "era": 3,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 4,
+        "wood": 1,
+        "metal": 3
+      },
+      "atk": 6,
+      "dem": 3,
+      "hp": 12,
+      "isCombatant": true,
+      "abilities": []
+    },
+    "u3_inf_l": {
+      "affiliation": "norse",
+      "id": "u3_inf_l",
+      "era": 3,
+      "type": "unit",
+      "category": "infantry",
+      "line": "front",
+      "cost": {
+        "food": 4,
+        "wood": 0,
+        "metal": 2
+      },
+      "atk": 8,
+      "dem": 3,
+      "hp": 8,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "fury",
+          "amount": 2
+        }
+      ]
+    },
+    "u3_knight": {
+      "affiliation": "common",
+      "id": "u3_knight",
+      "era": 3,
+      "type": "unit",
+      "category": "cavalry",
+      "line": "center",
+      "cost": {
+        "food": 4,
+        "wood": 1,
+        "metal": 2
+      },
+      "atk": 7,
+      "dem": 2,
+      "hp": 6,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "flank",
+          "bonusVsArcher": 3
+        }
+      ]
+    },
+    "u3_ram": {
+      "affiliation": "common",
+      "id": "u3_ram",
+      "era": 3,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 7,
+        "metal": 3
+      },
+      "atk": 0,
+      "dem": 16,
+      "hp": 9,
+      "isCombatant": false,
+      "abilities": []
+    },
+    "u3_sig_l": {
+      "affiliation": "common",
+      "id": "u3_sig_l",
+      "era": 3,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 5,
+        "metal": 2
+      },
+      "atk": 0,
+      "dem": 11,
+      "hp": 8,
+      "isCombatant": false,
+      "abilities": []
+    },
+    "u3_sig_m": {
+      "affiliation": "common",
+      "id": "u3_sig_m",
+      "era": 3,
+      "type": "unit",
+      "category": "siege",
+      "line": "rear",
+      "cost": {
+        "food": 0,
+        "wood": 6,
+        "metal": 3
+      },
+      "atk": 0,
+      "dem": 15,
+      "hp": 5,
+      "isCombatant": false,
+      "abilities": []
+    },
+    "u3_spr_h": {
+      "affiliation": "common",
+      "id": "u3_spr_h",
+      "era": 3,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 3,
+        "wood": 4,
+        "metal": 2
+      },
+      "atk": 5,
+      "dem": 2,
+      "hp": 9,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 7
+        }
+      ]
+    },
+    "u3_spr_l": {
+      "affiliation": "common",
+      "id": "u3_spr_l",
+      "era": 3,
+      "type": "unit",
+      "category": "spearman",
+      "line": "front",
+      "cost": {
+        "food": 3,
+        "wood": 3,
+        "metal": 1
+      },
+      "atk": 4,
+      "dem": 2,
+      "hp": 7,
+      "isCombatant": true,
+      "abilities": [
+        {
+          "kind": "impale",
+          "damage": 7
+        }
+      ]
+    }
+  },
+  "decks": [
+    {
+      "schemaVersion": 2,
+      "rulesetVersion": "2.0",
+      "catalogVersion": "2.0",
+      "civilizationId": "feudal",
+      "id": "balanced-tactical-v2",
+      "name": "Equilibrio Tattico",
+      "description": "Regni feudali: economia, esercito misto e adattamento.",
+      "subdecks": {
+        "1": [
+          "e1_farm",
+          "e1_farm",
+          "e1_lumb",
+          "e1_lumb",
+          "e1_mine",
+          "e1_mine",
+          "u1_inf_h",
+          "u1_inf_h",
+          "u1_spr_l",
+          "u1_spr_l",
+          "u1_spr_h",
+          "u1_arc_l",
+          "u1_arc_l",
+          "u1_arc_h",
+          "u1_cav_l",
+          "u1_cav_h",
+          "u1_sig_l",
+          "i1_arr",
+          "i1_arr",
+          "i1_wall"
+        ],
+        "2": [
+          "e2_mill",
+          "e2_saw",
+          "e2_fnd",
+          "f2_market",
+          "u2_inf_l",
+          "u2_inf_l",
+          "u2_inf_h",
+          "u2_inf_h",
+          "u2_spr_l",
+          "u2_spr_l",
+          "u2_spr_h",
+          "u2_arc_l",
+          "u2_arc_h",
+          "u2_arc_h",
+          "u2_lancer",
+          "u2_cav_h",
+          "u2_sig_l",
+          "i2_sab",
+          "i2_mor",
+          "i2_mor"
+        ],
+        "3": [
+          "u3_inf_h",
+          "u3_inf_h",
+          "u3_inf_h",
+          "u3_spr_l",
+          "u3_spr_l",
+          "u3_spr_h",
+          "u3_spr_h",
+          "u3_arc_l",
+          "u3_arc_l",
+          "u3_crossbow",
+          "u3_knight",
+          "u3_knight",
+          "u3_sig_l",
+          "u3_sig_m",
+          "i3_fir",
+          "i3_fir",
+          "i3_ral",
+          "i3_ral",
+          "e3_gld",
+          "e3_frn"
+        ]
+      }
+    },
+    {
+      "schemaVersion": 2,
+      "rulesetVersion": "2.0",
+      "catalogVersion": "2.0",
+      "civilizationId": "norse",
+      "id": "aggro-breach-v2",
+      "name": "Assalto e Breccia",
+      "description": "Norreni: pressione, fanteria e bottino dalle brecce.",
+      "subdecks": {
+        "1": [
+          "n1_longhouse",
+          "e1_lumb",
+          "e1_mine",
+          "n1_raider",
+          "n1_raider",
+          "n1_raider",
+          "u1_inf_h",
+          "u1_inf_h",
+          "u1_inf_l",
+          "u1_spr_l",
+          "u1_spr_l",
+          "u1_arc_l",
+          "u1_arc_l",
+          "u1_cav_l",
+          "u1_sig_l",
+          "u1_sig_l",
+          "u1_sig_h",
+          "n1_thing",
+          "n1_thing",
+          "i1_arr"
+        ],
+        "2": [
+          "n2_landing",
+          "e2_mill",
+          "e2_fnd",
+          "n2_huscarl",
+          "n2_huscarl",
+          "n2_huscarl",
+          "n2_axeman",
+          "n2_axeman",
+          "u2_inf_l",
+          "u2_inf_l",
+          "u2_arc_l",
+          "u2_arc_l",
+          "u2_lancer",
+          "u2_spr_l",
+          "u2_sig_l",
+          "u2_sig_l",
+          "u2_sig_h",
+          "i2_sab",
+          "i2_sab",
+          "i2_mor"
+        ],
+        "3": [
+          "u3_inf_l",
+          "u3_inf_l",
+          "u3_inf_l",
+          "n3_guard",
+          "n3_guard",
+          "u3_spr_l",
+          "u3_spr_l",
+          "u3_arc_l",
+          "u3_arc_l",
+          "u3_knight",
+          "u3_sig_l",
+          "u3_sig_l",
+          "u3_sig_m",
+          "u3_sig_m",
+          "n3_oath",
+          "n3_oath",
+          "i3_fir",
+          "i3_fir",
+          "e3_frn",
+          "e3_frn"
+        ]
+      }
+    },
+    {
+      "schemaVersion": 2,
+      "rulesetVersion": "2.0",
+      "catalogVersion": "2.0",
+      "civilizationId": "byzantine",
+      "id": "boom-economy-v2",
+      "name": "Sviluppo Imperiale",
+      "description": "Bizantini: investimenti, difesa e contrattacco pesante.",
+      "subdecks": {
+        "1": [
+          "b1_granary",
+          "b1_granary",
+          "e1_lumb",
+          "e1_lumb",
+          "e1_lumb",
+          "e1_mine",
+          "e1_mine",
+          "b1_spearman",
+          "b1_spearman",
+          "b1_spearman",
+          "b1_watch",
+          "b1_watch",
+          "u1_inf_h",
+          "u1_arc_l",
+          "u1_arc_l",
+          "u1_cav_l",
+          "u1_sig_l",
+          "i1_wall",
+          "i1_wall",
+          "i1_arr"
+        ],
+        "2": [
+          "b2_cistern",
+          "e2_mill",
+          "e2_saw",
+          "e2_fnd",
+          "e2_fnd",
+          "b2_skoutatos",
+          "b2_skoutatos",
+          "b2_skoutatos",
+          "b2_archer",
+          "b2_archer",
+          "u2_spr_l",
+          "u2_spr_l",
+          "u2_spr_h",
+          "u2_cav_h",
+          "u2_cav_h",
+          "u2_sig_l",
+          "u2_sig_h",
+          "i2_mor",
+          "i2_mor",
+          "i2_sab"
+        ],
+        "3": [
+          "u3_cav_h",
+          "u3_cav_h",
+          "u3_cav_h",
+          "u3_inf_h",
+          "u3_inf_h",
+          "u3_spr_l",
+          "u3_spr_l",
+          "u3_spr_h",
+          "u3_spr_h",
+          "u3_arc_l",
+          "u3_arc_l",
+          "u3_sig_m",
+          "u3_sig_l",
+          "b3_standard",
+          "b3_standard",
+          "i3_ral",
+          "i3_fir",
+          "b3_arsenal",
+          "b3_arsenal",
+          "e3_gld"
+        ]
+      }
+    }
+  ],
+  "seedDerivation": "masterSeed:gameIndex (see deriveGameSeed)",
+  "scoreInterval": "Normal 95% interval from sample variance of scores 0, 0.5, 1; per seed and seat.",
+  "summaries": [
+    {
+      "file": "greedy-0-1-1.json",
+      "bot": "greedy",
+      "pair": [
+        0,
+        1
+      ],
+      "seed": "expansion-calibration-1",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.5575,
+            "ci95": [
+              0.5187099641090381,
+              0.5962900358909619
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.565,
+            "ci95": [
+              0.5135282032702776,
+              0.6164717967297223
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.55,
+            "ci95": [
+              0.4917303377789648,
+              0.6082696622210353
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4405,
+              "wood": 4191,
+              "metal": 2633
+            },
+            "spent": {
+              "food": 4028,
+              "wood": 3966,
+              "metal": 1504
+            },
+            "overflow": {
+              "food": 200,
+              "wood": 143,
+              "metal": 181
+            },
+            "slots": {
+              "economy": 733,
+              "structure": 48,
+              "unit": 1715
+            },
+            "organization": 599,
+            "market": 77,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 208
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.4425,
+            "ci95": [
+              0.40370996410903814,
+              0.48129003589096186
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.45,
+            "ci95": [
+              0.3917303377789648,
+              0.5082696622210352
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.435,
+            "ci95": [
+              0.38352820327027765,
+              0.48647179672972235
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4358,
+              "wood": 3767,
+              "metal": 1944
+            },
+            "spent": {
+              "food": 3827,
+              "wood": 2980,
+              "metal": 977
+            },
+            "overflow": {
+              "food": 82,
+              "wood": 103,
+              "metal": 128
+            },
+            "slots": {
+              "economy": 481,
+              "structure": 0,
+              "unit": 1634
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 184,
+            "discipline": 0,
+            "resourceBlockedPasses": 388
+          }
+        }
+      },
+      "drawRate": 0.675
+    },
+    {
+      "file": "greedy-0-1-2.json",
+      "bot": "greedy",
+      "pair": [
+        0,
+        1
+      ],
+      "seed": "expansion-calibration-2",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.4975,
+            "ci95": [
+              0.4591353131645793,
+              0.5358646868354207
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.505,
+            "ci95": [
+              0.4557629974080223,
+              0.5542370025919777
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.49,
+            "ci95": [
+              0.43093661682291445,
+              0.5490633831770855
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4320,
+              "wood": 4178,
+              "metal": 2561
+            },
+            "spent": {
+              "food": 3828,
+              "wood": 3762,
+              "metal": 1364
+            },
+            "overflow": {
+              "food": 174,
+              "wood": 148,
+              "metal": 178
+            },
+            "slots": {
+              "economy": 698,
+              "structure": 45,
+              "unit": 1665
+            },
+            "organization": 599,
+            "market": 77,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 240
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.5025,
+            "ci95": [
+              0.46413531316457923,
+              0.5408646868354207
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.51,
+            "ci95": [
+              0.45093661682291447,
+              0.5690633831770855
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.495,
+            "ci95": [
+              0.4457629974080223,
+              0.5442370025919777
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4152,
+              "wood": 3796,
+              "metal": 2329
+            },
+            "spent": {
+              "food": 3973,
+              "wood": 3165,
+              "metal": 1105
+            },
+            "overflow": {
+              "food": 26,
+              "wood": 106,
+              "metal": 184
+            },
+            "slots": {
+              "economy": 511,
+              "structure": 0,
+              "unit": 1624
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 183,
+            "discipline": 0,
+            "resourceBlockedPasses": 407
+          }
+        }
+      },
+      "drawRate": 0.695
+    },
+    {
+      "file": "greedy-0-1-3.json",
+      "bot": "greedy",
+      "pair": [
+        0,
+        1
+      ],
+      "seed": "expansion-calibration-3",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.49,
+            "ci95": [
+              0.4483409483675568,
+              0.5316590516324432
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.455,
+            "ci95": [
+              0.3974085479125995,
+              0.5125914520874005
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.525,
+            "ci95": [
+              0.4652913640071957,
+              0.5847086359928044
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4312,
+              "wood": 4205,
+              "metal": 2422
+            },
+            "spent": {
+              "food": 3917,
+              "wood": 3697,
+              "metal": 1393
+            },
+            "overflow": {
+              "food": 137,
+              "wood": 201,
+              "metal": 127
+            },
+            "slots": {
+              "economy": 678,
+              "structure": 46,
+              "unit": 1692
+            },
+            "organization": 599,
+            "market": 73,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 230
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.51,
+            "ci95": [
+              0.4683409483675568,
+              0.5516590516324432
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.475,
+            "ci95": [
+              0.41529136400719563,
+              0.5347086359928044
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.545,
+            "ci95": [
+              0.4874085479125995,
+              0.6025914520874005
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4268,
+              "wood": 3796,
+              "metal": 2186
+            },
+            "spent": {
+              "food": 3984,
+              "wood": 3151,
+              "metal": 1120
+            },
+            "overflow": {
+              "food": 52,
+              "wood": 120,
+              "metal": 102
+            },
+            "slots": {
+              "economy": 509,
+              "structure": 0,
+              "unit": 1635
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 204,
+            "discipline": 0,
+            "resourceBlockedPasses": 411
+          }
+        }
+      },
+      "drawRate": 0.64
+    },
+    {
+      "file": "greedy-0-1-4.json",
+      "bot": "greedy",
+      "pair": [
+        0,
+        1
+      ],
+      "seed": "expansion-calibration-4",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.515,
+            "ci95": [
+              0.47454581721845546,
+              0.5554541827815446
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.53,
+            "ci95": [
+              0.47287365058066644,
+              0.5871263494193336
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.5,
+            "ci95": [
+              0.44256879389788656,
+              0.5574312061021135
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4234,
+              "wood": 4393,
+              "metal": 2525
+            },
+            "spent": {
+              "food": 3799,
+              "wood": 3742,
+              "metal": 1326
+            },
+            "overflow": {
+              "food": 166,
+              "wood": 294,
+              "metal": 193
+            },
+            "slots": {
+              "economy": 706,
+              "structure": 41,
+              "unit": 1661
+            },
+            "organization": 600,
+            "market": 60,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 234
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.485,
+            "ci95": [
+              0.44454581721845543,
+              0.5254541827815445
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.5,
+            "ci95": [
+              0.44256879389788656,
+              0.5574312061021135
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.47,
+            "ci95": [
+              0.4128736505806664,
+              0.5271263494193336
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4328,
+              "wood": 3685,
+              "metal": 2034
+            },
+            "spent": {
+              "food": 3952,
+              "wood": 3032,
+              "metal": 964
+            },
+            "overflow": {
+              "food": 64,
+              "wood": 100,
+              "metal": 89
+            },
+            "slots": {
+              "economy": 486,
+              "structure": 0,
+              "unit": 1658
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 216,
+            "discipline": 0,
+            "resourceBlockedPasses": 377
+          }
+        }
+      },
+      "drawRate": 0.66
+    },
+    {
+      "file": "greedy-0-1-5.json",
+      "bot": "greedy",
+      "pair": [
+        0,
+        1
+      ],
+      "seed": "expansion-calibration-5",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.5075,
+            "ci95": [
+              0.46612137626125577,
+              0.5488786237387442
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.505,
+            "ci95": [
+              0.44842824704569223,
+              0.5615717529543078
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.51,
+            "ci95": [
+              0.44931636600908426,
+              0.5706836339909158
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4275,
+              "wood": 4358,
+              "metal": 2542
+            },
+            "spent": {
+              "food": 3818,
+              "wood": 3769,
+              "metal": 1332
+            },
+            "overflow": {
+              "food": 198,
+              "wood": 211,
+              "metal": 190
+            },
+            "slots": {
+              "economy": 716,
+              "structure": 52,
+              "unit": 1650
+            },
+            "organization": 596,
+            "market": 80,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 212
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.4925,
+            "ci95": [
+              0.4511213762612558,
+              0.5338786237387442
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.49,
+            "ci95": [
+              0.42931636600908424,
+              0.5506836339909158
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.495,
+            "ci95": [
+              0.4384282470456922,
+              0.5515717529543078
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4139,
+              "wood": 3821,
+              "metal": 1936
+            },
+            "spent": {
+              "food": 3848,
+              "wood": 3039,
+              "metal": 978
+            },
+            "overflow": {
+              "food": 60,
+              "wood": 133,
+              "metal": 101
+            },
+            "slots": {
+              "economy": 472,
+              "structure": 0,
+              "unit": 1647
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 171,
+            "discipline": 0,
+            "resourceBlockedPasses": 414
+          }
+        }
+      },
+      "drawRate": 0.645
+    },
+    {
+      "file": "greedy-0-2-1.json",
+      "bot": "greedy",
+      "pair": [
+        0,
+        2
+      ],
+      "seed": "expansion-calibration-1",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.4575,
+            "ci95": [
+              0.42434473028992625,
+              0.4906552697100738
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.44,
+            "ci95": [
+              0.3932180817111154,
+              0.4867819182888846
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.475,
+            "ci95": [
+              0.42802149642677195,
+              0.521978503573228
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4407,
+              "wood": 4195,
+              "metal": 2637
+            },
+            "spent": {
+              "food": 4032,
+              "wood": 3956,
+              "metal": 1478
+            },
+            "overflow": {
+              "food": 198,
+              "wood": 143,
+              "metal": 185
+            },
+            "slots": {
+              "economy": 733,
+              "structure": 48,
+              "unit": 1715
+            },
+            "organization": 599,
+            "market": 76,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 207
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.5425,
+            "ci95": [
+              0.5093447302899262,
+              0.5756552697100737
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.525,
+            "ci95": [
+              0.478021496426772,
+              0.571978503573228
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.56,
+            "ci95": [
+              0.5132180817111154,
+              0.6067819182888847
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6312,
+              "wood": 4588,
+              "metal": 2714
+            },
+            "spent": {
+              "food": 4573,
+              "wood": 4092,
+              "metal": 1683
+            },
+            "overflow": {
+              "food": 1011,
+              "wood": 161,
+              "metal": 291
+            },
+            "slots": {
+              "economy": 799,
+              "structure": 44,
+              "unit": 1543
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 44,
+            "fury": 0,
+            "discipline": 123,
+            "resourceBlockedPasses": 244
+          }
+        }
+      },
+      "drawRate": 0.765
+    },
+    {
+      "file": "greedy-0-2-2.json",
+      "bot": "greedy",
+      "pair": [
+        0,
+        2
+      ],
+      "seed": "expansion-calibration-2",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.42,
+            "ci95": [
+              0.38636601383829705,
+              0.4536339861617029
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.405,
+            "ci95": [
+              0.3553705081161769,
+              0.4546294918838232
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.435,
+            "ci95": [
+              0.38953259131503915,
+              0.48046740868496085
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4323,
+              "wood": 4180,
+              "metal": 2561
+            },
+            "spent": {
+              "food": 3832,
+              "wood": 3752,
+              "metal": 1346
+            },
+            "overflow": {
+              "food": 177,
+              "wood": 140,
+              "metal": 178
+            },
+            "slots": {
+              "economy": 698,
+              "structure": 45,
+              "unit": 1666
+            },
+            "organization": 599,
+            "market": 77,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 240
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.58,
+            "ci95": [
+              0.546366013838297,
+              0.613633986161703
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.565,
+            "ci95": [
+              0.5195325913150391,
+              0.6104674086849607
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.595,
+            "ci95": [
+              0.5453705081161768,
+              0.6446294918838231
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6080,
+              "wood": 4717,
+              "metal": 2637
+            },
+            "spent": {
+              "food": 4519,
+              "wood": 4070,
+              "metal": 1676
+            },
+            "overflow": {
+              "food": 951,
+              "wood": 217,
+              "metal": 261
+            },
+            "slots": {
+              "economy": 797,
+              "structure": 43,
+              "unit": 1532
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 43,
+            "fury": 0,
+            "discipline": 92,
+            "resourceBlockedPasses": 245
+          }
+        }
+      },
+      "drawRate": 0.74
+    },
+    {
+      "file": "greedy-0-2-3.json",
+      "bot": "greedy",
+      "pair": [
+        0,
+        2
+      ],
+      "seed": "expansion-calibration-3",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.405,
+            "ci95": [
+              0.36864237100786623,
+              0.4413576289921338
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.41,
+            "ci95": [
+              0.3630111726152918,
+              0.45698882738470814
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.4,
+            "ci95": [
+              0.34428354612573386,
+              0.4557164538742662
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4313,
+              "wood": 4202,
+              "metal": 2424
+            },
+            "spent": {
+              "food": 3918,
+              "wood": 3691,
+              "metal": 1374
+            },
+            "overflow": {
+              "food": 143,
+              "wood": 202,
+              "metal": 130
+            },
+            "slots": {
+              "economy": 678,
+              "structure": 46,
+              "unit": 1692
+            },
+            "organization": 599,
+            "market": 74,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 230
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.595,
+            "ci95": [
+              0.5586423710078662,
+              0.6313576289921338
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.6,
+            "ci95": [
+              0.5442835461257338,
+              0.6557164538742661
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.59,
+            "ci95": [
+              0.5430111726152919,
+              0.6369888273847081
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6301,
+              "wood": 4671,
+              "metal": 2971
+            },
+            "spent": {
+              "food": 4661,
+              "wood": 4197,
+              "metal": 1786
+            },
+            "overflow": {
+              "food": 1014,
+              "wood": 183,
+              "metal": 345
+            },
+            "slots": {
+              "economy": 854,
+              "structure": 40,
+              "unit": 1535
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 40,
+            "fury": 0,
+            "discipline": 85,
+            "resourceBlockedPasses": 249
+          }
+        }
+      },
+      "drawRate": 0.69
+    },
+    {
+      "file": "greedy-0-2-4.json",
+      "bot": "greedy",
+      "pair": [
+        0,
+        2
+      ],
+      "seed": "expansion-calibration-4",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.43,
+            "ci95": [
+              0.39454969080373836,
+              0.4654503091962616
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.445,
+            "ci95": [
+              0.3949810985221536,
+              0.49501890147784644
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.415,
+            "ci95": [
+              0.36467174017141324,
+              0.4653282598285867
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4242,
+              "wood": 4402,
+              "metal": 2525
+            },
+            "spent": {
+              "food": 3796,
+              "wood": 3738,
+              "metal": 1313
+            },
+            "overflow": {
+              "food": 176,
+              "wood": 297,
+              "metal": 193
+            },
+            "slots": {
+              "economy": 706,
+              "structure": 41,
+              "unit": 1661
+            },
+            "organization": 600,
+            "market": 60,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 233
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.57,
+            "ci95": [
+              0.5345496908037384,
+              0.6054503091962615
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.585,
+            "ci95": [
+              0.5346717401714132,
+              0.6353282598285868
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.555,
+            "ci95": [
+              0.5049810985221537,
+              0.6050189014778464
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6085,
+              "wood": 4665,
+              "metal": 2800
+            },
+            "spent": {
+              "food": 4513,
+              "wood": 4081,
+              "metal": 1629
+            },
+            "overflow": {
+              "food": 1013,
+              "wood": 188,
+              "metal": 331
+            },
+            "slots": {
+              "economy": 811,
+              "structure": 41,
+              "unit": 1510
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 41,
+            "fury": 0,
+            "discipline": 72,
+            "resourceBlockedPasses": 274
+          }
+        }
+      },
+      "drawRate": 0.72
+    },
+    {
+      "file": "greedy-0-2-5.json",
+      "bot": "greedy",
+      "pair": [
+        0,
+        2
+      ],
+      "seed": "expansion-calibration-5",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.3975,
+            "ci95": [
+              0.36054496892697774,
+              0.4344550310730223
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.41,
+            "ci95": [
+              0.3590491383484999,
+              0.46095086165150007
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.385,
+            "ci95": [
+              0.33131415362490685,
+              0.43868584637509317
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4276,
+              "wood": 4360,
+              "metal": 2543
+            },
+            "spent": {
+              "food": 3803,
+              "wood": 3740,
+              "metal": 1292
+            },
+            "overflow": {
+              "food": 197,
+              "wood": 210,
+              "metal": 190
+            },
+            "slots": {
+              "economy": 716,
+              "structure": 52,
+              "unit": 1648
+            },
+            "organization": 596,
+            "market": 80,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 211
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.6025,
+            "ci95": [
+              0.5655449689269778,
+              0.6394550310730223
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.615,
+            "ci95": [
+              0.5613141536249068,
+              0.6686858463750932
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.59,
+            "ci95": [
+              0.5390491383484999,
+              0.6409508616515001
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6248,
+              "wood": 4528,
+              "metal": 2793
+            },
+            "spent": {
+              "food": 4627,
+              "wood": 4182,
+              "metal": 1728
+            },
+            "overflow": {
+              "food": 953,
+              "wood": 172,
+              "metal": 276
+            },
+            "slots": {
+              "economy": 804,
+              "structure": 37,
+              "unit": 1565
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 37,
+            "fury": 0,
+            "discipline": 95,
+            "resourceBlockedPasses": 244
+          }
+        }
+      },
+      "drawRate": 0.675
+    },
+    {
+      "file": "greedy-1-2-1.json",
+      "bot": "greedy",
+      "pair": [
+        1,
+        2
+      ],
+      "seed": "expansion-calibration-1",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.39,
+            "ci95": [
+              0.3482252606923621,
+              0.43177473930763793
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.385,
+            "ci95": [
+              0.3229333333333333,
+              0.4470666666666667
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.395,
+            "ci95": [
+              0.3387722560303262,
+              0.45122774396967386
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4160,
+              "wood": 3792,
+              "metal": 2075
+            },
+            "spent": {
+              "food": 3795,
+              "wood": 3001,
+              "metal": 994
+            },
+            "overflow": {
+              "food": 82,
+              "wood": 137,
+              "metal": 131
+            },
+            "slots": {
+              "economy": 482,
+              "structure": 0,
+              "unit": 1597
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 274,
+            "discipline": 0,
+            "resourceBlockedPasses": 410
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.61,
+            "ci95": [
+              0.568225260692362,
+              0.651774739307638
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.605,
+            "ci95": [
+              0.5487722560303262,
+              0.6612277439696738
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.615,
+            "ci95": [
+              0.5529333333333333,
+              0.6770666666666667
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6306,
+              "wood": 4578,
+              "metal": 2712
+            },
+            "spent": {
+              "food": 4579,
+              "wood": 4093,
+              "metal": 1684
+            },
+            "overflow": {
+              "food": 1008,
+              "wood": 164,
+              "metal": 291
+            },
+            "slots": {
+              "economy": 799,
+              "structure": 44,
+              "unit": 1544
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 44,
+            "fury": 0,
+            "discipline": 124,
+            "resourceBlockedPasses": 244
+          }
+        }
+      },
+      "drawRate": 0.59
+    },
+    {
+      "file": "greedy-1-2-2.json",
+      "bot": "greedy",
+      "pair": [
+        1,
+        2
+      ],
+      "seed": "expansion-calibration-2",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.405,
+            "ci95": [
+              0.3613993937619945,
+              0.4486006062380056
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.42,
+            "ci95": [
+              0.35659575261972914,
+              0.4834042473802708
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.39,
+            "ci95": [
+              0.32995921924612115,
+              0.4500407807538789
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4084,
+              "wood": 3735,
+              "metal": 2036
+            },
+            "spent": {
+              "food": 3826,
+              "wood": 3035,
+              "metal": 991
+            },
+            "overflow": {
+              "food": 37,
+              "wood": 117,
+              "metal": 97
+            },
+            "slots": {
+              "economy": 466,
+              "structure": 0,
+              "unit": 1643
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 259,
+            "discipline": 0,
+            "resourceBlockedPasses": 412
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.595,
+            "ci95": [
+              0.5513993937619944,
+              0.6386006062380055
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.61,
+            "ci95": [
+              0.5499592192461211,
+              0.6700407807538789
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.58,
+            "ci95": [
+              0.5165957526197291,
+              0.6434042473802708
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6075,
+              "wood": 4716,
+              "metal": 2635
+            },
+            "spent": {
+              "food": 4525,
+              "wood": 4072,
+              "metal": 1683
+            },
+            "overflow": {
+              "food": 946,
+              "wood": 214,
+              "metal": 261
+            },
+            "slots": {
+              "economy": 798,
+              "structure": 43,
+              "unit": 1532
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 43,
+            "fury": 0,
+            "discipline": 97,
+            "resourceBlockedPasses": 245
+          }
+        }
+      },
+      "drawRate": 0.57
+    },
+    {
+      "file": "greedy-1-2-3.json",
+      "bot": "greedy",
+      "pair": [
+        1,
+        2
+      ],
+      "seed": "expansion-calibration-3",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.37,
+            "ci95": [
+              0.33055453736342966,
+              0.40944546263657033
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.37,
+            "ci95": [
+              0.3149491548152478,
+              0.42505084518475217
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.37,
+            "ci95": [
+              0.31321429970867887,
+              0.4267857002913211
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4047,
+              "wood": 3706,
+              "metal": 2017
+            },
+            "spent": {
+              "food": 3783,
+              "wood": 3023,
+              "metal": 986
+            },
+            "overflow": {
+              "food": 38,
+              "wood": 84,
+              "metal": 65
+            },
+            "slots": {
+              "economy": 464,
+              "structure": 0,
+              "unit": 1630
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 271,
+            "discipline": 0,
+            "resourceBlockedPasses": 425
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.63,
+            "ci95": [
+              0.5905545373634297,
+              0.6694454626365703
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.63,
+            "ci95": [
+              0.5732142997086789,
+              0.6867857002913211
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.63,
+            "ci95": [
+              0.5749491548152479,
+              0.6850508451847521
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6298,
+              "wood": 4668,
+              "metal": 2971
+            },
+            "spent": {
+              "food": 4674,
+              "wood": 4217,
+              "metal": 1793
+            },
+            "overflow": {
+              "food": 1011,
+              "wood": 182,
+              "metal": 347
+            },
+            "slots": {
+              "economy": 854,
+              "structure": 40,
+              "unit": 1536
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 40,
+            "fury": 0,
+            "discipline": 88,
+            "resourceBlockedPasses": 249
+          }
+        }
+      },
+      "drawRate": 0.61
+    },
+    {
+      "file": "greedy-1-2-4.json",
+      "bot": "greedy",
+      "pair": [
+        1,
+        2
+      ],
+      "seed": "expansion-calibration-4",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.4275,
+            "ci95": [
+              0.3885733462540215,
+              0.46642665374597847
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.44,
+            "ci95": [
+              0.3873634301568911,
+              0.4926365698431089
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.415,
+            "ci95": [
+              0.35747596549741534,
+              0.4725240345025846
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4211,
+              "wood": 3789,
+              "metal": 2102
+            },
+            "spent": {
+              "food": 3954,
+              "wood": 3237,
+              "metal": 1129
+            },
+            "overflow": {
+              "food": 36,
+              "wood": 96,
+              "metal": 104
+            },
+            "slots": {
+              "economy": 492,
+              "structure": 0,
+              "unit": 1670
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 257,
+            "discipline": 0,
+            "resourceBlockedPasses": 396
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.5725,
+            "ci95": [
+              0.5335733462540215,
+              0.6114266537459785
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.585,
+            "ci95": [
+              0.5274759654974154,
+              0.6425240345025846
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.56,
+            "ci95": [
+              0.5073634301568911,
+              0.612636569843109
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6086,
+              "wood": 4665,
+              "metal": 2798
+            },
+            "spent": {
+              "food": 4532,
+              "wood": 4100,
+              "metal": 1646
+            },
+            "overflow": {
+              "food": 1002,
+              "wood": 186,
+              "metal": 331
+            },
+            "slots": {
+              "economy": 811,
+              "structure": 41,
+              "unit": 1510
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 41,
+            "fury": 0,
+            "discipline": 82,
+            "resourceBlockedPasses": 275
+          }
+        }
+      },
+      "drawRate": 0.665
+    },
+    {
+      "file": "greedy-1-2-5.json",
+      "bot": "greedy",
+      "pair": [
+        1,
+        2
+      ],
+      "seed": "expansion-calibration-5",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.3725,
+            "ci95": [
+              0.33509067982198953,
+              0.40990932017801046
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.395,
+            "ci95": [
+              0.34421123563367007,
+              0.44578876436632997
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.35,
+            "ci95": [
+              0.2951610254352515,
+              0.40483897456474843
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4153,
+              "wood": 3744,
+              "metal": 2032
+            },
+            "spent": {
+              "food": 3757,
+              "wood": 3094,
+              "metal": 957
+            },
+            "overflow": {
+              "food": 62,
+              "wood": 114,
+              "metal": 115
+            },
+            "slots": {
+              "economy": 476,
+              "structure": 0,
+              "unit": 1624
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 246,
+            "discipline": 0,
+            "resourceBlockedPasses": 412
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.6275,
+            "ci95": [
+              0.5900906798219895,
+              0.6649093201780104
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.65,
+            "ci95": [
+              0.5951610254352515,
+              0.7048389745647485
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.605,
+            "ci95": [
+              0.55421123563367,
+              0.6557887643663299
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6243,
+              "wood": 4518,
+              "metal": 2789
+            },
+            "spent": {
+              "food": 4633,
+              "wood": 4192,
+              "metal": 1731
+            },
+            "overflow": {
+              "food": 944,
+              "wood": 164,
+              "metal": 276
+            },
+            "slots": {
+              "economy": 804,
+              "structure": 37,
+              "unit": 1565
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 37,
+            "fury": 0,
+            "discipline": 99,
+            "resourceBlockedPasses": 244
+          }
+        }
+      },
+      "drawRate": 0.645
+    },
+    {
+      "file": "rational-0-1-1.json",
+      "bot": "rational",
+      "pair": [
+        0,
+        1
+      ],
+      "seed": "expansion-calibration-1",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.535,
+            "ci95": [
+              0.49856281373769973,
+              0.5714371862623003
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.515,
+            "ci95": [
+              0.465841871311434,
+              0.5641581286885661
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.555,
+            "ci95": [
+              0.5012419223828557,
+              0.6087580776171444
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4408,
+              "wood": 4196,
+              "metal": 2640
+            },
+            "spent": {
+              "food": 4059,
+              "wood": 4066,
+              "metal": 1525
+            },
+            "overflow": {
+              "food": 194,
+              "wood": 118,
+              "metal": 169
+            },
+            "slots": {
+              "economy": 733,
+              "structure": 48,
+              "unit": 1698
+            },
+            "organization": 599,
+            "market": 70,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 212
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.465,
+            "ci95": [
+              0.4285628137376997,
+              0.5014371862623003
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.445,
+            "ci95": [
+              0.3912419223828557,
+              0.4987580776171443
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.485,
+            "ci95": [
+              0.435841871311434,
+              0.534158128688566
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4356,
+              "wood": 3768,
+              "metal": 1944
+            },
+            "spent": {
+              "food": 3891,
+              "wood": 3151,
+              "metal": 1011
+            },
+            "overflow": {
+              "food": 78,
+              "wood": 93,
+              "metal": 108
+            },
+            "slots": {
+              "economy": 480,
+              "structure": 0,
+              "unit": 1636
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 184,
+            "discipline": 0,
+            "resourceBlockedPasses": 398
+          }
+        }
+      },
+      "drawRate": 0.72
+    },
+    {
+      "file": "rational-0-1-2.json",
+      "bot": "rational",
+      "pair": [
+        0,
+        1
+      ],
+      "seed": "expansion-calibration-2",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.49,
+            "ci95": [
+              0.4519748932451388,
+              0.5280251067548611
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.49,
+            "ci95": [
+              0.4379192701256749,
+              0.5420807298743251
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.49,
+            "ci95": [
+              0.43431837979833177,
+              0.5456816202016682
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4318,
+              "wood": 4179,
+              "metal": 2562
+            },
+            "spent": {
+              "food": 3866,
+              "wood": 3851,
+              "metal": 1427
+            },
+            "overflow": {
+              "food": 170,
+              "wood": 145,
+              "metal": 163
+            },
+            "slots": {
+              "economy": 699,
+              "structure": 45,
+              "unit": 1637
+            },
+            "organization": 599,
+            "market": 67,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 237
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.51,
+            "ci95": [
+              0.4719748932451388,
+              0.5480251067548612
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.51,
+            "ci95": [
+              0.4543183797983318,
+              0.5656816202016682
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.51,
+            "ci95": [
+              0.4579192701256749,
+              0.5620807298743251
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4151,
+              "wood": 3795,
+              "metal": 2326
+            },
+            "spent": {
+              "food": 4028,
+              "wood": 3327,
+              "metal": 1171
+            },
+            "overflow": {
+              "food": 23,
+              "wood": 83,
+              "metal": 165
+            },
+            "slots": {
+              "economy": 511,
+              "structure": 0,
+              "unit": 1621
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 186,
+            "discipline": 0,
+            "resourceBlockedPasses": 418
+          }
+        }
+      },
+      "drawRate": 0.7
+    },
+    {
+      "file": "rational-0-1-3.json",
+      "bot": "rational",
+      "pair": [
+        0,
+        1
+      ],
+      "seed": "expansion-calibration-3",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.485,
+            "ci95": [
+              0.445756933205249,
+              0.524243066794751
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.45,
+            "ci95": [
+              0.3951610254352515,
+              0.5048389745647486
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.52,
+            "ci95": [
+              0.46442301181098766,
+              0.5755769881890124
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4314,
+              "wood": 4209,
+              "metal": 2424
+            },
+            "spent": {
+              "food": 3946,
+              "wood": 3811,
+              "metal": 1451
+            },
+            "overflow": {
+              "food": 130,
+              "wood": 178,
+              "metal": 110
+            },
+            "slots": {
+              "economy": 679,
+              "structure": 46,
+              "unit": 1672
+            },
+            "organization": 599,
+            "market": 67,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 230
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.515,
+            "ci95": [
+              0.47575693320524903,
+              0.554243066794751
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.48,
+            "ci95": [
+              0.4244230118109876,
+              0.5355769881890123
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.55,
+            "ci95": [
+              0.49516102543525153,
+              0.6048389745647486
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4268,
+              "wood": 3796,
+              "metal": 2186
+            },
+            "spent": {
+              "food": 4009,
+              "wood": 3288,
+              "metal": 1155
+            },
+            "overflow": {
+              "food": 56,
+              "wood": 101,
+              "metal": 93
+            },
+            "slots": {
+              "economy": 509,
+              "structure": 0,
+              "unit": 1626
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 204,
+            "discipline": 0,
+            "resourceBlockedPasses": 419
+          }
+        }
+      },
+      "drawRate": 0.68
+    },
+    {
+      "file": "rational-0-1-4.json",
+      "bot": "rational",
+      "pair": [
+        0,
+        1
+      ],
+      "seed": "expansion-calibration-4",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.5125,
+            "ci95": [
+              0.4723286490495287,
+              0.5526713509504713
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.525,
+            "ci95": [
+              0.4652913640071957,
+              0.5847086359928044
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.5,
+            "ci95": [
+              0.44605277550880834,
+              0.5539472244911917
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4245,
+              "wood": 4400,
+              "metal": 2526
+            },
+            "spent": {
+              "food": 3836,
+              "wood": 3869,
+              "metal": 1391
+            },
+            "overflow": {
+              "food": 162,
+              "wood": 285,
+              "metal": 184
+            },
+            "slots": {
+              "economy": 708,
+              "structure": 42,
+              "unit": 1648
+            },
+            "organization": 600,
+            "market": 59,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 237
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.4875,
+            "ci95": [
+              0.44732864904952874,
+              0.5276713509504712
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.5,
+            "ci95": [
+              0.44605277550880834,
+              0.5539472244911917
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.475,
+            "ci95": [
+              0.41529136400719563,
+              0.5347086359928044
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4329,
+              "wood": 3686,
+              "metal": 2037
+            },
+            "spent": {
+              "food": 4002,
+              "wood": 3192,
+              "metal": 1015
+            },
+            "overflow": {
+              "food": 62,
+              "wood": 84,
+              "metal": 77
+            },
+            "slots": {
+              "economy": 486,
+              "structure": 0,
+              "unit": 1664
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 218,
+            "discipline": 0,
+            "resourceBlockedPasses": 388
+          }
+        }
+      },
+      "drawRate": 0.665
+    },
+    {
+      "file": "rational-0-1-5.json",
+      "bot": "rational",
+      "pair": [
+        0,
+        1
+      ],
+      "seed": "expansion-calibration-5",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.4825,
+            "ci95": [
+              0.4435857462396021,
+              0.5214142537603979
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.47,
+            "ci95": [
+              0.41459783762379304,
+              0.5254021623762068
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.495,
+            "ci95": [
+              0.4401698711445703,
+              0.5498301288554297
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4274,
+              "wood": 4361,
+              "metal": 2544
+            },
+            "spent": {
+              "food": 3842,
+              "wood": 3938,
+              "metal": 1384
+            },
+            "overflow": {
+              "food": 194,
+              "wood": 163,
+              "metal": 179
+            },
+            "slots": {
+              "economy": 719,
+              "structure": 52,
+              "unit": 1638
+            },
+            "organization": 596,
+            "market": 76,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 212
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.5175,
+            "ci95": [
+              0.4785857462396021,
+              0.5564142537603979
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.505,
+            "ci95": [
+              0.4501698711445703,
+              0.5598301288554297
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.53,
+            "ci95": [
+              0.4745978376237931,
+              0.5854021623762069
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4139,
+              "wood": 3821,
+              "metal": 1936
+            },
+            "spent": {
+              "food": 3899,
+              "wood": 3178,
+              "metal": 1023
+            },
+            "overflow": {
+              "food": 61,
+              "wood": 128,
+              "metal": 91
+            },
+            "slots": {
+              "economy": 472,
+              "structure": 0,
+              "unit": 1650
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 167,
+            "discipline": 0,
+            "resourceBlockedPasses": 417
+          }
+        }
+      },
+      "drawRate": 0.685
+    },
+    {
+      "file": "rational-0-2-1.json",
+      "bot": "rational",
+      "pair": [
+        0,
+        2
+      ],
+      "seed": "expansion-calibration-1",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.4675,
+            "ci95": [
+              0.43412710229081786,
+              0.5008728977091822
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.48,
+            "ci95": [
+              0.43397065494643,
+              0.5260293450535699
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.455,
+            "ci95": [
+              0.40655751509847643,
+              0.5034424849015237
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4400,
+              "wood": 4204,
+              "metal": 2662
+            },
+            "spent": {
+              "food": 4114,
+              "wood": 4172,
+              "metal": 1556
+            },
+            "overflow": {
+              "food": 180,
+              "wood": 86,
+              "metal": 161
+            },
+            "slots": {
+              "economy": 728,
+              "structure": 49,
+              "unit": 1698
+            },
+            "organization": 599,
+            "market": 71,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 214
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.5325,
+            "ci95": [
+              0.4991271022908178,
+              0.5658728977091821
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.545,
+            "ci95": [
+              0.49655751509847645,
+              0.5934424849015236
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.52,
+            "ci95": [
+              0.47397065494643004,
+              0.5660293450535699
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6312,
+              "wood": 4588,
+              "metal": 2716
+            },
+            "spent": {
+              "food": 4594,
+              "wood": 4162,
+              "metal": 1710
+            },
+            "overflow": {
+              "food": 991,
+              "wood": 155,
+              "metal": 257
+            },
+            "slots": {
+              "economy": 803,
+              "structure": 44,
+              "unit": 1526
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 44,
+            "fury": 0,
+            "discipline": 125,
+            "resourceBlockedPasses": 249
+          }
+        }
+      },
+      "drawRate": 0.765
+    },
+    {
+      "file": "rational-0-2-2.json",
+      "bot": "rational",
+      "pair": [
+        0,
+        2
+      ],
+      "seed": "expansion-calibration-2",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.43,
+            "ci95": [
+              0.3973859049492417,
+              0.4626140950507583
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.41,
+            "ci95": [
+              0.3630111726152918,
+              0.45698882738470814
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.45,
+            "ci95": [
+              0.4048645137257598,
+              0.4951354862742402
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4332,
+              "wood": 4182,
+              "metal": 2567
+            },
+            "spent": {
+              "food": 3884,
+              "wood": 3934,
+              "metal": 1448
+            },
+            "overflow": {
+              "food": 161,
+              "wood": 121,
+              "metal": 160
+            },
+            "slots": {
+              "economy": 694,
+              "structure": 45,
+              "unit": 1646
+            },
+            "organization": 599,
+            "market": 68,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 239
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.57,
+            "ci95": [
+              0.5373859049492417,
+              0.6026140950507582
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.55,
+            "ci95": [
+              0.5048645137257598,
+              0.5951354862742403
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.59,
+            "ci95": [
+              0.5430111726152919,
+              0.6369888273847081
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6080,
+              "wood": 4717,
+              "metal": 2637
+            },
+            "spent": {
+              "food": 4516,
+              "wood": 4172,
+              "metal": 1704
+            },
+            "overflow": {
+              "food": 946,
+              "wood": 213,
+              "metal": 233
+            },
+            "slots": {
+              "economy": 798,
+              "structure": 45,
+              "unit": 1527
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 43,
+            "fury": 0,
+            "discipline": 108,
+            "resourceBlockedPasses": 250
+          }
+        }
+      },
+      "drawRate": 0.76
+    },
+    {
+      "file": "rational-0-2-3.json",
+      "bot": "rational",
+      "pair": [
+        0,
+        2
+      ],
+      "seed": "expansion-calibration-3",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.4125,
+            "ci95": [
+              0.3774622063348072,
+              0.44753779366519275
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.415,
+            "ci95": [
+              0.36868700686272443,
+              0.46131299313727553
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.41,
+            "ci95": [
+              0.3571794499739874,
+              0.4628205500260126
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4317,
+              "wood": 4208,
+              "metal": 2437
+            },
+            "spent": {
+              "food": 3954,
+              "wood": 3881,
+              "metal": 1450
+            },
+            "overflow": {
+              "food": 138,
+              "wood": 161,
+              "metal": 98
+            },
+            "slots": {
+              "economy": 678,
+              "structure": 44,
+              "unit": 1664
+            },
+            "organization": 599,
+            "market": 60,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 241
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.5875,
+            "ci95": [
+              0.5524622063348072,
+              0.6225377936651928
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.59,
+            "ci95": [
+              0.5371794499739874,
+              0.6428205500260126
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.585,
+            "ci95": [
+              0.5386870068627244,
+              0.6313129931372755
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6301,
+              "wood": 4671,
+              "metal": 2971
+            },
+            "spent": {
+              "food": 4706,
+              "wood": 4294,
+              "metal": 1822
+            },
+            "overflow": {
+              "food": 1012,
+              "wood": 173,
+              "metal": 319
+            },
+            "slots": {
+              "economy": 855,
+              "structure": 41,
+              "unit": 1528
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 40,
+            "fury": 0,
+            "discipline": 96,
+            "resourceBlockedPasses": 251
+          }
+        }
+      },
+      "drawRate": 0.715
+    },
+    {
+      "file": "rational-0-2-4.json",
+      "bot": "rational",
+      "pair": [
+        0,
+        2
+      ],
+      "seed": "expansion-calibration-4",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.4425,
+            "ci95": [
+              0.40978432905123086,
+              0.47521567094876915
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.45,
+            "ci95": [
+              0.4027640780418935,
+              0.4972359219581065
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.435,
+            "ci95": [
+              0.38953259131503915,
+              0.48046740868496085
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4251,
+              "wood": 4414,
+              "metal": 2530
+            },
+            "spent": {
+              "food": 3853,
+              "wood": 3918,
+              "metal": 1408
+            },
+            "overflow": {
+              "food": 156,
+              "wood": 234,
+              "metal": 174
+            },
+            "slots": {
+              "economy": 706,
+              "structure": 42,
+              "unit": 1629
+            },
+            "organization": 600,
+            "market": 61,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 237
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.5575,
+            "ci95": [
+              0.5247843290512308,
+              0.5902156709487691
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.565,
+            "ci95": [
+              0.5195325913150391,
+              0.6104674086849607
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.55,
+            "ci95": [
+              0.5027640780418936,
+              0.5972359219581065
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6085,
+              "wood": 4664,
+              "metal": 2803
+            },
+            "spent": {
+              "food": 4528,
+              "wood": 4168,
+              "metal": 1649
+            },
+            "overflow": {
+              "food": 996,
+              "wood": 184,
+              "metal": 318
+            },
+            "slots": {
+              "economy": 812,
+              "structure": 42,
+              "unit": 1505
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 41,
+            "fury": 0,
+            "discipline": 93,
+            "resourceBlockedPasses": 279
+          }
+        }
+      },
+      "drawRate": 0.765
+    },
+    {
+      "file": "rational-0-2-5.json",
+      "bot": "rational",
+      "pair": [
+        0,
+        2
+      ],
+      "seed": "expansion-calibration-5",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.415,
+            "ci95": [
+              0.38088871007272646,
+              0.4491112899272735
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.425,
+            "ci95": [
+              0.38468971357185366,
+              0.4653102864281463
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.405,
+            "ci95": [
+              0.34981714876243647,
+              0.4601828512375636
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4273,
+              "wood": 4365,
+              "metal": 2563
+            },
+            "spent": {
+              "food": 3853,
+              "wood": 3977,
+              "metal": 1342
+            },
+            "overflow": {
+              "food": 185,
+              "wood": 149,
+              "metal": 173
+            },
+            "slots": {
+              "economy": 718,
+              "structure": 52,
+              "unit": 1634
+            },
+            "organization": 596,
+            "market": 74,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 0,
+            "discipline": 0,
+            "resourceBlockedPasses": 210
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.585,
+            "ci95": [
+              0.5508887100727264,
+              0.6191112899272735
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.595,
+            "ci95": [
+              0.5398171487624364,
+              0.6501828512375636
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.575,
+            "ci95": [
+              0.5346897135718537,
+              0.6153102864281462
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6248,
+              "wood": 4528,
+              "metal": 2793
+            },
+            "spent": {
+              "food": 4645,
+              "wood": 4237,
+              "metal": 1752
+            },
+            "overflow": {
+              "food": 945,
+              "wood": 167,
+              "metal": 252
+            },
+            "slots": {
+              "economy": 807,
+              "structure": 37,
+              "unit": 1554
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 37,
+            "fury": 0,
+            "discipline": 110,
+            "resourceBlockedPasses": 249
+          }
+        }
+      },
+      "drawRate": 0.73
+    },
+    {
+      "file": "rational-1-2-1.json",
+      "bot": "rational",
+      "pair": [
+        1,
+        2
+      ],
+      "seed": "expansion-calibration-1",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.42,
+            "ci95": [
+              0.3810470093909732,
+              0.4589529906090268
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.43,
+            "ci95": [
+              0.3708709543421844,
+              0.48912904565781556
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.41,
+            "ci95": [
+              0.3590491383484999,
+              0.46095086165150007
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4160,
+              "wood": 3792,
+              "metal": 2075
+            },
+            "spent": {
+              "food": 3869,
+              "wood": 3199,
+              "metal": 1067
+            },
+            "overflow": {
+              "food": 79,
+              "wood": 114,
+              "metal": 116
+            },
+            "slots": {
+              "economy": 482,
+              "structure": 0,
+              "unit": 1595
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 280,
+            "discipline": 0,
+            "resourceBlockedPasses": 417
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.58,
+            "ci95": [
+              0.5410470093909732,
+              0.6189529906090268
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.59,
+            "ci95": [
+              0.5390491383484999,
+              0.6409508616515001
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.57,
+            "ci95": [
+              0.5108709543421843,
+              0.6291290456578156
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6306,
+              "wood": 4578,
+              "metal": 2712
+            },
+            "spent": {
+              "food": 4584,
+              "wood": 4142,
+              "metal": 1701
+            },
+            "overflow": {
+              "food": 991,
+              "wood": 161,
+              "metal": 284
+            },
+            "slots": {
+              "economy": 801,
+              "structure": 44,
+              "unit": 1536
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 44,
+            "fury": 0,
+            "discipline": 131,
+            "resourceBlockedPasses": 246
+          }
+        }
+      },
+      "drawRate": 0.66
+    },
+    {
+      "file": "rational-1-2-2.json",
+      "bot": "rational",
+      "pair": [
+        1,
+        2
+      ],
+      "seed": "expansion-calibration-2",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.41,
+            "ci95": [
+              0.36904193589687884,
+              0.4509580641031211
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.435,
+            "ci95": [
+              0.37647285530058155,
+              0.49352714469941844
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.385,
+            "ci95": [
+              0.32781424561089967,
+              0.44218575438910035
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4084,
+              "wood": 3735,
+              "metal": 2036
+            },
+            "spent": {
+              "food": 3857,
+              "wood": 3227,
+              "metal": 1069
+            },
+            "overflow": {
+              "food": 42,
+              "wood": 95,
+              "metal": 85
+            },
+            "slots": {
+              "economy": 466,
+              "structure": 0,
+              "unit": 1639
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 263,
+            "discipline": 0,
+            "resourceBlockedPasses": 417
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.59,
+            "ci95": [
+              0.5490419358968789,
+              0.630958064103121
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.615,
+            "ci95": [
+              0.5578142456108997,
+              0.6721857543891003
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.565,
+            "ci95": [
+              0.5064728553005815,
+              0.6235271446994184
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6075,
+              "wood": 4716,
+              "metal": 2635
+            },
+            "spent": {
+              "food": 4551,
+              "wood": 4143,
+              "metal": 1711
+            },
+            "overflow": {
+              "food": 942,
+              "wood": 208,
+              "metal": 241
+            },
+            "slots": {
+              "economy": 799,
+              "structure": 44,
+              "unit": 1535
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 43,
+            "fury": 0,
+            "discipline": 119,
+            "resourceBlockedPasses": 245
+          }
+        }
+      },
+      "drawRate": 0.62
+    },
+    {
+      "file": "rational-1-2-3.json",
+      "bot": "rational",
+      "pair": [
+        1,
+        2
+      ],
+      "seed": "expansion-calibration-3",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.4,
+            "ci95": [
+              0.36070163096202057,
+              0.4392983690379795
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.405,
+            "ci95": [
+              0.35160405569065317,
+              0.4583959443093469
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.395,
+            "ci95": [
+              0.33707263691536277,
+              0.45292736308463727
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4047,
+              "wood": 3706,
+              "metal": 2017
+            },
+            "spent": {
+              "food": 3861,
+              "wood": 3239,
+              "metal": 1069
+            },
+            "overflow": {
+              "food": 38,
+              "wood": 73,
+              "metal": 60
+            },
+            "slots": {
+              "economy": 464,
+              "structure": 0,
+              "unit": 1624
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 262,
+            "discipline": 0,
+            "resourceBlockedPasses": 432
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.6,
+            "ci95": [
+              0.5607016309620205,
+              0.6392983690379794
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.605,
+            "ci95": [
+              0.5470726369153628,
+              0.6629273630846372
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.595,
+            "ci95": [
+              0.5416040556906532,
+              0.6483959443093468
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6298,
+              "wood": 4668,
+              "metal": 2971
+            },
+            "spent": {
+              "food": 4709,
+              "wood": 4284,
+              "metal": 1827
+            },
+            "overflow": {
+              "food": 1008,
+              "wood": 180,
+              "metal": 323
+            },
+            "slots": {
+              "economy": 855,
+              "structure": 43,
+              "unit": 1532
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 40,
+            "fury": 0,
+            "discipline": 106,
+            "resourceBlockedPasses": 251
+          }
+        }
+      },
+      "drawRate": 0.64
+    },
+    {
+      "file": "rational-1-2-4.json",
+      "bot": "rational",
+      "pair": [
+        1,
+        2
+      ],
+      "seed": "expansion-calibration-4",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.445,
+            "ci95": [
+              0.4052194992338454,
+              0.4847805007661546
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.45,
+            "ci95": [
+              0.39695951612878205,
+              0.5030404838712179
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.44,
+            "ci95": [
+              0.38044591287804597,
+              0.49955408712195404
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4204,
+              "wood": 3787,
+              "metal": 2102
+            },
+            "spent": {
+              "food": 4022,
+              "wood": 3371,
+              "metal": 1190
+            },
+            "overflow": {
+              "food": 36,
+              "wood": 86,
+              "metal": 85
+            },
+            "slots": {
+              "economy": 490,
+              "structure": 0,
+              "unit": 1652
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 251,
+            "discipline": 0,
+            "resourceBlockedPasses": 407
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.555,
+            "ci95": [
+              0.5152194992338455,
+              0.5947805007661546
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.56,
+            "ci95": [
+              0.5004459128780461,
+              0.619554087121954
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.55,
+            "ci95": [
+              0.4969595161287821,
+              0.603040483871218
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6079,
+              "wood": 4661,
+              "metal": 2801
+            },
+            "spent": {
+              "food": 4520,
+              "wood": 4161,
+              "metal": 1650
+            },
+            "overflow": {
+              "food": 980,
+              "wood": 186,
+              "metal": 300
+            },
+            "slots": {
+              "economy": 812,
+              "structure": 41,
+              "unit": 1505
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 41,
+            "fury": 0,
+            "discipline": 81,
+            "resourceBlockedPasses": 278
+          }
+        }
+      },
+      "drawRate": 0.66
+    },
+    {
+      "file": "rational-1-2-5.json",
+      "bot": "rational",
+      "pair": [
+        1,
+        2
+      ],
+      "seed": "expansion-calibration-5",
+      "games": 200,
+      "score": {
+        "A": {
+          "overall": {
+            "games": 200,
+            "score": 0.4,
+            "ci95": [
+              0.36258906724703016,
+              0.4374109327529699
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.43,
+            "ci95": [
+              0.38376037817777237,
+              0.4762396218222276
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.37,
+            "ci95": [
+              0.31153089739361517,
+              0.4284691026063848
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 4152,
+              "wood": 3743,
+              "metal": 2027
+            },
+            "spent": {
+              "food": 3825,
+              "wood": 3260,
+              "metal": 1038
+            },
+            "overflow": {
+              "food": 59,
+              "wood": 96,
+              "metal": 99
+            },
+            "slots": {
+              "economy": 475,
+              "structure": 0,
+              "unit": 1613
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 0,
+            "cistern": 0,
+            "fury": 238,
+            "discipline": 0,
+            "resourceBlockedPasses": 421
+          }
+        },
+        "B": {
+          "overall": {
+            "games": 200,
+            "score": 0.6,
+            "ci95": [
+              0.5625890672470301,
+              0.6374109327529699
+            ]
+          },
+          "asP1": {
+            "games": 100,
+            "score": 0.63,
+            "ci95": [
+              0.5715308973936152,
+              0.6884691026063848
+            ]
+          },
+          "asP2": {
+            "games": 100,
+            "score": 0.57,
+            "ci95": [
+              0.5237603781777723,
+              0.6162396218222276
+            ]
+          },
+          "development": {
+            "produced": {
+              "food": 6236,
+              "wood": 4516,
+              "metal": 2788
+            },
+            "spent": {
+              "food": 4660,
+              "wood": 4218,
+              "metal": 1747
+            },
+            "overflow": {
+              "food": 932,
+              "wood": 158,
+              "metal": 253
+            },
+            "slots": {
+              "economy": 805,
+              "structure": 37,
+              "unit": 1559
+            },
+            "organization": 0,
+            "market": 0,
+            "engineering": 600,
+            "cistern": 37,
+            "fury": 0,
+            "discipline": 112,
+            "resourceBlockedPasses": 249
+          }
+        }
+      },
+      "drawRate": 0.67
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { MatchGuidance } from './MatchGuidance.js';
-import { CARDS_RULES, getCard } from '@epochs/content';
+import { getCatalog, getCard } from '@epochs/content';
 import { autoDiscard, getTotalCardCost, type CardInstance, type PlayerView } from '@epochs/engine';
 import type { ReactElement } from 'react';
 import type { GameController } from '../../controllers/types.js';
@@ -372,7 +372,11 @@ export function HandLimitModal({
   };
 
   const handleSuggestFifo = (): void => {
-    const suggestedUids = autoDiscard(view.self.hand, CARDS_RULES, mustDiscardCount);
+    const suggestedUids = autoDiscard(
+      view.self.hand,
+      getCatalog(view.catalogVersion ?? '1.0').rulesById,
+      mustDiscardCount,
+    );
     updateSelectedUids(suggestedUids);
   };
 
@@ -481,7 +485,7 @@ export function HandLimitModal({
         >
           {view.self.hand.map((instance) => {
             const isSelected = selectedUids.includes(instance.uid);
-            const catalogCard = getCard(instance.cardId);
+            const catalogCard = getCard(instance.cardId, view.catalogVersion);
             const totalCost = getTotalCardCost(catalogCard.rules);
 
             return (

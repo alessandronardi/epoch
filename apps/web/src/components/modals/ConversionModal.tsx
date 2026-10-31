@@ -50,7 +50,7 @@ export function calculateConversionPreview(
   view: PlayerView,
   conversionCardId: string,
 ): ConversionGainPreview {
-  const card = getCard(conversionCardId);
+  const card = getCard(conversionCardId, view.catalogVersion);
   const cap = STORAGE_CAP_BY_ERA[3]; // 16 in Era III
   const buildingCountPreSacrifice = view.self.buildings.length;
 
@@ -150,7 +150,9 @@ export function ConversionModal({
       ? (availableBuildings.find((b) => b.uid === effectiveSacrificeUid) ?? null)
       : null;
   const selectedBuildingCard =
-    selectedBuildingInstance !== null ? getCard(selectedBuildingInstance.cardId) : null;
+    selectedBuildingInstance !== null
+      ? getCard(selectedBuildingInstance.cardId, view.catalogVersion)
+      : null;
 
   const preview = calculateConversionPreview(view, conversionInstance.cardId);
   const hasOverflow = hasNonZeroResources(preview.overflow);
@@ -432,7 +434,7 @@ export function ConversionModal({
             >
               {availableBuildings.map((building) => {
                 const isSelected = building.uid === effectiveSacrificeUid;
-                const bCard = getCard(building.cardId);
+                const bCard = getCard(building.cardId, view.catalogVersion);
 
                 return (
                   <div

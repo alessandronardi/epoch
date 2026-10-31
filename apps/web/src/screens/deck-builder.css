@@ -4,7 +4,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: clamp(12px, 2.5vw, 28px);
-  color: var(--chalk, #e9e5d6);
+  color: var(--chalk);
 }
 
 .deck-builder__content {
@@ -16,8 +16,8 @@
 .deck-builder__panel {
   min-width: 0;
   padding: clamp(12px, 2vw, 22px);
-  background: rgba(20, 30, 39, 0.94);
-  border: 1px solid #806d49;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
   border-radius: 12px;
 }
 .deck-builder__header {
@@ -34,7 +34,7 @@
 }
 .deck-builder h1 {
   font-size: clamp(1.7rem, 4vw, 2.4rem);
-  color: #d6b979;
+  color: var(--brass);
 }
 .deck-builder h2 {
   font-size: 1.1rem;
@@ -44,7 +44,7 @@
   overflow-wrap: anywhere;
 }
 .deck-builder__eyebrow {
-  color: #d6b979;
+  color: var(--brass);
   font-family: var(--font-numeric);
   letter-spacing: 0.08em;
   font-size: 0.8rem;
@@ -57,9 +57,9 @@
   min-height: 44px;
   font: inherit;
   color: inherit;
-  border: 1px solid #8c805f;
+  border: 1px solid var(--panel-border);
   border-radius: 6px;
-  background: #223444;
+  background: var(--surface-card);
   padding: 8px 12px;
 }
 .deck-builder button {
@@ -71,16 +71,16 @@
   cursor: not-allowed;
   color: #b7b9b7;
   border-color: #58616a;
-  background: #24313b;
+  background: var(--surface-card);
 }
 .deck-builder button:not(:disabled):hover,
 .deck-builder button[aria-pressed='true'] {
   border-color: #e5c785;
-  background: #364650;
+  background: var(--control-hover);
 }
 .deck-builder .deck-builder__primary {
-  background: #d6b979;
-  color: #141e27;
+  background: var(--brass);
+  color: var(--table-deep);
 }
 .deck-builder label {
   display: grid;
@@ -136,7 +136,7 @@
 }
 .deck-builder progress {
   width: 100%;
-  accent-color: #d6b979;
+  accent-color: var(--brass);
   height: 8px;
 }
 .deck-builder__types {
@@ -154,7 +154,7 @@
 .deck-builder__curve {
   margin: 0;
   padding: 12px;
-  background: #1b2b37;
+  background: var(--table-deep);
   border-radius: 8px;
   min-width: 0;
 }
@@ -182,14 +182,14 @@
 .deck-builder__bar {
   width: 75%;
   min-height: 1px;
-  background: #d5bb73;
+  background: var(--resource-food);
   border-radius: 3px 3px 0 0;
 }
 .deck-builder__curve--wood .deck-builder__bar {
-  background: #9bc09c;
+  background: var(--resource-wood);
 }
 .deck-builder__curve--metal .deck-builder__bar {
-  background: #abc8e2;
+  background: var(--resource-metal);
 }
 .deck-builder__workspace {
   display: grid;
@@ -227,7 +227,7 @@
   justify-content: space-between;
   gap: 6px;
   padding: 8px 0;
-  border-bottom: 1px solid #465059;
+  border-bottom: 1px solid var(--panel-border);
 }
 .deck-builder .deck-builder__card-name {
   flex: 1;

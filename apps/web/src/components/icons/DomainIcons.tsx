@@ -1,10 +1,4 @@
-import type {
-  CardType,
-  EraNo,
-  Line,
-  Resource,
-  UnitCategory,
-} from '@epochs/engine';
+import type { CardType, EraNo, Line, Resource, UnitCategory } from '@epochs/engine';
 import type { ReactElement } from 'react';
 
 export type StatKind = 'atk' | 'dem' | 'hp' | 'walls' | 'cityCenter';
@@ -15,19 +9,17 @@ export interface DomainIconProps {
   readonly label?: string | undefined;
 }
 
-export const RESOURCE_LABELS_IT: Readonly<Record<Resource, string>> =
-  Object.freeze({
-    food: 'Cibo',
-    wood: 'Legno',
-    metal: 'Metallo',
-  });
+export const RESOURCE_LABELS_IT: Readonly<Record<Resource, string>> = Object.freeze({
+  food: 'Cibo',
+  wood: 'Legno',
+  metal: 'Metallo',
+});
 
-export const ERA_ROMAN_LABELS: Readonly<Record<EraNo, 'I' | 'II' | 'III'>> =
-  Object.freeze({
-    1: 'I',
-    2: 'II',
-    3: 'III',
-  });
+export const ERA_ROMAN_LABELS: Readonly<Record<EraNo, 'I' | 'II' | 'III'>> = Object.freeze({
+  1: 'I',
+  2: 'II',
+  3: 'III',
+});
 
 export const ERA_LABELS_IT: Readonly<Record<EraNo, string>> = Object.freeze({
   1: 'Era I (Bronzo)',
@@ -41,24 +33,21 @@ export const LINE_LABELS_IT: Readonly<Record<Line, string>> = Object.freeze({
   rear: 'Retroguardia',
 });
 
-export const UNIT_CATEGORY_LABELS_IT: Readonly<Record<UnitCategory, string>> =
-  Object.freeze({
-    infantry: 'Fanteria',
-    spearman: 'Lanciere',
-    cavalry: 'Cavalleria',
-    archer: 'Arciere',
-    siege: 'Assedio',
-  });
+export const UNIT_CATEGORY_LABELS_IT: Readonly<Record<UnitCategory, string>> = Object.freeze({
+  infantry: 'Fanteria',
+  spearman: 'Lanciere',
+  cavalry: 'Cavalleria',
+  archer: 'Arciere',
+  siege: 'Assedio',
+});
 
-export const STAT_LABELS_IT: Readonly<Record<StatKind, string>> = Object.freeze(
-  {
-    atk: 'Attacco (ATK)',
-    dem: 'Demolizione (DEM)',
-    hp: 'Punti Vita (HP)',
-    walls: 'Mura',
-    cityCenter: 'Centro Città',
-  },
-);
+export const STAT_LABELS_IT: Readonly<Record<StatKind, string>> = Object.freeze({
+  atk: 'Attacco (ATK)',
+  dem: 'Demolizione (DEM)',
+  hp: 'Punti Vita (HP)',
+  walls: 'Mura',
+  cityCenter: 'Centro Città',
+});
 
 function getA11ySvgProps(label: string | undefined): {
   readonly role?: 'img';
@@ -168,12 +157,7 @@ export interface EraIconProps extends DomainIconProps {
   readonly era: EraNo;
 }
 
-export function EraIcon({
-  era,
-  size = 18,
-  className,
-  label,
-}: EraIconProps): ReactElement {
+export function EraIcon({ era, size = 18, className, label }: EraIconProps): ReactElement {
   const a11yProps = getA11ySvgProps(label);
 
   // Scudo araldico sagomato per Era (Esagono I, Scudo II, Corona/Ottagono III) con cifre romane incise
@@ -253,12 +237,7 @@ export interface LineIconProps extends DomainIconProps {
   readonly line: Line;
 }
 
-export function LineIcon({
-  line,
-  size = 16,
-  className,
-  label,
-}: LineIconProps): ReactElement {
+export function LineIcon({ line, size = 16, className, label }: LineIconProps): ReactElement {
   const a11yProps = getA11ySvgProps(label);
 
   // Tre fasce tattiche con la linea attiva evidenziata in pieno e chevron direzionale
@@ -278,14 +257,7 @@ export function LineIcon({
           data-domain-icon="line-front"
           {...a11yProps}
         >
-          <rect
-            x="3"
-            y="4"
-            width="18"
-            height="4"
-            rx="1"
-            fill="currentColor"
-          />
+          <rect x="3" y="4" width="18" height="4" rx="1" fill="currentColor" />
           <rect x="3" y="10" width="18" height="4" rx="1" opacity="0.45" />
           <rect x="3" y="16" width="18" height="4" rx="1" opacity="0.45" />
         </svg>
@@ -307,14 +279,7 @@ export function LineIcon({
           {...a11yProps}
         >
           <rect x="3" y="4" width="18" height="4" rx="1" opacity="0.45" />
-          <rect
-            x="3"
-            y="10"
-            width="18"
-            height="4"
-            rx="1"
-            fill="currentColor"
-          />
+          <rect x="3" y="10" width="18" height="4" rx="1" fill="currentColor" />
           <rect x="3" y="16" width="18" height="4" rx="1" opacity="0.45" />
         </svg>
       );
@@ -336,14 +301,7 @@ export function LineIcon({
         >
           <rect x="3" y="4" width="18" height="4" rx="1" opacity="0.45" />
           <rect x="3" y="10" width="18" height="4" rx="1" opacity="0.45" />
-          <rect
-            x="3"
-            y="16"
-            width="18"
-            height="4"
-            rx="1"
-            fill="currentColor"
-          />
+          <rect x="3" y="16" width="18" height="4" rx="1" fill="currentColor" />
         </svg>
       );
   }
@@ -489,6 +447,7 @@ export function CardTypeIcon({
   const a11yProps = getA11ySvgProps(label);
 
   switch (type) {
+    case 'structure':
     case 'economy':
       return (
         <svg
@@ -579,12 +538,7 @@ export interface StatIconProps extends DomainIconProps {
   readonly stat: StatKind;
 }
 
-export function StatIcon({
-  stat,
-  size = 16,
-  className,
-  label,
-}: StatIconProps): ReactElement {
+export function StatIcon({ stat, size = 16, className, label }: StatIconProps): ReactElement {
   const a11yProps = getA11ySvgProps(label);
 
   switch (stat) {

@@ -2,6 +2,7 @@
 // Avvio partita (createGame), pesca iniziale da sotto-mazzo e risoluzione simultanea del mulligan.
 
 import { produce } from 'immer';
+import { eraWallsBonus } from './civilizations.js';
 import type { Result, RuleError, SubmitMulliganCommand } from './commands.js';
 import { validateDeck } from './deck.js';
 import {
@@ -89,9 +90,7 @@ function createCardInstances(
 ): CardInstance[] {
   return cardIds.map((cardId) => {
     if (catalog[cardId] === undefined) {
-      throw new Error(
-        `Card "${cardId}" for player ${owner} does not exist in catalog.`,
-      );
+      throw new Error(`Card "${cardId}" for player ${owner} does not exist in catalog.`);
     }
     const nextUidNum = ++counters.uid;
     return {
@@ -132,9 +131,7 @@ function buildPlayerSubdecks(
   const issues = validateDeck(deckPayload, config.catalog);
   if (issues.length > 0) {
     const firstIssue = issues[0]!;
-    throw new Error(
-      `Invalid deck for ${player} (${firstIssue.code}): ${firstIssue.message}`,
-    );
+    throw new Error(`Invalid deck for ${player} (${firstIssue.code}): ${firstIssue.message}`);
   }
 
   let currentRng = rngState;
@@ -159,9 +156,7 @@ function buildPlayerSubdecks(
   return { subdecks, nextRngState: currentRng };
 }
 
-function createInitialPlayerState(
-  subdecks: Record<EraNo, CardInstance[]>,
-): PlayerState {
+function createInitialPlayerState(subdecks: Record<EraNo, CardInstance[]>): PlayerState {
   return {
     hand: [],
     subdecks,
@@ -220,10 +215,7 @@ export function drawCardsFromSubdeck(
  * Esegue il Raccolto d'apertura dell'Era corrente per entrambi i giocatori e apre il Ciclo 1 di `development`
  * (GDD §3.3.2–3, TECH-SPEC §4.4 passi 6 e 7).
  */
-export function startEraDevelopment(
-  state: GameState,
-  events: GameEvent[],
-): void {
+export function startEraDevelopment(state: GameState, events: GameEvent[]): void {
   applyOpeningHarvest(state, events);
 
   state.phase = 'development';
@@ -253,10 +245,23 @@ export function createGame(config: NewGameConfig): {
   state: GameState;
   events: GameEvent[];
 } {
+  const version = config.decks?.P1?.rulesetVersion ?? config.rules?.gddVersion ?? '1.0';
+  if (
+    (config.decks?.P2 && (config.decks.P2.rulesetVersion ?? '1.0') !== version) ||
+    (config.rules?.gddVersion !== undefined && config.rules.gddVersion !== version)
+  ) {
+    throw new Error('Both decks and rules must use the same version.');
+  }
+  const catalogV2 = Object.values(config.catalog).some((c) => c.affiliation !== undefined);
+  if (catalogV2 !== (version === '2.0'))
+    throw new Error('Catalog and rules versions do not match.');
+  const civilizations = config.decks
+    ? { P1: config.decks.P1?.civilizationId, P2: config.decks.P2?.civilizationId }
+    : config.civilizations;
+  if (version === '2.0' && (!civilizations?.P1 || !civilizations.P2))
+    throw new Error('V2 requires explicit civilizations for both players.');
   if (config.decks === undefined && config.fixedDecks === undefined) {
-    throw new Error(
-      'Either decks or fixedDecks must be provided in NewGameConfig.',
-    );
+    throw new Error('Either decks or fixedDecks must be provided in NewGameConfig.');
   }
 
   let rngState: RngState = seedToRngState(config.seed);
@@ -283,11 +288,11 @@ export function createGame(config: NewGameConfig): {
   rngState = p2Build.nextRngState;
 
   const state: GameState = {
-    schemaVersion: 1,
-    rulesetVersion: '1.0',
-    catalogVersion: '1.0',
+    schemaVersion: version === '2.0' ? 2 : 1,
+    rulesetVersion: version,
+    catalogVersion: version,
     stateVersion: 0,
-    rules: mergeRulesConfig(config.rules),
+    rules: mergeRulesConfig({ ...config.rules, gddVersion: version }),
     catalog: config.catalog,
     seed: config.seed,
     rngState,
@@ -307,12 +312,23 @@ export function createGame(config: NewGameConfig): {
 
   const events: GameEvent[] = [];
 
+  if (version === '2.0') {
+    for (const player of PLAYERS_ORDER) {
+      const p = state.players[player];
+      p.civilizationId = civilizations![player]!;
+      p.organizationUsed = false;
+      p.structures = [];
+      p.marketUsed = false;
+      p.walls += eraWallsBonus(state, p);
+    }
+  }
+
   events.push({
     n: ++state.counters.event,
     type: 'GameStarted',
     era: 1,
-    rulesetVersion: '1.0',
-    catalogVersion: '1.0',
+    rulesetVersion: version,
+    catalogVersion: version,
   });
 
   events.push({
@@ -431,9 +447,7 @@ export function mutateSubmitMulligan(
       const selectedUids = new Set(commit.cardUids);
       const playerState = draft.players[player];
 
-      const keptCards = playerState.hand.filter(
-        (card) => !selectedUids.has(card.uid),
-      );
+      const keptCards = playerState.hand.filter((card) => !selectedUids.has(card.uid));
       const returnedCards = playerState.hand
         .filter((card) => selectedUids.has(card.uid))
         .sort((a, b) => a.drawnOrder - b.drawnOrder);

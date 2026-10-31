@@ -4,7 +4,7 @@
 // - Replay deterministico GET /api/v1/games/:id/replay?as=P1|P2|public (solo per partite FINISHED)
 
 import { randomUUID } from 'node:crypto';
-import { CARDS_RULES } from '@epochs/content';
+import { CARDS_RULES, getCatalog } from '@epochs/content';
 import {
   PLAYERS_ORDER,
   apply,
@@ -34,10 +34,7 @@ import {
 } from '@epochs/protocol';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
-import {
-  authenticateOrCreateGuest,
-  resolvePlayerFromToken,
-} from '../auth/guest-session.js';
+import { authenticateOrCreateGuest, resolvePlayerFromToken } from '../auth/guest-session.js';
 import {
   RepositoryIntegrityError,
   type GameCommandLogRecord,
@@ -105,13 +102,12 @@ export function extractInitialDecksFromGameState(
       ...pState.subdecks[2],
       ...pState.subdecks[3],
       ...pState.buildings,
+      ...(pState.structures ?? []),
       ...pState.units,
       ...pState.discard,
     ];
 
-    allCards.sort(
-      (a, b) => parseUidNumericSuffix(a.uid) - parseUidNumericSuffix(b.uid),
-    );
+    allCards.sort((a, b) => parseUidNumericSuffix(a.uid) - parseUidNumericSuffix(b.uid));
 
     const subdecks: { '1': string[]; '2': string[]; '3': string[] } = {
       '1': [],
@@ -129,6 +125,14 @@ export function extractInitialDecksFromGameState(
     result[player] = {
       id: `reconstructed_${player.toLowerCase()}`,
       name: `Mazzo ${player}`,
+      ...(state.rulesetVersion === '2.0' && pState.civilizationId
+        ? {
+            schemaVersion: 2 as const,
+            rulesetVersion: state.rulesetVersion,
+            catalogVersion: state.catalogVersion,
+            civilizationId: pState.civilizationId,
+          }
+        : {}),
       subdecks,
     };
   }
@@ -156,14 +160,11 @@ export function projectViewForReplayPerspective(
     ...base,
     self: {
       ...base.self,
+      ...(base.self.organizationUsed !== undefined ? { organizationUsed: false } : {}),
       hand: [],
-      resources: revealedStage
-        ? base.self.resources
-        : { food: 0, wood: 0, metal: 0 },
+      resources: revealedStage ? base.self.resources : { food: 0, wood: 0, metal: 0 },
       buildings: [],
-      units: revealedStage
-        ? base.self.units.filter((u) => u.revealed)
-        : [],
+      units: revealedStage ? base.self.units.filter((u) => u.revealed) : [],
       discard: base.self.discard.filter((c) => publicDiscardIds.has(c.cardId)),
       legal: {
         phase: state.phase,
@@ -243,10 +244,7 @@ function buildInitialReplayState(
       player: firstCmd.player,
     };
     const applied = apply(created.state, engineCmd);
-    if (
-      applied.ok &&
-      stateHash(applied.value.state) === firstCmd.stateHash
-    ) {
+    if (applied.ok && stateHash(applied.value.state) === firstCmd.stateHash) {
       return created;
     }
   }
@@ -269,14 +267,12 @@ export function reconstructGameReplay(
   perspective: ReplayPerspective,
   catalog: Readonly<Record<string, CardRules>> = CARDS_RULES,
 ): ReplayPayload {
+  catalog = record.state.catalog;
   const initial = buildInitialReplayState(record, commands, catalog);
   let currentState = initial.state;
 
   const initialView = projectViewForReplayPerspective(currentState, perspective);
-  const initialEvents = projectEventsForReplayPerspective(
-    initial.events,
-    perspective,
-  );
+  const initialEvents = projectEventsForReplayPerspective(initial.events, perspective);
 
   const steps: ReplayStep[] = [];
 
@@ -302,11 +298,7 @@ export function reconstructGameReplay(
     const nextState = transition.value.state;
     const computedStepHash = stateHash(nextState);
     if (computedStepHash !== cmdLog.stateHash) {
-      throw new RepositoryIntegrityError(
-        record.id,
-        cmdLog.stateHash,
-        computedStepHash,
-      );
+      throw new RepositoryIntegrityError(record.id, cmdLog.stateHash, computedStepHash);
     }
 
     if (nextState.stateVersion !== cmdLog.resultingVersion) {
@@ -315,10 +307,7 @@ export function reconstructGameReplay(
       );
     }
 
-    const stepEvents = projectEventsForReplayPerspective(
-      transition.value.events,
-      perspective,
-    );
+    const stepEvents = projectEventsForReplayPerspective(transition.value.events, perspective);
     const stepView = projectViewForReplayPerspective(nextState, perspective);
 
     steps.push({
@@ -338,11 +327,7 @@ export function reconstructGameReplay(
 
   const finalComputedHash = stateHash(currentState);
   if (finalComputedHash !== record.stateHash) {
-    throw new RepositoryIntegrityError(
-      record.id,
-      record.stateHash,
-      finalComputedHash,
-    );
+    throw new RepositoryIntegrityError(record.id, record.stateHash, finalComputedHash);
   }
 
   const finalResult = currentState.result ?? record.result;
@@ -378,10 +363,7 @@ function extractRequestPlayer(
   }
 
   const guestTokenHeader = request.headers['x-guest-token'];
-  if (
-    typeof guestTokenHeader === 'string' &&
-    guestTokenHeader.trim().length > 0
-  ) {
+  if (typeof guestTokenHeader === 'string' && guestTokenHeader.trim().length > 0) {
     return resolvePlayerFromToken(repository, guestTokenHeader);
   }
 
@@ -441,9 +423,7 @@ export function registerReplayAndDecksRoutes(
   app.get('/api/v1/decks', async (request, reply) => {
     const player = extractRequestPlayer(request, repository);
     if (player === null) {
-      return reply
-        .status(401)
-        .send(createGameErrorMessage('UNAUTHENTICATED'));
+      return reply.status(401).send(createGameErrorMessage('UNAUTHENTICATED'));
     }
 
     const decks = repository.listDecksByPlayer(player.id);
@@ -458,9 +438,7 @@ export function registerReplayAndDecksRoutes(
   ) => {
     const player = extractRequestPlayer(request, repository);
     if (player === null) {
-      return reply
-        .status(401)
-        .send(createGameErrorMessage('UNAUTHENTICATED'));
+      return reply.status(401).send(createGameErrorMessage('UNAUTHENTICATED'));
     }
 
     const parsedBody = SaveDeckBodySchema.safeParse(request.body);
@@ -477,36 +455,27 @@ export function registerReplayAndDecksRoutes(
 
     const bodyData = parsedBody.data;
     const deckPayload: DeckPayload =
-      'deck' in bodyData
-        ? bodyData.deck
-        : 'payload' in bodyData
-          ? bodyData.payload
-          : bodyData;
+      'deck' in bodyData ? bodyData.deck : 'payload' in bodyData ? bodyData.payload : bodyData;
 
-    const validationIssues = validateDeck(deckPayload, catalog);
+    const validationIssues = validateDeck(
+      deckPayload,
+      options.catalog ?? getCatalog(deckPayload.catalogVersion ?? '1.0').rulesById,
+    );
     if (validationIssues.length > 0) {
       return reply
         .status(400)
-        .send(
-          createGameErrorMessage(
-            'INVALID_DECK',
-            validationIssues[0]!.message,
-          ),
-        );
+        .send(createGameErrorMessage('INVALID_DECK', validationIssues[0]!.message));
     }
 
     const deckId =
       explicitDeckId ??
-      ('id' in bodyData && typeof bodyData.id === 'string'
-        ? bodyData.id
-        : undefined) ??
+      ('id' in bodyData && typeof bodyData.id === 'string' ? bodyData.id : undefined) ??
       deckPayload.id ??
       `deck_${randomUUID().replace(/-/g, '').slice(0, 12)}`;
 
     const deckName =
-      ('name' in bodyData && typeof bodyData.name === 'string'
-        ? bodyData.name
-        : undefined) ?? deckPayload.name;
+      ('name' in bodyData && typeof bodyData.name === 'string' ? bodyData.name : undefined) ??
+      deckPayload.name;
 
     try {
       const saved = repository.saveDeck({
@@ -518,19 +487,15 @@ export function registerReplayAndDecksRoutes(
           id: deckId,
           name: deckName,
         },
-        catalogVersion: '1.0',
+        catalogVersion: deckPayload.catalogVersion ?? '1.0',
         updatedAt: clock(),
       });
 
       return reply.status(explicitDeckId ? 200 : 201).send({ deck: saved });
     } catch (err) {
       const message =
-        err instanceof Error
-          ? err.message
-          : 'Impossibile salvare il mazzo richiesto.';
-      return reply
-        .status(403)
-        .send(createGameErrorMessage('MATCH_NOT_ACCESSIBLE', message));
+        err instanceof Error ? err.message : 'Impossibile salvare il mazzo richiesto.';
+      return reply.status(403).send(createGameErrorMessage('MATCH_NOT_ACCESSIBLE', message));
     }
   };
 
@@ -538,44 +503,34 @@ export function registerReplayAndDecksRoutes(
     return handleUpsertDeck(request, reply);
   });
 
-  app.put<{ Params: { id: string } }>(
-    '/api/v1/decks/:id',
-    async (request, reply) => {
-      const id = request.params.id.trim();
-      if (id.length === 0) {
-        return reply
-          .status(400)
-          .send(createGameErrorMessage('INVALID_DECK', 'ID mazzo mancante.'));
-      }
-      return handleUpsertDeck(request, reply, id);
-    },
-  );
+  app.put<{ Params: { id: string } }>('/api/v1/decks/:id', async (request, reply) => {
+    const id = request.params.id.trim();
+    if (id.length === 0) {
+      return reply.status(400).send(createGameErrorMessage('INVALID_DECK', 'ID mazzo mancante.'));
+    }
+    return handleUpsertDeck(request, reply, id);
+  });
 
-  app.delete<{ Params: { id: string } }>(
-    '/api/v1/decks/:id',
-    async (request, reply) => {
-      const player = extractRequestPlayer(request, repository);
-      if (player === null) {
-        return reply
-          .status(401)
-          .send(createGameErrorMessage('UNAUTHENTICATED'));
-      }
+  app.delete<{ Params: { id: string } }>('/api/v1/decks/:id', async (request, reply) => {
+    const player = extractRequestPlayer(request, repository);
+    if (player === null) {
+      return reply.status(401).send(createGameErrorMessage('UNAUTHENTICATED'));
+    }
 
-      const deleted = repository.deleteDeck(request.params.id, player.id);
-      if (!deleted) {
-        return reply
-          .status(404)
-          .send(
-            createGameErrorMessage(
-              'MATCH_NOT_ACCESSIBLE',
-              'Mazzo non trovato o non appartenente al giocatore.',
-            ),
-          );
-      }
+    const deleted = repository.deleteDeck(request.params.id, player.id);
+    if (!deleted) {
+      return reply
+        .status(404)
+        .send(
+          createGameErrorMessage(
+            'MATCH_NOT_ACCESSIBLE',
+            'Mazzo non trovato o non appartenente al giocatore.',
+          ),
+        );
+    }
 
-      return reply.status(200).send({ deleted: true });
-    },
-  );
+    return reply.status(200).send({ deleted: true });
+  });
 
   // 4. Replay deterministico GET /api/v1/games/:id/replay?as=P1|P2|public (§6.4 riga 596, §6.5 riga 602)
   app.get<{
@@ -603,12 +558,7 @@ export function registerReplayAndDecksRoutes(
     if (gameRecord === null) {
       return reply
         .status(404)
-        .send(
-          createGameErrorMessage(
-            'MATCH_NOT_ACCESSIBLE',
-            `Partita "${gameId}" non trovata.`,
-          ),
-        );
+        .send(createGameErrorMessage('MATCH_NOT_ACCESSIBLE', `Partita "${gameId}" non trovata.`));
     }
 
     // Regola bloccante §6.4 / §6.5: durante una partita ACTIVE nessuno può interrogare il replay
@@ -625,12 +575,7 @@ export function registerReplayAndDecksRoutes(
     }
 
     const commands = repository.listCommandsByGame(gameId);
-    const replayPayload = reconstructGameReplay(
-      gameRecord,
-      commands,
-      perspective,
-      catalog,
-    );
+    const replayPayload = reconstructGameReplay(gameRecord, commands, perspective, catalog);
 
     return reply.status(200).send(replayPayload);
   });

@@ -26,6 +26,27 @@ export function validateDeck(
   catalog: Record<string, CardRules>,
 ): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
+  const v2 =
+    deck.schemaVersion === 2 ||
+    deck.rulesetVersion === '2.0' ||
+    deck.catalogVersion === '2.0' ||
+    deck.civilizationId !== undefined;
+  const catalogV2 = Object.values(catalog).some((card) => card.affiliation !== undefined);
+  if (
+    v2 !== catalogV2 ||
+    (v2 &&
+      (deck.schemaVersion !== 2 ||
+        deck.rulesetVersion !== '2.0' ||
+        deck.catalogVersion !== '2.0' ||
+        !['feudal', 'norse', 'byzantine'].includes(deck.civilizationId ?? '')))
+  ) {
+    issues.push({
+      code: 'INCOMPATIBLE_VERSION',
+      path: 'catalogVersion',
+      message:
+        'Deck metadata and catalog version must match; v2 requires an explicit civilization.',
+    });
+  }
   const copyCounts: Record<string, number> = {};
 
   for (const [eraKey, eraNo] of ERA_SUBDECK_KEYS) {
@@ -62,6 +83,19 @@ export function validateDeck(
           cardId,
           era: eraNo,
           message: `Card "${cardId}" belongs to Era ${cardRules.era}, not Era ${eraNo} subdeck.`,
+        });
+      }
+      if (
+        v2 &&
+        cardRules.affiliation !== 'common' &&
+        cardRules.affiliation !== deck.civilizationId
+      ) {
+        issues.push({
+          code: 'WRONG_CIVILIZATION',
+          path: `subdecks.${eraKey}[${i}]`,
+          cardId,
+          era: eraNo,
+          message: `Card "${cardId}" does not belong to ${deck.civilizationId}.`,
         });
       }
     }

@@ -1,12 +1,9 @@
+import type { Affiliation } from '../versions.js';
 import { z } from 'zod';
 
 export type EraNo = 1 | 2 | 3;
 
-export const EraNoSchema = z.union([
-  z.literal(1),
-  z.literal(2),
-  z.literal(3),
-]);
+export const EraNoSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 
 export const ResourceSchema = z.enum(['food', 'wood', 'metal']);
 export type Resource = z.infer<typeof ResourceSchema>;
@@ -23,24 +20,15 @@ export type Resources = z.infer<typeof ResourcesSchema>;
 export const LineSchema = z.enum(['front', 'center', 'rear']);
 export type Line = z.infer<typeof LineSchema>;
 
-export const CardTypeSchema = z.enum([
-  'economy',
-  'unit',
-  'instant',
-  'conversion',
-]);
+export const CardTypeSchema = z.enum(['structure', 'economy', 'unit', 'instant', 'conversion']);
 export type CardType = z.infer<typeof CardTypeSchema>;
 
-export const UnitCategorySchema = z.enum([
-  'infantry',
-  'spearman',
-  'cavalry',
-  'archer',
-  'siege',
-]);
+export const UnitCategorySchema = z.enum(['infantry', 'spearman', 'cavalry', 'archer', 'siege']);
 export type UnitCategory = z.infer<typeof UnitCategorySchema>;
 
 export const AbilitySchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('fury'), amount: z.literal(2) }).strict(),
+  z.object({ kind: z.literal('discipline'), amount: z.literal(1) }).strict(),
   z
     .object({
       kind: z.literal('impale'),
@@ -66,7 +54,7 @@ export const InstantEffectSchema = z.discriminatedUnion('kind', [
   z
     .object({
       kind: z.literal('atk_mod'),
-      target: z.enum(['own_archers', 'own_front']),
+      target: z.enum(['own_archers', 'own_front', 'own_infantry']),
       amount: z.number().int(),
     })
     .strict(),
@@ -97,13 +85,12 @@ export const ConversionEffectSchema = z.discriminatedUnion('kind', [
 ]);
 export type ConversionEffect = z.infer<typeof ConversionEffectSchema>;
 
-export const CardEffectSchema = z.union([
-  InstantEffectSchema,
-  ConversionEffectSchema,
-]);
+export const CardEffectSchema = z.union([InstantEffectSchema, ConversionEffectSchema]);
 export type CardEffect = z.infer<typeof CardEffectSchema>;
 
 export interface CardRules {
+  affiliation?: Affiliation;
+  structureEffect?: { kind: 'market' } | { kind: 'era_walls'; amount: number };
   id: string;
   era: EraNo;
   type: CardType;
@@ -121,6 +108,13 @@ export interface CardRules {
 
 const BaseCardRulesSchema = z
   .object({
+    affiliation: z.enum(['common', 'feudal', 'norse', 'byzantine']).optional(),
+    structureEffect: z
+      .union([
+        z.object({ kind: z.literal('market') }).strict(),
+        z.object({ kind: z.literal('era_walls'), amount: z.literal(2) }).strict(),
+      ])
+      .optional(),
     id: z.string().min(1),
     era: EraNoSchema,
     type: CardTypeSchema,
@@ -137,8 +131,26 @@ const BaseCardRulesSchema = z
   })
   .strict();
 
-export const CardRulesSchema: z.ZodType<CardRules> =
-  BaseCardRulesSchema.superRefine((card, ctx) => {
+export const CardRulesSchema: z.ZodType<CardRules> = BaseCardRulesSchema.superRefine(
+  (card, ctx) => {
+    if (
+      card.type === 'structure'
+        ? card.structureEffect === undefined || card.effect !== undefined
+        : card.structureEffect !== undefined
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['structureEffect'],
+        message:
+          'Only structures must define a structureEffect, without instant/conversion effects.',
+      });
+    }
+    if (new Set(card.abilities.map((a) => a.kind)).size !== card.abilities.length)
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['abilities'],
+        message: 'Duplicate abilities are not allowed.',
+      });
     if (card.type === 'unit') {
       if (card.category === undefined) {
         ctx.addIssue({
@@ -303,8 +315,7 @@ export const CardRulesSchema: z.ZodType<CardRules> =
     if (card.type === 'conversion') {
       if (
         card.effect === undefined ||
-        (card.effect.kind !== 'gain_per_building' &&
-          card.effect.kind !== 'gain_and_dem_bonus')
+        (card.effect.kind !== 'gain_per_building' && card.effect.kind !== 'gain_and_dem_bonus')
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -314,7 +325,8 @@ export const CardRulesSchema: z.ZodType<CardRules> =
         });
       }
     }
-  }) as unknown as z.ZodType<CardRules>;
+  },
+) as unknown as z.ZodType<CardRules>;
 
 export const CardsRulesFileSchema = z
   .record(z.string().min(1), CardRulesSchema)

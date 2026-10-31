@@ -1,5 +1,7 @@
+import { useCatalogVersion } from '../../content/use-catalog-version.js';
+import type { ContentVersion } from '@epochs/content';
 import { useBoardCardInspection } from './BoardCardInspection.js';
-import { getCard, type CatalogCard } from '@epochs/content';
+import { getCard, CIVILIZATIONS, type CatalogCard } from '@epochs/content';
 import type { Resource, UnplayableReason } from '@epochs/engine';
 import {
   useEffect,
@@ -31,6 +33,7 @@ export const LONG_PRESS_MS = 250;
 const RESOURCE_ORDER: readonly Resource[] = ['food', 'wood', 'metal'];
 
 export interface CardProps {
+  readonly version?: ContentVersion | undefined;
   readonly cardId?: string | undefined;
   readonly card?: CatalogCard | undefined;
   readonly atkMod?: number | undefined;
@@ -50,17 +53,19 @@ export interface CardProps {
 export function resolveCatalogCard(
   cardId: string | undefined,
   card: CatalogCard | undefined,
+  version: ContentVersion = '1.0',
 ): CatalogCard {
   if (card !== undefined) {
     return card;
   }
   if (cardId !== undefined) {
-    return getCard(cardId);
+    return getCard(cardId, version);
   }
   throw new Error('Card component requires either card or cardId prop.');
 }
 
 export function Card({
+  version,
   cardId,
   card,
   atkMod = 0,
@@ -76,7 +81,8 @@ export function Card({
   artSlot,
   className,
 }: CardProps): ReactElement {
-  const resolved = resolveCatalogCard(cardId, card);
+  const catalogVersion = useCatalogVersion(version);
+  const resolved = resolveCatalogCard(cardId, card, catalogVersion);
   const { rules, text, rulesText } = resolved;
 
   const inspection = useBoardCardInspection(
@@ -205,6 +211,12 @@ export function Card({
         <header className="epochs-card__header" data-card-band="header">
           <span className="epochs-card__name" title={text.name}>
             {text.name}
+            {rules.affiliation && rules.affiliation !== 'common' && (
+              <small title={CIVILIZATIONS[rules.affiliation].name}>
+                {' '}
+                · {rules.affiliation === 'feudal' ? '♜' : rules.affiliation === 'norse' ? 'ᚾ' : '✦'}
+              </small>
+            )}
           </span>
           <div className="epochs-card__costs" aria-label="Costo risorse">
             {positiveCosts.map((res) => (

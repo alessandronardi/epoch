@@ -8,6 +8,7 @@ import {
   type ClientCommand,
   type LegalCommands,
   type PlayCardClientCommand,
+  type ActivateMarketClientCommand,
   type PlayConversionClientCommand,
   type PlayerView,
   type Resources,
@@ -67,10 +68,7 @@ export function pickRandomInt(
 /**
  * Seleziona uniformemente un elemento da un array non vuoto usando `rng`.
  */
-export function pickRandomElement<T>(
-  items: readonly T[],
-  rng: () => number,
-): T {
+export function pickRandomElement<T>(items: readonly T[], rng: () => number): T {
   if (items.length === 0) {
     throw new Error('Cannot pick a random element from an empty array.');
   }
@@ -81,11 +79,7 @@ export function pickRandomElement<T>(
 /**
  * Estrae `count` elementi distinti in modo uniforme da `items` tramite Fisher-Yates parziale.
  */
-export function sampleDistinct<T>(
-  items: readonly T[],
-  count: number,
-  rng: () => number,
-): T[] {
+export function sampleDistinct<T>(items: readonly T[], count: number, rng: () => number): T[] {
   const targetCount = Math.max(0, Math.min(count, items.length));
   if (targetCount === 0) {
     return [];
@@ -106,8 +100,10 @@ export function sampleDistinct<T>(
  */
 export function enumeratePlayableDevelopmentMoves(
   legal: Readonly<LegalCommands>,
-): Array<PlayCardClientCommand | PlayConversionClientCommand> {
-  const moves: Array<PlayCardClientCommand | PlayConversionClientCommand> = [];
+): Array<PlayCardClientCommand | PlayConversionClientCommand | ActivateMarketClientCommand> {
+  const moves: Array<
+    PlayCardClientCommand | PlayConversionClientCommand | ActivateMarketClientCommand
+  > = [...(legal.marketCommands ?? [])];
 
   for (const cardUid of legal.playableFieldCardUids) {
     moves.push({
@@ -153,11 +149,7 @@ export function enumeratePlayableInstantSubsets(
   const handMap = new Map(view.self.hand.map((c) => [c.uid, c.cardId]));
   const validSubsets: string[][] = [];
 
-  function backtrack(
-    startIndex: number,
-    currentUids: string[],
-    currentCost: Resources,
-  ): void {
+  function backtrack(startIndex: number, currentUids: string[], currentCost: Resources): void {
     for (let i = startIndex; i < playableUids.length; i++) {
       const uid = playableUids[i]!;
       const cardId = handMap.get(uid);
@@ -175,9 +167,7 @@ export function enumeratePlayableInstantSubsets(
   }
 
   backtrack(0, [], { ...ZERO_RESOURCES });
-  return validSubsets.length > 0
-    ? validSubsets
-    : playableUids.map((uid) => [uid]);
+  return validSubsets.length > 0 ? validSubsets : playableUids.map((uid) => [uid]);
 }
 
 /**
@@ -193,13 +183,8 @@ export class RandomBot implements Bot {
   private readonly catalog: Readonly<Record<string, CardRules>> | undefined;
 
   public constructor(options: RandomBotOptions = {}) {
-    const passProbability =
-      options.passProbability ?? DEFAULT_RANDOM_BOT_PASS_PROBABILITY;
-    if (
-      !Number.isFinite(passProbability) ||
-      passProbability < 0 ||
-      passProbability > 1
-    ) {
+    const passProbability = options.passProbability ?? DEFAULT_RANDOM_BOT_PASS_PROBABILITY;
+    if (!Number.isFinite(passProbability) || passProbability < 0 || passProbability > 1) {
       throw new RangeError(
         `RandomBot passProbability must be a finite number in [0, 1], received ${String(passProbability)}.`,
       );
@@ -274,10 +259,7 @@ export class RandomBot implements Bot {
           );
         }
 
-        const nonEmptySubsets = enumeratePlayableInstantSubsets(
-          view,
-          this.catalog,
-        );
+        const nonEmptySubsets = enumeratePlayableInstantSubsets(view, this.catalog);
         if (nonEmptySubsets.length === 0) {
           return {
             type: 'LockInstants',
@@ -285,10 +267,7 @@ export class RandomBot implements Bot {
           };
         }
 
-        if (
-          this.passProbability > 0 &&
-          clampUnitRandom(rng()) < this.passProbability
-        ) {
+        if (this.passProbability > 0 && clampUnitRandom(rng()) < this.passProbability) {
           return {
             type: 'LockInstants',
             cardUids: [],

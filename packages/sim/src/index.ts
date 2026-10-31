@@ -1,6 +1,7 @@
 // TECH-SPEC §7.2 — Orchestratore multi-worker runSimulation e aggregatore deterministico per @epochs/sim.
 
 import { Worker } from 'node:worker_threads';
+import { summarizeExpansion } from './expansion-metrics.js';
 import { DEFAULT_BOT_CATALOG, type BotKind } from '../../bots/src/index.js';
 import {
   PLAYERS_ORDER,
@@ -171,6 +172,7 @@ export interface CardSimulationStats {
 }
 
 export interface SimulationReport {
+  readonly expansion: ReturnType<typeof summarizeExpansion>;
   readonly seed: string;
   readonly games: number;
   readonly deckA: {
@@ -267,8 +269,7 @@ function buildBattleOutcomesSummary(
   stalemateCount: number,
   mutualAnnihilationCount: number,
 ): BattleOutcomesSummary {
-  const totalBattles =
-    winnerCount + stalemateCount + mutualAnnihilationCount;
+  const totalBattles = winnerCount + stalemateCount + mutualAnnihilationCount;
   return {
     totalBattles,
     winnerCount,
@@ -283,17 +284,12 @@ function buildBattleOutcomesSummary(
 /**
  * Ripartisce gli indici `0 .. games - 1` in `workerCount` batch contigui/bilanciati.
  */
-export function partitionGameIndices(
-  games: number,
-  workerCount: number,
-): number[][] {
+export function partitionGameIndices(games: number, workerCount: number): number[][] {
   if (!Number.isInteger(games) || games < 0) {
     throw new Error(`Invalid games count: ${games} (must be an integer >= 0).`);
   }
   if (!Number.isInteger(workerCount) || workerCount < 1) {
-    throw new Error(
-      `Invalid workerCount: ${workerCount} (must be an integer >= 1).`,
-    );
+    throw new Error(`Invalid workerCount: ${workerCount} (must be an integer >= 1).`);
   }
   if (games === 0) {
     return [];
@@ -326,15 +322,10 @@ export function aggregateSimulationRecords(
   options: SimulationOptions,
 ): SimulationReport {
   const catalog = options.catalog ?? DEFAULT_BOT_CATALOG;
-  const sortedRecords = [...records].sort(
-    (a, b) => a.gameIndex - b.gameIndex,
-  );
+  const sortedRecords = [...records].sort((a, b) => a.gameIndex - b.gameIndex);
   const totalGames = sortedRecords.length;
 
-  const seatCounts: Record<
-    PlayerId,
-    { wins: number; losses: number; draws: number }
-  > = {
+  const seatCounts: Record<PlayerId, { wins: number; losses: number; draws: number }> = {
     P1: { wins: 0, losses: 0, draws: 0 },
     P2: { wins: 0, losses: 0, draws: 0 },
   };
@@ -622,8 +613,7 @@ export function aggregateSimulationRecords(
 
     // Statistiche per singola carta per ciascuno dei due giocatori (P1, P2)
     for (const player of PLAYERS_ORDER) {
-      const deckCounts =
-        player === record.aSeat ? deckACardCounts : deckBCardCounts;
+      const deckCounts = player === record.aSeat ? deckACardCounts : deckBCardCounts;
       const drawnMap = record.cardsDrawnByPlayer[player];
       const playedMap = record.cardsPlayedByPlayer[player];
       const playerWon = record.winner === player;
@@ -798,10 +788,7 @@ export function aggregateSimulationRecords(
       copiesInDecks: cardAcc.copiesInDecks,
       gamesInDeck: cardAcc.gamesInDeck,
       winsWhenInDeck: cardAcc.winsWhenInDeck,
-      winRateWhenInDeck: safeRatio(
-        cardAcc.winsWhenInDeck,
-        cardAcc.gamesInDeck,
-      ),
+      winRateWhenInDeck: safeRatio(cardAcc.winsWhenInDeck, cardAcc.gamesInDeck),
       gamesDrawn: cardAcc.gamesDrawn,
       copiesDrawn: cardAcc.copiesDrawn,
       gamesPlayed: cardAcc.gamesPlayed,
@@ -811,10 +798,7 @@ export function aggregateSimulationRecords(
       drawsWhenPlayed: cardAcc.drawsWhenPlayed,
       playRatePerGame: safeRatio(cardAcc.gamesPlayed, totalPlayerGameEntries),
       playRateWhenDrawn: safeRatio(cardAcc.gamesPlayed, cardAcc.gamesDrawn),
-      winRateWhenPlayed: safeRatio(
-        cardAcc.winsWhenPlayed,
-        cardAcc.gamesPlayed,
-      ),
+      winRateWhenPlayed: safeRatio(cardAcc.winsWhenPlayed, cardAcc.gamesPlayed),
     };
   }
 
@@ -853,6 +837,7 @@ export function aggregateSimulationRecords(
       avgTotalRaidedPerGame: safeRatio(totalResourcesRaided, totalGames),
     },
     cardStats,
+    expansion: summarizeExpansion(sortedRecords),
   };
 
   const reportHash = sha256Hex(canonicalizeJson(partialReport));
@@ -900,7 +885,10 @@ function spawnWorkerBatch(task: WorkerBatchTask): Promise<WorkerBatchResult> {
 
     worker.on('message', (result: WorkerBatchResult) => {
       settled = true;
-      void worker.terminate().then(() => resolve(result), () => resolve(result));
+      void worker.terminate().then(
+        () => resolve(result),
+        () => resolve(result),
+      );
     });
 
     worker.on('error', (err: Error) => {
@@ -913,11 +901,7 @@ function spawnWorkerBatch(task: WorkerBatchTask): Promise<WorkerBatchResult> {
     worker.on('exit', (code: number) => {
       if (!settled && code !== 0) {
         settled = true;
-        reject(
-          new Error(
-            `Simulation worker ${task.workerId} exited with non-zero code ${code}.`,
-          ),
-        );
+        reject(new Error(`Simulation worker ${task.workerId} exited with non-zero code ${code}.`));
       }
     });
   });
@@ -928,9 +912,7 @@ function spawnWorkerBatch(task: WorkerBatchTask): Promise<WorkerBatchResult> {
  * aggregando i risultati in ordine di `gameIndex` così che a parità di `--seed` e parametri
  * il report sia identico al 100% indipendentemente dal numero di worker.
  */
-export async function runSimulation(
-  options: SimulationOptions,
-): Promise<SimulationReport> {
+export async function runSimulation(options: SimulationOptions): Promise<SimulationReport> {
   const workers = options.workers ?? 1;
   const batches = partitionGameIndices(options.games, workers);
 
@@ -968,9 +950,7 @@ export async function runSimulation(
     ...(options.maxSteps !== undefined ? { maxSteps: options.maxSteps } : {}),
   }));
 
-  const batchResults = await Promise.all(
-    tasks.map((task) => spawnWorkerBatch(task)),
-  );
+  const batchResults = await Promise.all(tasks.map((task) => spawnWorkerBatch(task)));
 
   const allRecords: GameMetricsRecord[] = [];
   for (const batchResult of batchResults) {

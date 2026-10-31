@@ -2,11 +2,11 @@
 
 import { isMainThread, parentPort, workerData } from 'node:worker_threads';
 import {
-  DEFAULT_BOT_CATALOG,
-  createBot,
-  type Bot,
-  type BotKind,
-} from '../../bots/src/index.js';
+  collectDevelopmentMetrics,
+  emptyDevelopmentMetrics,
+  type DevelopmentMetrics,
+} from './expansion-metrics.js';
+import { DEFAULT_BOT_CATALOG, createBot, type Bot, type BotKind } from '../../bots/src/index.js';
 import {
   HAND_LIMIT,
   INITIAL_WALLS,
@@ -47,6 +47,7 @@ export interface EraMetricsRecord {
 }
 
 export interface GameMetricsRecord {
+  readonly development?: Record<PlayerId, DevelopmentMetrics>;
   readonly gameIndex: number;
   readonly seed: string;
   readonly aSeat: PlayerId;
@@ -160,10 +161,7 @@ function ensureEraRecord(
   return record;
 }
 
-function incrementCardCounter(
-  counter: Record<string, number>,
-  cardId: string,
-): void {
+function incrementCardCounter(counter: Record<string, number>, cardId: string): void {
   counter[cardId] = (counter[cardId] ?? 0) + 1;
 }
 
@@ -185,10 +183,7 @@ function selectNextActingPlayer(state: Readonly<GameState>): PlayerId {
   }
 
   if (state.phase === 'hand_limit') {
-    if (
-      state.pending.P1 === undefined &&
-      state.players.P1.hand.length > HAND_LIMIT
-    ) {
+    if (state.pending.P1 === undefined && state.players.P1.hand.length > HAND_LIMIT) {
       return 'P1';
     }
     return 'P2';
@@ -245,10 +240,7 @@ function processEventsForMetrics(
           for (const card of event.cards) {
             if (!seenDrawnUids[event.player].has(card.uid)) {
               seenDrawnUids[event.player].add(card.uid);
-              incrementCardCounter(
-                cardsDrawnByPlayer[event.player],
-                card.cardId,
-              );
+              incrementCardCounter(cardsDrawnByPlayer[event.player], card.cardId);
             }
           }
         }
@@ -281,10 +273,7 @@ function processEventsForMetrics(
       case 'InstantsRevealed': {
         for (const player of PLAYERS_ORDER) {
           for (const playedInstant of event.played[player]) {
-            incrementCardCounter(
-              cardsPlayedByPlayer[player],
-              playedInstant.cardId,
-            );
+            incrementCardCounter(cardsPlayedByPlayer[player], playedInstant.cardId);
           }
         }
         break;
@@ -349,10 +338,7 @@ function processEventsForMetrics(
  * per bilanciare perfettamente il vantaggio d'iniziativa tra i due archetipi.
  */
 export function simulateGame(params: SimulateGameParams): GameMetricsRecord {
-  const catalog = (params.catalog ?? DEFAULT_BOT_CATALOG) as Record<
-    string,
-    CardRules
-  >;
+  const catalog = (params.catalog ?? DEFAULT_BOT_CATALOG) as Record<string, CardRules>;
   const maxSteps = params.maxSteps ?? DEFAULT_MAX_STEPS;
   const seed = deriveGameSeed(params.masterSeed, params.gameIndex);
 
@@ -380,6 +366,8 @@ export function simulateGame(params: SimulateGameParams): GameMetricsRecord {
   });
 
   let state = initialState;
+  const development = { P1: emptyDevelopmentMetrics(), P2: emptyDevelopmentMetrics() };
+  collectDevelopmentMetrics(development, initialEvents, state);
   const botRng = createDeterministicBotRng(`${seed}:bot`);
 
   const eras: Partial<Record<EraNo, EraMetricsRecord>> = {};
@@ -429,6 +417,7 @@ export function simulateGame(params: SimulateGameParams): GameMetricsRecord {
       );
     }
 
+    collectDevelopmentMetrics(development, transition.value.events, state, command);
     state = transition.value.state;
     processEventsForMetrics(
       transition.value.events,
@@ -452,6 +441,7 @@ export function simulateGame(params: SimulateGameParams): GameMetricsRecord {
 
   return {
     gameIndex: params.gameIndex,
+    development,
     seed,
     aSeat,
     bSeat,
@@ -482,10 +472,7 @@ export function simulateGame(params: SimulateGameParams): GameMetricsRecord {
  * Esegue in sequenza un batch di partite assegnate a un worker.
  */
 export function runWorkerBatch(task: WorkerBatchTask): WorkerBatchResult {
-  const catalog = (task.catalog ?? DEFAULT_BOT_CATALOG) as Record<
-    string,
-    CardRules
-  >;
+  const catalog = (task.catalog ?? DEFAULT_BOT_CATALOG) as Record<string, CardRules>;
   const botInstanceA = createBot(task.botA, { catalog });
   const botInstanceB = createBot(task.botB, { catalog });
 

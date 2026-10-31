@@ -12,6 +12,11 @@ test('tutorial completo con controlli reali, riepilogo e scarto su desktop e mob
   test.setTimeout(180_000);
   await page.goto('/');
   await page.getByTestId('nav-tutorial-btn').click();
+  await page
+    .getByTestId('mulligan-modal')
+    .getByRole('button', { name: 'Esercitazioni', exact: true })
+    .click();
+  await page.getByTestId('tutorial-module-main').click();
   await expect(page.getByTestId('tutorial-title')).toHaveText('Ispeziona una carta');
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(
@@ -52,6 +57,11 @@ test('tutorial completo con controlli reali, riepilogo e scarto su desktop e mob
   await page.getByTestId('nav-tutorial-btn').click();
   await page
     .getByTestId('mulligan-modal')
+    .getByRole('button', { name: 'Esercitazioni', exact: true })
+    .click();
+  await page.getByTestId('tutorial-module-main').click();
+  await page
+    .getByTestId('mulligan-modal')
     .getByRole('button', { name: 'Esci dal tutorial' })
     .click();
   await expect(page.getByTestId('screen-tutorial')).toHaveCount(0);
@@ -67,6 +77,11 @@ test('trascina carte realmente sulla Città, poi torna a una partita libera', as
   test.setTimeout(180_000);
   await page.goto('/');
   await page.getByTestId('nav-tutorial-btn').click();
+  await page
+    .getByTestId('mulligan-modal')
+    .getByRole('button', { name: 'Esercitazioni', exact: true })
+    .click();
+  await page.getByTestId('tutorial-module-main').click();
   let drops = 0;
   for (const cue of TUTORIAL_CUES.slice(0, -1)) {
     await expect(page.getByTestId('tutorial-title')).toHaveText(cue.title);

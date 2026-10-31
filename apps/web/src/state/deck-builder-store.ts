@@ -1,5 +1,6 @@
 // M6-01 — Bozze locali, mazzi validati e sincronizzazione REST esplicita.
-import { CARDS_RULES } from '@epochs/content';
+import { CARDS_RULES, getCatalog, type CivilizationId } from '@epochs/content';
+import { migrateLegacyDeck } from '../../../../packages/content/src/migration.js';
 import {
   validateDeck,
   MAX_COPIES_PER_CARD,
@@ -25,6 +26,10 @@ const eraKey = (era: EraNo): EraKey => String(era) as EraKey;
 // Le bozze possono essere incomplete, ma non possono violare i limiti di costruzione.
 const DraftSchema = z
   .object({
+    schemaVersion: z.union([z.literal(1), z.literal(2)]).optional(),
+    rulesetVersion: z.enum(['1.0', '2.0']).optional(),
+    catalogVersion: z.enum(['1.0', '2.0']).optional(),
+    civilizationId: z.enum(['feudal', 'norse', 'byzantine']).optional(),
     id: z.string().min(1),
     name: z.string().max(60),
     description: z.string().max(240).optional(),
@@ -76,6 +81,8 @@ export interface DeckBuilderOptions {
 }
 
 export interface DeckBuilderState {
+  setCivilization: (civilizationId: CivilizationId) => boolean;
+  migrateToCivilization: (civilizationId: CivilizationId) => string[];
   draft: DeckPayload;
   savedDecks: DeckPayload[];
   issues: ValidationIssue[];
@@ -128,7 +135,7 @@ export function calculateDeckStatistics(
   const statistics: DeckStatistics = {
     total: 0,
     byEra: { 1: 0, 2: 0, 3: 0 },
-    byType: { economy: 0, unit: 0, instant: 0, conversion: 0 },
+    byType: { economy: 0, unit: 0, instant: 0, conversion: 0, structure: 0 },
     costCurve: { food: {}, wood: {}, metal: {} },
     totalCost: { food: 0, wood: 0, metal: 0 },
   };
@@ -152,7 +159,8 @@ export function calculateDeckStatistics(
 }
 
 export function createDeckBuilderStore(options: DeckBuilderOptions = {}): DeckBuilderStoreApi {
-  const catalog = options.catalog ?? CARDS_RULES;
+  const catalogFor = (deck: DeckPayload) =>
+    options.catalog ?? getCatalog(deck.catalogVersion ?? '1.0').rulesById;
   const storageKey = options.storageKey ?? DECK_BUILDER_STORAGE_KEY;
   let storage = options.storage;
   let persistenceError: string | null = null;
@@ -167,17 +175,17 @@ export function createDeckBuilderStore(options: DeckBuilderOptions = {}): DeckBu
 
   function validateComplete(value: unknown): DeckPayload {
     const deck = DeckPayloadSchema.parse(value);
-    const issues = validateDeck(deck, catalog);
+    const issues = validateDeck(deck, catalogFor(deck));
     if (issues.length > 0) throw new Error(issues[0]!.message);
     return deck;
   }
 
   function derived(draft: DeckPayload) {
-    const issues = validateDeck(draft, catalog);
+    const issues = validateDeck(draft, catalogFor(draft));
     return {
       issues,
       isValid: issues.length === 0 && DeckPayloadSchema.safeParse(draft).success,
-      statistics: calculateDeckStatistics(draft, catalog),
+      statistics: calculateDeckStatistics(draft, catalogFor(draft)),
     };
   }
 
@@ -190,6 +198,7 @@ export function createDeckBuilderStore(options: DeckBuilderOptions = {}): DeckBu
       // Zod inferisce anche undefined per i campi opzionali; lo stato usa
       // exactOptionalPropertyTypes e omette invece le proprietà assenti.
       const restoredDraft: DeckPayload = {
+        ...(JSON.parse(JSON.stringify(parsed.draft)) as DeckPayload),
         id: parsed.draft.id,
         name: parsed.draft.name,
         subdecks: parsed.draft.subdecks,
@@ -197,8 +206,13 @@ export function createDeckBuilderStore(options: DeckBuilderOptions = {}): DeckBu
           ? { description: parsed.draft.description }
           : {}),
       };
-      const blockingIssues = validateDeck(restoredDraft, catalog).filter(
-        (issue) => issue.code !== 'INVALID_SUBDECK_LENGTH',
+      const blockingIssues = validateDeck(restoredDraft, catalogFor(restoredDraft)).filter(
+        (issue) =>
+          issue.code !== 'INVALID_SUBDECK_LENGTH' &&
+          !(
+            restoredDraft.catalogVersion === '2.0' &&
+            (issue.code === 'MAX_COPIES_EXCEEDED' || issue.code === 'WRONG_CIVILIZATION')
+          ),
       );
       if (blockingIssues.length > 0) throw new Error(blockingIssues[0]!.message);
       const restoredDecks = parsed.savedDecks.map((deck) => withId(validateComplete(deck)));
@@ -239,6 +253,31 @@ export function createDeckBuilderStore(options: DeckBuilderOptions = {}): DeckBu
       error: null,
       persistenceError,
       syncStatus: 'idle',
+      setCivilization: (civilizationId) => {
+        const draft = get().draft;
+        if (
+          (draft.catalogVersion ?? '1.0') === '1.0' &&
+          Object.values(draft.subdecks).some((cards) => cards.length)
+        )
+          return fail('Migra una copia del mazzo v1 prima di scegliere una civiltà.');
+        return updateDraft({
+          ...draft,
+          schemaVersion: 2,
+          rulesetVersion: '2.0',
+          catalogVersion: '2.0',
+          civilizationId,
+        });
+      },
+      migrateToCivilization: (civilizationId) => {
+        try {
+          const { deck, changes, issues } = migrateLegacyDeck(get().draft, civilizationId);
+          updateDraft(deck);
+          return [...changes.map((c) => `${c.from} → ${c.to}`), ...issues.map((i) => i.message)];
+        } catch (error) {
+          fail(message(error));
+          return [message(error)];
+        }
+      },
 
       newDeck: (name) => {
         updateDraft(emptyDeck(name));
@@ -252,11 +291,18 @@ export function createDeckBuilderStore(options: DeckBuilderOptions = {}): DeckBu
           ? fail('La descrizione può contenere al massimo 240 caratteri.')
           : updateDraft({ ...get().draft, description }),
       addCard: (cardId) => {
+        const catalog = catalogFor(get().draft);
         const card = catalog[cardId];
         if (card === undefined || !Object.hasOwn(catalog, cardId)) {
           return fail('Carta non presente nel catalogo.');
         }
         const draft = get().draft;
+        if (
+          card.affiliation &&
+          card.affiliation !== 'common' &&
+          card.affiliation !== draft.civilizationId
+        )
+          return fail('Carta esclusiva di un’altra civiltà.');
         const key = eraKey(card.era);
         const cards = draft.subdecks[key];
         if (cards.filter((id) => id === cardId).length >= MAX_COPIES_PER_CARD) {

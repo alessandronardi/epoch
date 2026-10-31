@@ -44,7 +44,7 @@ function renderCentralEmblem(card: CardRules, palette: EraPalette): string {
   const isMedium = card.id.endsWith('_m');
   const strokeWidth = isHeavy ? 18 : isMedium ? 14 : 10;
 
-  if (card.type === 'economy') {
+  if (card.type === 'economy' || card.type === 'structure') {
     const resColor =
       card.production && card.production.food > 0
         ? '#86A94C'
@@ -175,21 +175,21 @@ function main(): void {
   const rootDir = process.cwd();
   const rulesPath = path.join(rootDir, 'data', 'cards.rules.json');
   const artPath = path.join(rootDir, 'data', 'cards.art.json');
-  const outDir = path.join(
-    rootDir,
-    'apps',
-    'web',
-    'public',
-    'cards',
-    'placeholders',
-  );
+  const outDir = path.join(rootDir, 'apps', 'web', 'public', 'cards', 'placeholders');
 
-  const rulesMap = CardsRulesFileSchema.parse(
-    JSON.parse(fs.readFileSync(rulesPath, 'utf8')),
+  const rulesMap = CardsRulesFileSchema.parse(JSON.parse(fs.readFileSync(rulesPath, 'utf8')));
+  const artMap = CardsArtFileSchema.parse(JSON.parse(fs.readFileSync(artPath, 'utf8')));
+  const expansionRules = CardsRulesFileSchema.parse(
+    JSON.parse(fs.readFileSync(path.join(rootDir, 'data/v2/cards.rules.json'), 'utf8')),
   );
-  const artMap = CardsArtFileSchema.parse(
-    JSON.parse(fs.readFileSync(artPath, 'utf8')),
+  const expansionArt = CardsArtFileSchema.parse(
+    JSON.parse(fs.readFileSync(path.join(rootDir, 'data/v2/cards.art.json'), 'utf8')),
   );
+  for (const [id, card] of Object.entries(expansionRules))
+    if (!rulesMap[id]) {
+      rulesMap[id] = card;
+      artMap[id] = expansionArt[id]!;
+    }
 
   fs.mkdirSync(outDir, { recursive: true });
 
@@ -208,14 +208,11 @@ function main(): void {
     generatedCount += 1;
   }
 
-  console.log(
-    `Generated ${generatedCount} SVG placeholders in ${outDir}.`,
-  );
+  console.log(`Generated ${generatedCount} SVG placeholders in ${outDir}.`);
 }
 
 const isDirectRun =
-  process.argv[1] !== undefined &&
-  path.basename(process.argv[1]) === 'art-placeholders.ts';
+  process.argv[1] !== undefined && path.basename(process.argv[1]) === 'art-placeholders.ts';
 
 if (isDirectRun) {
   main();

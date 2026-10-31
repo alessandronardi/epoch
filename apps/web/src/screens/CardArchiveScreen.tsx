@@ -1,5 +1,6 @@
 import {
-  CARD_CATALOG,
+  V2_CARD_CATALOG as CARD_CATALOG,
+  CIVILIZATIONS,
   KEYWORD_TOOLTIPS_IT,
   type CardType,
   type CatalogCard,
@@ -18,6 +19,7 @@ import {
 } from '../components/icons/DomainIcons.js';
 
 export const CARD_TYPE_LABELS_IT: Readonly<Record<CardType, string>> = Object.freeze({
+  structure: 'Struttura',
   economy: 'Economia',
   unit: 'Unità',
   instant: 'Istantanea',
@@ -123,6 +125,7 @@ export function CardArchiveScreen({
   onFiltersChange,
 }: CardArchiveScreenProps): ReactElement {
   const [eraFilter, setEraFilter] = useState<ArchiveEraFilter>('all');
+  const [civilizationFilter,setCivilizationFilter]=useState('all');
   const [typeFilter, setTypeFilter] = useState<ArchiveTypeFilter>('all');
   const [categoryFilter, setCategoryFilter] = useState<ArchiveCategoryFilter>('all');
   const [lineFilter, setLineFilter] = useState<ArchiveLineFilter>('all');
@@ -141,17 +144,18 @@ export function CardArchiveScreen({
 
   const filteredCards = useMemo(
     () =>
-      filterCatalogCards(CARD_CATALOG.allCards, {
+      filterCatalogCards(CARD_CATALOG.allCards.filter(c=>civilizationFilter==='all'||c.rules.affiliation==='common'||c.rules.affiliation===civilizationFilter), {
         era: eraFilter,
         type: typeFilter,
         category: categoryFilter,
         line: lineFilter,
         searchQuery,
       }),
-    [eraFilter, typeFilter, categoryFilter, lineFilter, searchQuery],
+    [eraFilter, typeFilter, categoryFilter, lineFilter, searchQuery,civilizationFilter],
   );
 
   const hasActiveFilters =
+    civilizationFilter !== 'all' ||
     eraFilter !== 'all' ||
     typeFilter !== 'all' ||
     categoryFilter !== 'all' ||
@@ -159,6 +163,7 @@ export function CardArchiveScreen({
     searchQuery.trim().length > 0;
 
   const handleResetFilters = (): void => {
+    setCivilizationFilter('all');
     setEraFilter('all');
     setTypeFilter('all');
     setCategoryFilter('all');
@@ -206,8 +211,8 @@ export function CardArchiveScreen({
             gap: '12px',
             padding: '14px 18px',
             borderRadius: '10px',
-            backgroundColor: 'rgba(20, 30, 39, 0.92)',
-            border: '1.5px solid var(--brass, #B58E48)',
+            backgroundColor: 'var(--panel)',
+            border: '1px solid var(--panel-border)',
           }}
         >
           <div>
@@ -221,7 +226,7 @@ export function CardArchiveScreen({
               style={{
                 margin: '4px 0 0 0',
                 fontSize: '0.9rem',
-                color: 'var(--chalk-muted, #A7B4C2)',
+                color: 'var(--chalk-muted)',
               }}
             >
               Tocca una carta (o premi a lungo 250ms / doppio tap) per aprire la vista ingrandita
@@ -237,9 +242,9 @@ export function CardArchiveScreen({
               style={{
                 padding: '6px 12px',
                 borderRadius: '6px',
-                backgroundColor: 'var(--surface-card, #223444)',
-                border: '1px solid rgba(181, 142, 72, 0.45)',
-                color: 'var(--chalk, #E9E5D6)',
+                backgroundColor: 'var(--surface-card)',
+                border: '1px solid var(--panel-border)',
+                color: 'var(--chalk)',
                 fontWeight: 700,
                 fontSize: '0.95rem',
               }}
@@ -256,9 +261,9 @@ export function CardArchiveScreen({
                 style={{
                   padding: '8px 16px',
                   borderRadius: '6px',
-                  border: '1px solid var(--brass, #B58E48)',
-                  backgroundColor: 'var(--surface-card, #223444)',
-                  color: 'var(--chalk, #E9E5D6)',
+                  border: '1px solid var(--brass)',
+                  backgroundColor: 'var(--surface-card)',
+                  color: 'var(--chalk)',
                   fontFamily: 'var(--font-numeric)',
                   fontWeight: 700,
                   cursor: 'pointer',
@@ -277,14 +282,15 @@ export function CardArchiveScreen({
           style={{
             padding: '14px 16px',
             borderRadius: '10px',
-            backgroundColor: 'rgba(20, 30, 39, 0.88)',
-            border: '1px solid rgba(181, 142, 72, 0.4)',
+            backgroundColor: 'var(--panel-soft)',
+            border: '1px solid var(--panel-border)',
             display: 'flex',
             flexDirection: 'column',
             gap: '12px',
           }}
         >
           {/* Riga 1: Ricerca testuale + Pulsanti Era + Pulsante Reset */}
+          <label>Civiltà<select value={civilizationFilter} onChange={e=>setCivilizationFilter(e.target.value)}><option value="all">Tutte</option>{Object.entries(CIVILIZATIONS).map(([id,c])=><option key={id} value={id}>{c.name} e comuni</option>)}</select></label>
           <div
             style={{
               display: 'flex',
@@ -323,9 +329,9 @@ export function CardArchiveScreen({
                 style={{
                   padding: '8px 12px',
                   borderRadius: '6px',
-                  border: '1px solid rgba(181, 142, 72, 0.45)',
-                  backgroundColor: 'var(--surface-card, #223444)',
-                  color: 'var(--chalk, #E9E5D6)',
+                  border: '1px solid var(--panel-border)',
+                  backgroundColor: 'var(--surface-card)',
+                  color: 'var(--chalk)',
                   fontFamily: 'var(--font-body)',
                   fontSize: '0.95rem',
                 }}
@@ -351,12 +357,10 @@ export function CardArchiveScreen({
                       padding: '7px 12px',
                       borderRadius: '6px',
                       border: active
-                        ? '1.5px solid var(--brass, #B58E48)'
+                        ? '1.5px solid var(--brass)'
                         : '1px solid rgba(233, 229, 214, 0.22)',
-                      backgroundColor: active
-                        ? 'rgba(181, 142, 72, 0.25)'
-                        : 'var(--surface-card, #223444)',
-                      color: 'var(--chalk, #E9E5D6)',
+                      backgroundColor: active ? 'rgba(181, 142, 72, 0.25)' : 'var(--surface-card)',
+                      color: 'var(--chalk)',
                       fontFamily: 'var(--font-numeric)',
                       fontWeight: 700,
                       fontSize: '0.88rem',
@@ -379,10 +383,8 @@ export function CardArchiveScreen({
                 padding: '7px 14px',
                 borderRadius: '6px',
                 border: '1px solid rgba(233, 229, 214, 0.3)',
-                backgroundColor: hasActiveFilters
-                  ? 'rgba(168, 64, 77, 0.25)'
-                  : 'rgba(34, 52, 68, 0.5)',
-                color: 'var(--chalk, #E9E5D6)',
+                backgroundColor: hasActiveFilters ? 'rgba(168, 64, 77, 0.25)' : 'var(--panel-soft)',
+                color: 'var(--chalk)',
                 fontFamily: 'var(--font-numeric)',
                 fontWeight: 700,
                 fontSize: '0.88rem',
@@ -423,9 +425,9 @@ export function CardArchiveScreen({
                 style={{
                   padding: '8px 10px',
                   borderRadius: '6px',
-                  border: '1px solid rgba(181, 142, 72, 0.4)',
-                  backgroundColor: 'var(--surface-card, #223444)',
-                  color: 'var(--chalk, #E9E5D6)',
+                  border: '1px solid var(--panel-border)',
+                  backgroundColor: 'var(--surface-card)',
+                  color: 'var(--chalk)',
                   fontFamily: 'var(--font-body)',
                   fontSize: '0.92rem',
                 }}
@@ -459,9 +461,9 @@ export function CardArchiveScreen({
                 style={{
                   padding: '8px 10px',
                   borderRadius: '6px',
-                  border: '1px solid rgba(181, 142, 72, 0.4)',
-                  backgroundColor: 'var(--surface-card, #223444)',
-                  color: 'var(--chalk, #E9E5D6)',
+                  border: '1px solid var(--panel-border)',
+                  backgroundColor: 'var(--surface-card)',
+                  color: 'var(--chalk)',
                   fontFamily: 'var(--font-body)',
                   fontSize: '0.92rem',
                 }}
@@ -495,9 +497,9 @@ export function CardArchiveScreen({
                 style={{
                   padding: '8px 10px',
                   borderRadius: '6px',
-                  border: '1px solid rgba(181, 142, 72, 0.4)',
-                  backgroundColor: 'var(--surface-card, #223444)',
-                  color: 'var(--chalk, #E9E5D6)',
+                  border: '1px solid var(--panel-border)',
+                  backgroundColor: 'var(--surface-card)',
+                  color: 'var(--chalk)',
                   fontFamily: 'var(--font-body)',
                   fontSize: '0.92rem',
                 }}
@@ -529,20 +531,15 @@ export function CardArchiveScreen({
               style={{
                 padding: '8px 10px',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(20, 30, 39, 0.82)',
-                border: '1px solid rgba(181, 142, 72, 0.28)',
+                backgroundColor: 'var(--panel)',
+                border: '1px solid var(--panel-border)',
                 fontSize: '0.82rem',
               }}
             >
-              <strong
-                className="font-display"
-                style={{ color: 'var(--brass, #B58E48)', display: 'block' }}
-              >
+              <strong className="font-display" style={{ color: 'var(--brass)', display: 'block' }}>
                 {kw}
               </strong>
-              <span style={{ color: 'var(--chalk-muted, #A7B4C2)' }}>
-                {KEYWORD_TOOLTIPS_IT[kw]}
-              </span>
+              <span style={{ color: 'var(--chalk-muted)' }}>{KEYWORD_TOOLTIPS_IT[kw]}</span>
             </div>
           ))}
         </section>
@@ -554,7 +551,7 @@ export function CardArchiveScreen({
             style={{
               padding: '28px 20px',
               borderRadius: '10px',
-              backgroundColor: 'rgba(20, 30, 39, 0.86)',
+              backgroundColor: 'var(--panel-soft)',
               border: '1px dashed rgba(181, 142, 72, 0.45)',
               textAlign: 'center',
             }}
@@ -569,9 +566,9 @@ export function CardArchiveScreen({
               style={{
                 padding: '8px 16px',
                 borderRadius: '6px',
-                border: '1px solid var(--brass, #B58E48)',
-                backgroundColor: 'var(--surface-card, #223444)',
-                color: 'var(--chalk, #E9E5D6)',
+                border: '1px solid var(--brass)',
+                backgroundColor: 'var(--surface-card)',
+                color: 'var(--chalk)',
                 fontFamily: 'var(--font-numeric)',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -610,6 +607,7 @@ export function CardArchiveScreen({
 
       {onInspectCard === undefined && (
         <CardInspectModal
+          version="2.0"
           cardId={localInspectedCardId}
           onClose={() => setLocalInspectedCardId(null)}
         />

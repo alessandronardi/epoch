@@ -102,13 +102,19 @@ describe('Deck Builder M6-01: composizione e validazione live', () => {
     expect(store.getState().statistics).toEqual({
       total: 3,
       byEra: { 1: 3, 2: 0, 3: 0 },
-      byType: { economy: 3, unit: 0, instant: 0, conversion: 0 },
+      byType: { economy: 3, unit: 0, instant: 0, conversion: 0, structure: 0 },
       costCurve: { food: { 0: 2, 2: 1 }, wood: { 0: 1, 2: 2 }, metal: { 0: 3 } },
       totalCost: { food: 2, wood: 4, metal: 0 },
     });
     store.getState().importJson(JSON.stringify(validDeck()));
     const statistics = store.getState().statistics;
-    expect(statistics.byType).toEqual({ economy: 7, unit: 45, instant: 6, conversion: 2 });
+    expect(statistics.byType).toEqual({
+      economy: 7,
+      unit: 45,
+      instant: 6,
+      conversion: 2,
+      structure: 0,
+    });
     for (const curve of Object.values(statistics.costCurve)) {
       expect(Object.values(curve).reduce((sum, count) => sum + count, 0)).toBe(60);
     }

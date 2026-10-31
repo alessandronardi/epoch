@@ -2,6 +2,8 @@
 // Orchestratore puro e immutabile `apply(state, cmd)` basato su Immer.
 
 import { produce } from 'immer';
+import { mutateMarket, validateMarket } from './structures.js';
+import { advanceDevelopmentTurn } from './development.js';
 import type {
   ApplyTimeoutCommand,
   Command,
@@ -22,15 +24,8 @@ import {
 } from './development.js';
 import { HAND_LIMIT, autoDiscard } from './discard-policy.js';
 import type { GameEvent } from './events.js';
-import {
-  getOpponent,
-  mutateSubmitMulligan,
-  validateSubmitMulligan,
-} from './setup.js';
-import {
-  mutateLockInstants,
-  validateLockInstants,
-} from './siege-and-era.js';
+import { getOpponent, mutateSubmitMulligan, validateSubmitMulligan } from './setup.js';
+import { mutateLockInstants, validateLockInstants } from './siege-and-era.js';
 import type { GameState } from './types.js';
 
 /**
@@ -217,12 +212,7 @@ export function mutateApplyTimeout(
   }
 
   if (draft.phase === 'development') {
-    return mutatePass(
-      draft,
-      { type: 'Pass', player: cmd.player },
-      events,
-      'timeout',
-    );
+    return mutatePass(draft, { type: 'Pass', player: cmd.player }, events, 'timeout');
   }
 
   // draft.phase === 'prebattle'
@@ -236,15 +226,14 @@ export function mutateApplyTimeout(
 /**
  * Valida preventivamente qualsiasi comando `Command` sullo stato corrente senza mutarlo.
  */
-export function validateCommand(
-  state: Readonly<GameState>,
-  cmd: Command,
-): RuleError | null {
+export function validateCommand(state: Readonly<GameState>, cmd: Command): RuleError | null {
   switch (cmd.type) {
     case 'SubmitMulligan':
       return validateSubmitMulligan(state, cmd);
     case 'SubmitDiscard':
       return validateSubmitDiscard(state, cmd);
+    case 'ActivateMarket':
+      return validateMarket(state, cmd);
     case 'PlayCard':
       return validatePlayCard(state, cmd);
     case 'PlayConversion':
@@ -279,6 +268,12 @@ export function apply(
 
   const nextState = produce(state, (draft) => {
     switch (cmd.type) {
+      case 'ActivateMarket':
+        draft.players[cmd.player].consecutiveTimeouts = 0;
+        mutateMarket(draft, cmd, events);
+        advanceDevelopmentTurn(draft, events, cmd.player);
+        autoPassIfConfigured(draft, events);
+        break;
       case 'SubmitMulligan':
         draft.players[cmd.player].consecutiveTimeouts = 0;
         mutateSubmitMulligan(draft, cmd, events);

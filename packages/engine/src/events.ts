@@ -10,9 +10,10 @@ import type {
   UnitInstance,
 } from './types.js';
 
-export type ResourceChangeReason = 'initial' | 'harvest' | 'rent' | 'cost' | 'conversion' | 'raid';
+export type ResourceChangeReason =
+  'initial' | 'harvest' | 'rent' | 'cost' | 'conversion' | 'raid' | 'market';
 
-export type ResourceOverflowReason = 'harvest' | 'rent' | 'conversion' | 'raid';
+export type ResourceOverflowReason = 'harvest' | 'rent' | 'conversion' | 'raid' | 'market';
 
 export type PassReason = 'chosen' | 'no_legal_play' | 'timeout';
 
@@ -29,8 +30,8 @@ export interface GameStartedEvent {
   n: number;
   type: 'GameStarted';
   era: EraNo;
-  rulesetVersion: '1.0';
-  catalogVersion: '1.0';
+  rulesetVersion: '1.0' | '2.0';
+  catalogVersion: '1.0' | '2.0';
 }
 
 export interface InitiativeAssignedEvent {
@@ -117,7 +118,16 @@ export interface CardPlayedEvent {
   coveredCount: number;
   uid?: string;
   cardId?: string;
-  cardType?: 'economy' | 'unit';
+  cardType?: 'economy' | 'unit' | 'structure';
+}
+
+export interface MarketActivatedEvent {
+  n: number;
+  type: 'MarketActivated';
+  player: PlayerId;
+  structureUid: string;
+  give?: import('./types.js').Resource;
+  receive?: import('./types.js').Resource;
 }
 
 export interface ConversionActivatedEvent {
@@ -182,6 +192,8 @@ export interface BattleStartedEvent {
 }
 
 export interface BattleContribution {
+  furyBonus?: number;
+  disciplineBonus?: number;
   uid: string;
   cardId: string;
   baseDamage: number;
@@ -253,6 +265,7 @@ export interface GameEndedEvent {
 
 // TECH-SPEC §4.5 — unione discriminata di tutti gli eventi con indice monotono n
 export type GameEvent =
+  | MarketActivatedEvent
   | GameStartedEvent
   | InitiativeAssignedEvent
   | CardsDrawnEvent

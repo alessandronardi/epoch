@@ -2,40 +2,12 @@ import type { BotKind } from '@epochs/bots';
 import type { DeckPayload } from '@epochs/engine';
 import { useEffect, useRef, useState, type ReactElement, type ReactNode } from 'react';
 import { X } from 'lucide-react';
-import aggroBreachJson from '../../../../data/decks/aggro-breach.json' with { type: 'json' };
-import balancedTacticalJson from '../../../../data/decks/balanced-tactical.json' with { type: 'json' };
-import boomEconomyJson from '../../../../data/decks/boom-economy.json' with { type: 'json' };
 
 export type AppScreenId =
   'home' | 'match' | 'online' | 'deck-builder' | 'archive' | 'tutorial' | 'rules';
 
-export interface PresetDeckOption {
-  readonly id: string;
-  readonly name: string;
-  readonly description: string;
-  readonly payload: DeckPayload;
-}
-
-export const PRESET_DECK_OPTIONS: readonly PresetDeckOption[] = Object.freeze([
-  {
-    id: aggroBreachJson.id,
-    name: aggroBreachJson.name,
-    description: aggroBreachJson.description,
-    payload: aggroBreachJson as DeckPayload,
-  },
-  {
-    id: balancedTacticalJson.id,
-    name: balancedTacticalJson.name,
-    description: balancedTacticalJson.description,
-    payload: balancedTacticalJson as DeckPayload,
-  },
-  {
-    id: boomEconomyJson.id,
-    name: boomEconomyJson.name,
-    description: boomEconomyJson.description,
-    payload: boomEconomyJson as DeckPayload,
-  },
-]);
+import { PRESET_DECK_OPTIONS, DEFAULT_PLAYER_DECK_ID, DEFAULT_OPPONENT_DECK_ID, presetOption, type PresetDeckOption } from '../content/presets.js';
+export { PRESET_DECK_OPTIONS, type PresetDeckOption } from '../content/presets.js';
 
 export interface StartBotMatchRequest {
   readonly botKind: BotKind;
@@ -65,8 +37,8 @@ export function HomeScreen({
   onStartHotSeatMatch,
   onNavigate,
 }: HomeScreenProps): ReactElement {
-  const fallbackDeck = availableDecks[0] ?? PRESET_DECK_OPTIONS[0]!;
-  const secondFallbackDeck = availableDecks[1] ?? availableDecks[0] ?? PRESET_DECK_OPTIONS[1]!;
+  const fallbackDeck = availableDecks.find(d=>d.id===DEFAULT_PLAYER_DECK_ID) ?? availableDecks[0] ?? presetOption(DEFAULT_PLAYER_DECK_ID);
+  const secondFallbackDeck = availableDecks.find(d=>d.id===DEFAULT_OPPONENT_DECK_ID) ?? fallbackDeck;
 
   const [botKind, setBotKind] = useState<BotKind>('greedy');
   const [playerDeckId, setPlayerDeckId] = useState<string>(fallbackDeck.id);
@@ -83,8 +55,13 @@ export function HomeScreen({
 
   const selectedPlayerDeckOption =
     availableDecks.find((d) => d.id === playerDeckId) ?? fallbackDeck;
+  const sameVersion = (first: string, second: string): boolean =>
+    (resolveDeckById(first).catalogVersion ?? '1.0') === (resolveDeckById(second).catalogVersion ?? '1.0');
+  const botVersionsMatch = sameVersion(playerDeckId, botDeckId);
+  const hotSeatVersionsMatch = sameVersion(hotSeatP1DeckId, hotSeatP2DeckId);
 
   const handleStartBot = (): void => {
+    if (!botVersionsMatch) return;
     const normalizedSeed =
       seedInput.trim().length > 0 ? seedInput.trim() : 'epochs-cartographer-seed-1';
     onStartBotMatch({
@@ -96,6 +73,7 @@ export function HomeScreen({
   };
 
   const handleStartHotSeat = (): void => {
+    if (!hotSeatVersionsMatch) return;
     const normalizedSeed =
       seedInput.trim().length > 0 ? seedInput.trim() : 'epochs-cartographer-hotseat-1';
     onStartHotSeatMatch({
@@ -193,8 +171,8 @@ export function HomeScreen({
             style={{
               padding: '18px 20px',
               borderRadius: '12px',
-              backgroundColor: 'rgba(20, 30, 39, 0.97)',
-              border: '1.5px solid var(--brass, #B58E48)',
+              backgroundColor: 'var(--panel)',
+              border: '1.5px solid var(--brass)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -224,7 +202,7 @@ export function HomeScreen({
                     style={{
                       margin: 0,
                       fontSize: '1.25rem',
-                      color: 'var(--brass, #B58E48)',
+                      color: 'var(--brass)',
                     }}
                   >
                     Partita contro Bot
@@ -263,13 +241,11 @@ export function HomeScreen({
                     borderRadius: '6px',
                     border:
                       botKind === 'random'
-                        ? '1.5px solid var(--brass, #B58E48)'
+                        ? '1.5px solid var(--brass)'
                         : '1px solid rgba(233, 229, 214, 0.22)',
                     backgroundColor:
-                      botKind === 'random'
-                        ? 'rgba(181, 142, 72, 0.24)'
-                        : 'var(--surface-card, #223444)',
-                    color: 'var(--chalk, #E9E5D6)',
+                      botKind === 'random' ? 'rgba(181, 142, 72, 0.24)' : 'var(--surface-card)',
+                    color: 'var(--chalk)',
                     fontFamily: 'var(--font-numeric)',
                     fontSize: '0.92rem',
                     fontWeight: 700,
@@ -290,13 +266,11 @@ export function HomeScreen({
                     borderRadius: '6px',
                     border:
                       botKind === 'greedy'
-                        ? '1.5px solid var(--brass, #B58E48)'
+                        ? '1.5px solid var(--brass)'
                         : '1px solid rgba(233, 229, 214, 0.22)',
                     backgroundColor:
-                      botKind === 'greedy'
-                        ? 'rgba(181, 142, 72, 0.24)'
-                        : 'var(--surface-card, #223444)',
-                    color: 'var(--chalk, #E9E5D6)',
+                      botKind === 'greedy' ? 'rgba(181, 142, 72, 0.24)' : 'var(--surface-card)',
+                    color: 'var(--chalk)',
                     fontFamily: 'var(--font-numeric)',
                     fontSize: '0.92rem',
                     fontWeight: 700,
@@ -326,8 +300,8 @@ export function HomeScreen({
                     padding: '8px 10px',
                     borderRadius: '6px',
                     border: '1px solid rgba(181, 142, 72, 0.45)',
-                    backgroundColor: 'var(--surface-card, #223444)',
-                    color: 'var(--chalk, #E9E5D6)',
+                    backgroundColor: 'var(--surface-card)',
+                    color: 'var(--chalk)',
                     fontFamily: 'var(--font-body)',
                     fontSize: '0.92rem',
                   }}
@@ -368,8 +342,8 @@ export function HomeScreen({
                     padding: '8px 10px',
                     borderRadius: '6px',
                     border: '1px solid rgba(233, 229, 214, 0.25)',
-                    backgroundColor: 'var(--surface-card, #223444)',
-                    color: 'var(--chalk, #E9E5D6)',
+                    backgroundColor: 'var(--surface-card)',
+                    color: 'var(--chalk)',
                     fontFamily: 'var(--font-body)',
                     fontSize: '0.92rem',
                   }}
@@ -383,18 +357,20 @@ export function HomeScreen({
               </div>
             </div>
 
+            {!botVersionsMatch && <p role="alert">Scegli due mazzi della stessa versione. Nel Deck Builder puoi creare una copia di civiltà di un mazzo classico.</p>}
             <button
               type="button"
               className="touch-target home-mode__start"
               data-testid="start-bot-match-btn"
+              disabled={!botVersionsMatch}
               onClick={handleStartBot}
               style={{
                 width: '100%',
                 padding: '11px 18px',
                 borderRadius: '8px',
-                border: '1.5px solid var(--brass, #B58E48)',
-                backgroundColor: 'var(--brass, #B58E48)',
-                color: 'var(--table-deep, #141E27)',
+                border: '1.5px solid var(--brass)',
+                backgroundColor: 'var(--brass)',
+                color: 'var(--table-deep)',
                 fontFamily: 'var(--font-numeric)',
                 fontSize: '1.02rem',
                 fontWeight: 700,
@@ -416,7 +392,7 @@ export function HomeScreen({
             style={{
               padding: '18px 20px',
               borderRadius: '12px',
-              backgroundColor: 'rgba(20, 30, 39, 0.97)',
+              backgroundColor: 'var(--panel)',
               border: '1px solid rgba(181, 142, 72, 0.45)',
               display: 'flex',
               flexDirection: 'column',
@@ -447,7 +423,7 @@ export function HomeScreen({
                     style={{
                       margin: 0,
                       fontSize: '1.25rem',
-                      color: 'var(--chalk, #E9E5D6)',
+                      color: 'var(--chalk)',
                     }}
                   >
                     Partita Locale Hot-Seat
@@ -484,8 +460,8 @@ export function HomeScreen({
                     padding: '8px 10px',
                     borderRadius: '6px',
                     border: '1px solid rgba(233, 229, 214, 0.25)',
-                    backgroundColor: 'var(--surface-card, #223444)',
-                    color: 'var(--chalk, #E9E5D6)',
+                    backgroundColor: 'var(--surface-card)',
+                    color: 'var(--chalk)',
                     fontFamily: 'var(--font-body)',
                     fontSize: '0.92rem',
                   }}
@@ -516,8 +492,8 @@ export function HomeScreen({
                     padding: '8px 10px',
                     borderRadius: '6px',
                     border: '1px solid rgba(233, 229, 214, 0.25)',
-                    backgroundColor: 'var(--surface-card, #223444)',
-                    color: 'var(--chalk, #E9E5D6)',
+                    backgroundColor: 'var(--surface-card)',
+                    color: 'var(--chalk)',
                     fontFamily: 'var(--font-body)',
                     fontSize: '0.92rem',
                   }}
@@ -531,18 +507,20 @@ export function HomeScreen({
               </div>
             </div>
 
+            {!hotSeatVersionsMatch && <p role="alert">Scegli due mazzi della stessa versione. Nel Deck Builder puoi creare una copia di civiltà di un mazzo classico.</p>}
             <button
               type="button"
               className="touch-target home-mode__start"
               data-testid="start-hotseat-match-btn"
+              disabled={!hotSeatVersionsMatch}
               onClick={handleStartHotSeat}
               style={{
                 width: '100%',
                 padding: '11px 18px',
                 borderRadius: '8px',
-                border: '1.5px solid var(--brass, #B58E48)',
-                backgroundColor: 'var(--surface-card, #223444)',
-                color: 'var(--chalk, #E9E5D6)',
+                border: '1.5px solid var(--brass)',
+                backgroundColor: 'var(--surface-card)',
+                color: 'var(--chalk)',
                 fontFamily: 'var(--font-numeric)',
                 fontSize: '1.02rem',
                 fontWeight: 700,

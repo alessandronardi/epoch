@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 1152" width="1536" height="1152">
+  <defs>
+    <radialGradient id="bg-b2_skoutatos" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#243546" />
+      <stop offset="100%" stop-color="#141E27" />
+    </radialGradient>
+    <linearGradient id="accent-b2_skoutatos" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9FB1C2" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#A8404D" stop-opacity="0.15" />
+    </linearGradient>
+  </defs>
+  <rect width="1536" height="1152" fill="url(#bg-b2_skoutatos)" />
+  <rect x="96" y="72" width="1344" height="1008" rx="24" fill="url(#accent-b2_skoutatos)" stroke="#9FB1C2" stroke-width="4" stroke-opacity="0.5" />
+  <g>
+    <circle cx="768" cy="576" r="330" fill="none" stroke="#9FB1C2" stroke-width="3" stroke-opacity="0.45"/>
+    <circle cx="768" cy="576" r="364" fill="none" stroke="#9FB1C2" stroke-width="3" stroke-opacity="0.35"/>
+    
+        <g transform="translate(768, 576)">
+          <path d="M0,-240 L190,-150 C190,40 120,170 0,250 C-120,170 -190,40 -190,-150 Z" fill="#141E27" stroke="#9FB1C2" stroke-width="10"/>
+          <path d="M0,-195 L145,-120 C145,25 90,130 0,195 C-90,130 -145,25 -145,-120 Z" fill="#A8404D" fill-opacity="0.4" stroke="#DCE7F2" stroke-width="6"/>
+          <path d="M0,-230 L0,210 M-75,-70 L75,-70" stroke="#DCE7F2" stroke-width="10" stroke-linecap="round"/>
+        </g>
+      
+  </g>
+</svg>

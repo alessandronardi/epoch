@@ -1,5 +1,5 @@
 import { createBot, type Bot } from '@epochs/bots';
-import { CARDS_RULES } from '@epochs/content';
+import { getCatalog } from '@epochs/content';
 import {
   apply,
   createGame,
@@ -32,6 +32,8 @@ const MAX_BOT_SAFETY_STEPS = 512;
 
 function toFullCommand(player: PlayerId, command: ClientCommand): Command {
   switch (command.type) {
+    case 'ActivateMarket':
+      return { ...command, player };
     case 'SubmitMulligan':
       return {
         type: 'SubmitMulligan',
@@ -85,10 +87,7 @@ function toFullCommand(player: PlayerId, command: ClientCommand): Command {
  * Determina il giocatore che deve avere il controllo del dispositivo in modalità Hot-Seat
  * per la fase o finestra segreta corrente (§9.8).
  */
-export function determineActiveHotSeatPlayer(
-  state: GameState,
-  currentSeat: PlayerId,
-): PlayerId {
+export function determineActiveHotSeatPlayer(state: GameState, currentSeat: PlayerId): PlayerId {
   if (state.phase === 'finished') {
     return currentSeat;
   }
@@ -123,20 +122,17 @@ export class LocalGameController implements GameController {
   readonly #seed: string;
   readonly #catalog: Readonly<Record<string, CardRules>>;
   readonly #decks: Readonly<Record<PlayerId, DeckPayload>> | undefined;
-  readonly #fixedDecks:
-    | Readonly<Record<PlayerId, Record<EraNo, string[]>>>
-    | undefined;
+  readonly #fixedDecks: Readonly<Record<PlayerId, Record<EraNo, string[]>>> | undefined;
   readonly #fixedInitiative: PlayerId | undefined;
   readonly #rules: Partial<RulesConfig> | undefined;
   readonly #store: GameStoreApi;
-  readonly #onProjectionEmitted:
-    | ((notification: ProjectionNotification) => void)
-    | undefined;
+  readonly #onProjectionEmitted: ((notification: ProjectionNotification) => void) | undefined;
 
   constructor(options: LocalGameControllerOptions) {
     this.mode = options.mode;
     this.#seed = options.seed;
-    this.#catalog = options.catalog ?? CARDS_RULES;
+    this.#catalog =
+      options.catalog ?? getCatalog(options.decks?.P1.catalogVersion ?? '1.0').rulesById;
     this.#decks = options.decks;
     this.#fixedDecks = options.fixedDecks;
     this.#fixedInitiative = options.fixedInitiative;
@@ -186,10 +182,7 @@ export class LocalGameController implements GameController {
     return view;
   }
 
-  #advanceBotLoop(
-    initialState: GameState,
-    accumulatedEvents: GameEvent[],
-  ): GameState {
+  #advanceBotLoop(initialState: GameState, accumulatedEvents: GameEvent[]): GameState {
     if (this.mode !== 'bot' || this.#bot === null) {
       return initialState;
     }
@@ -250,9 +243,7 @@ export class LocalGameController implements GameController {
             },
           }
         : {}),
-      ...(this.#fixedInitiative !== undefined
-        ? { fixedInitiative: this.#fixedInitiative }
-        : {}),
+      ...(this.#fixedInitiative !== undefined ? { fixedInitiative: this.#fixedInitiative } : {}),
       ...(this.#rules !== undefined ? { rules: this.#rules } : {}),
     };
 
@@ -267,23 +258,13 @@ export class LocalGameController implements GameController {
       this.#activeViewer = this.#humanPlayer;
       currentState = this.#advanceBotLoop(currentState, rawEvents);
       this.#state = currentState;
-      return this.#projectAndPublish(
-        currentState,
-        this.#activeViewer,
-        rawEvents,
-        true,
-      );
+      return this.#projectAndPublish(currentState, this.#activeViewer, rawEvents, true);
     }
 
     // Modalità Hot-Seat: inizia dal primo giocatore attivo nella finestra iniziale
     this.#activeViewer = determineActiveHotSeatPlayer(currentState, 'P1');
     this.#state = currentState;
-    return this.#projectAndPublish(
-      currentState,
-      this.#activeViewer,
-      rawEvents,
-      true,
-    );
+    return this.#projectAndPublish(currentState, this.#activeViewer, rawEvents, true);
   }
 
   dispatch(command: ClientCommand): Result<PlayerView, RuleError> {
@@ -296,8 +277,7 @@ export class LocalGameController implements GameController {
       return { ok: false, error: err };
     }
 
-    const actingPlayer =
-      this.mode === 'bot' ? this.#humanPlayer : this.#activeViewer;
+    const actingPlayer = this.mode === 'bot' ? this.#humanPlayer : this.#activeViewer;
     const fullCmd = toFullCommand(actingPlayer, command);
     const applied = apply(this.#state, fullCmd);
 
@@ -312,29 +292,18 @@ export class LocalGameController implements GameController {
     if (this.mode === 'bot') {
       nextState = this.#advanceBotLoop(nextState, rawEvents);
       this.#state = nextState;
-      const view = this.#projectAndPublish(
-        nextState,
-        this.#humanPlayer,
-        rawEvents,
-        false,
-      );
+      const view = this.#projectAndPublish(nextState, this.#humanPlayer, rawEvents, false);
       return { ok: true, value: view };
     }
 
     // Modalità Hot-Seat: calcola se il controllo passa all'altro giocatore o a una nuova finestra segreta
     const nextSeat = determineActiveHotSeatPlayer(nextState, actingPlayer);
-    const requiresHandover =
-      nextState.phase !== 'finished' && nextSeat !== actingPlayer;
+    const requiresHandover = nextState.phase !== 'finished' && nextSeat !== actingPlayer;
 
     this.#activeViewer = nextSeat;
     this.#state = nextState;
 
-    const view = this.#projectAndPublish(
-      nextState,
-      this.#activeViewer,
-      rawEvents,
-      false,
-    );
+    const view = this.#projectAndPublish(nextState, this.#activeViewer, rawEvents, false);
 
     if (requiresHandover) {
       this.#store.getState().setHotSeatHandover(true, nextSeat);

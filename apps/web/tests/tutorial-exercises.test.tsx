@@ -42,6 +42,7 @@ function openExercise(id: string): void {
 
 describe('Esercitazioni D con transizioni del motore', () => {
   for (const id of [
+    'civilizations',
     'economy',
     'budget',
     'annihilation',
@@ -116,7 +117,14 @@ describe('Esercitazioni D con transizioni del motore', () => {
 });
 
 describe('Esercitazioni D attraverso i controlli reali', () => {
-  for (const id of ['economy', 'budget', 'concession', 'timeout', 'hotseat'] as const) {
+  for (const id of [
+    'civilizations',
+    'economy',
+    'budget',
+    'concession',
+    'timeout',
+    'hotseat',
+  ] as const) {
     it(`completa ${id}, registra i progressi e permette di tornare al menu`, () => {
       vi.useFakeTimers();
       openExercise(id);
@@ -217,7 +225,7 @@ describe('Esercitazioni D attraverso i controlli reali', () => {
     vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
     openExercise('deck-builder');
     fireEvent.change(screen.getByTestId('deck-preset-select'), {
-      target: { value: 'aggro-breach' },
+      target: { value: 'aggro-breach-v2' },
     });
     const remove = screen.getAllByTestId(/^deck-remove-/)[0]!;
     const id = remove.getAttribute('data-testid')!.replace('deck-remove-', '');

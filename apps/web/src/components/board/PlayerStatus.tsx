@@ -6,6 +6,7 @@ import {
   type Resource,
 } from '@epochs/engine';
 import { Flag, LayoutGrid } from 'lucide-react';
+import { CIVILIZATIONS, getCard } from '@epochs/content';
 import type { ReactElement } from 'react';
 import { ResourceIcon, RESOURCE_LABELS_IT, StatIcon } from '../icons/DomainIcons.js';
 
@@ -32,6 +33,18 @@ export function PlayerStatus({
     >
       <div className="board-status-bar__identity">
         <span>{name}</span>
+        {player.civilizationId && (
+          <span title={CIVILIZATIONS[player.civilizationId].description}>
+            {CIVILIZATIONS[player.civilizationId].name}
+          </span>
+        )}
+        {(player.structures ?? []).length > 0 && (
+          <span aria-label="Strutture pubbliche">
+            {player
+              .structures!.map((c) => getCard(c.cardId, view.catalogVersion).text.name)
+              .join(' · ')}
+          </span>
+        )}
         {view.initiative === playerId && (
           <span
             className="board-initiative"

@@ -135,15 +135,11 @@ CREATE TABLE IF NOT EXISTS game_commands (
 export class SqliteRepository implements GameRepository {
   private readonly db: Database.Database;
   private readonly executeSaveTransitionTx: Database.Transaction<
-    (
-      gameUpdate: GameTransitionUpdate,
-      commandLogRecord: GameCommandLogRecord,
-    ) => GameRecord
+    (gameUpdate: GameTransitionUpdate, commandLogRecord: GameCommandLogRecord) => GameRecord
   >;
 
   public constructor(options: SqliteRepositoryOptions | string = ':memory:') {
-    const filename =
-      typeof options === 'string' ? options : (options.filename ?? ':memory:');
+    const filename = typeof options === 'string' ? options : (options.filename ?? ':memory:');
     this.db = new Database(filename);
     this.db.pragma('journal_mode = WAL');
     this.db.pragma('foreign_keys = ON');
@@ -151,10 +147,7 @@ export class SqliteRepository implements GameRepository {
     this.db.exec(SCHEMA_SQL);
 
     this.executeSaveTransitionTx = this.db.transaction(
-      (
-        gameUpdate: GameTransitionUpdate,
-        commandLogRecord: GameCommandLogRecord,
-      ): GameRecord => {
+      (gameUpdate: GameTransitionUpdate, commandLogRecord: GameCommandLogRecord): GameRecord => {
         if (gameUpdate.gameId !== commandLogRecord.gameId) {
           throw new Error(
             `Mismatch gameId tra gameUpdate ("${gameUpdate.gameId}") e commandLogRecord ("${commandLogRecord.gameId}").`,
@@ -163,11 +156,7 @@ export class SqliteRepository implements GameRepository {
 
         const computedHash = stateHash(gameUpdate.state);
         if (computedHash !== gameUpdate.stateHash) {
-          throw new RepositoryIntegrityError(
-            gameUpdate.gameId,
-            gameUpdate.stateHash,
-            computedHash,
-          );
+          throw new RepositoryIntegrityError(gameUpdate.gameId, gameUpdate.stateHash, computedHash);
         }
         if (commandLogRecord.stateHash !== gameUpdate.stateHash) {
           throw new RepositoryIntegrityError(
@@ -182,18 +171,12 @@ export class SqliteRepository implements GameRepository {
           commandLogRecord.commandId,
         );
         if (existingCommand !== null) {
-          throw new DuplicateCommandIdError(
-            commandLogRecord.gameId,
-            commandLogRecord.commandId,
-          );
+          throw new DuplicateCommandIdError(commandLogRecord.gameId, commandLogRecord.commandId);
         }
 
         const updatedAt = gameUpdate.updatedAt ?? Date.now();
         const canonicalStateJson = canonicalizeJson(gameUpdate.state);
-        const resultJson =
-          gameUpdate.result !== null
-            ? canonicalizeJson(gameUpdate.result)
-            : null;
+        const resultJson = gameUpdate.result !== null ? canonicalizeJson(gameUpdate.result) : null;
 
         const updateStmt = this.db.prepare(`
           UPDATE games
@@ -219,9 +202,7 @@ export class SqliteRepository implements GameRepository {
         );
 
         if (updateResult.changes === 0) {
-          throw new Error(
-            `Partita "${gameUpdate.gameId}" non trovata durante saveTransition.`,
-          );
+          throw new Error(`Partita "${gameUpdate.gameId}" non trovata durante saveTransition.`);
         }
 
         const insertCommandStmt = this.db.prepare(`
@@ -311,7 +292,9 @@ export class SqliteRepository implements GameRepository {
   }
 
   public saveDeck(input: UpsertDeckInput): DeckRecord {
-    const catalogVersion = input.catalogVersion ?? '1.0';
+    const catalogVersion = input.catalogVersion ?? input.payload.catalogVersion ?? '1.0';
+    if (catalogVersion !== (input.payload.catalogVersion ?? '1.0'))
+      throw new Error('Deck and persistence catalog versions must match.');
     const updatedAt = input.updatedAt ?? Date.now();
     const payloadJson = canonicalizeJson(input.payload);
 
@@ -333,14 +316,7 @@ export class SqliteRepository implements GameRepository {
       WHERE player_id = excluded.player_id
     `);
 
-    stmt.run(
-      input.id,
-      input.playerId,
-      input.name,
-      payloadJson,
-      catalogVersion,
-      updatedAt,
-    );
+    stmt.run(input.id, input.playerId, input.name, payloadJson, catalogVersion, updatedAt);
 
     return {
       id: input.id,
@@ -388,16 +364,11 @@ export class SqliteRepository implements GameRepository {
   public createGameRecord(input: CreateGameRecordInput): GameRecord {
     const computedHash = stateHash(input.state);
     if (computedHash !== input.stateHash) {
-      throw new RepositoryIntegrityError(
-        input.id,
-        input.stateHash,
-        computedHash,
-      );
+      throw new RepositoryIntegrityError(input.id, input.stateHash, computedHash);
     }
 
     const createdAt = input.createdAt ?? Date.now();
-    const status: GameStatus =
-      input.state.phase === 'finished' ? 'FINISHED' : 'ACTIVE';
+    const status: GameStatus = input.state.phase === 'finished' ? 'FINISHED' : 'ACTIVE';
     const stateVersion = input.state.stateVersion;
     const eventN = input.state.counters.event;
     const result = input.state.result;
@@ -504,10 +475,7 @@ export class SqliteRepository implements GameRepository {
     return this.executeSaveTransitionTx(gameUpdate, commandLogRecord);
   }
 
-  public getCommandByCommandId(
-    gameId: string,
-    commandId: string,
-  ): GameCommandLogRecord | null {
+  public getCommandByCommandId(gameId: string, commandId: string): GameCommandLogRecord | null {
     const stmt = this.db.prepare(`
       SELECT
         game_id,
@@ -570,7 +538,7 @@ export class SqliteRepository implements GameRepository {
       playerId: row.player_id,
       name: row.name,
       payload: JSON.parse(row.payload_json) as DeckPayload,
-      catalogVersion: row.catalog_version as '1.0',
+      catalogVersion: row.catalog_version as '1.0' | '2.0',
       updatedAt: row.updated_at,
     };
   }
@@ -583,10 +551,7 @@ export class SqliteRepository implements GameRepository {
     }
 
     const rules = JSON.parse(row.rules_json) as RulesConfig;
-    const result =
-      row.result_json !== null
-        ? (JSON.parse(row.result_json) as GameResult)
-        : null;
+    const result = row.result_json !== null ? (JSON.parse(row.result_json) as GameResult) : null;
 
     return {
       id: row.id,

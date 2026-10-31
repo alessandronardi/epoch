@@ -1,3 +1,4 @@
+import type { Affiliation, CivilizationId, ContentVersion } from '../../../data/versions.js';
 // GDD §1–§7, TECH-SPEC §0.3, §4.3, §11, Appendice C.4
 
 export type PlayerId = 'P1' | 'P2';
@@ -5,23 +6,20 @@ export type EraNo = 1 | 2 | 3;
 export type Resource = 'food' | 'wood' | 'metal';
 export type Resources = Record<Resource, number>;
 export type Line = 'front' | 'center' | 'rear';
-export type CardType = 'economy' | 'unit' | 'instant' | 'conversion';
-export type UnitCategory =
-  | 'infantry'
-  | 'spearman'
-  | 'cavalry'
-  | 'archer'
-  | 'siege';
+export type CardType = 'economy' | 'unit' | 'instant' | 'conversion' | 'structure';
+export type UnitCategory = 'infantry' | 'spearman' | 'cavalry' | 'archer' | 'siege';
 
 // GDD §5.3, TECH-SPEC §4.3, §11 D1
 export type Ability =
+  | { kind: 'fury'; amount: number }
+  | { kind: 'discipline'; amount: number }
   | { kind: 'impale'; damage: number } // vs Cavalleria; valore stampato sulla carta (D1)
   | { kind: 'volley'; bonusVsSpearman: number } // Tiro vs Lancieri; valore stampato sulla carta (D1)
   | { kind: 'flank'; bonusVsArcher: number }; // Accerchiamento vs Arcieri; valore stampato (D1)
 
 // GDD §5.1, §7, TECH-SPEC §4.3
 export type InstantEffect =
-  | { kind: 'atk_mod'; target: 'own_archers' | 'own_front'; amount: number }
+  | { kind: 'atk_mod'; target: 'own_archers' | 'own_front' | 'own_infantry'; amount: number }
   | { kind: 'walls_mod'; target: 'own' | 'enemy'; amount: number }; // amount con segno (+3, -4, -6)
 
 // GDD §3.4, §7, TECH-SPEC §4.3
@@ -33,6 +31,8 @@ export type CardEffect = InstantEffect | ConversionEffect;
 
 // GDD §7, TECH-SPEC §4.3
 export interface CardRules {
+  affiliation?: Affiliation;
+  structureEffect?: { kind: 'market' } | { kind: 'era_walls'; amount: number };
   id: string; // ATTENZIONE: il prefisso NON determina il tipo
   era: EraNo; // sotto-mazzo di appartenenza (1 | 2 | 3)
   type: CardType; // determinato dal campo 'Tipo / Cat.' del GDD, mai dall'ID
@@ -67,6 +67,10 @@ export interface UnitInstance extends CardInstance {
 
 // GDD §2–§6, TECH-SPEC §4.3, §5.2
 export interface PlayerState {
+  civilizationId?: CivilizationId;
+  organizationUsed?: boolean;
+  structures?: CardInstance[];
+  marketUsed?: boolean;
   hand: CardInstance[];
   subdecks: Record<EraNo, CardInstance[]>; // indice 0 = cima del sotto-mazzo
   discard: CardInstance[];
@@ -84,12 +88,7 @@ export interface PlayerState {
   consecutiveTimeouts: number; // contatore timeout consecutivi per regola di abbandono (§6.3, D2)
 }
 
-export type Phase =
-  | 'mulligan'
-  | 'hand_limit'
-  | 'development'
-  | 'prebattle'
-  | 'finished';
+export type Phase = 'mulligan' | 'hand_limit' | 'development' | 'prebattle' | 'finished';
 
 export type PendingWindow = 'mulligan' | 'hand_limit' | 'prebattle';
 
@@ -99,12 +98,7 @@ export type PendingCommit =
   | { window: 'prebattle'; cardUids: string[] };
 
 // GDD §6, TECH-SPEC §4.5, §4.9
-export type GameResultKind =
-  | 'annihilation'
-  | 'points'
-  | 'draw'
-  | 'concession'
-  | 'timeout';
+export type GameResultKind = 'annihilation' | 'points' | 'draw' | 'concession' | 'timeout';
 
 export interface GameResult {
   kind: GameResultKind;
@@ -127,7 +121,7 @@ export interface TimeoutPolicyConfig {
 }
 
 export interface RulesConfig {
-  gddVersion: '1.0';
+  gddVersion: ContentVersion;
   eraScalingSource: 'card' | 'current_era';
   archerMeleeUsesEffectiveAtk: boolean;
   seqAssignedAt: 'play' | 'reveal';
@@ -169,9 +163,9 @@ export interface GameCounters {
 
 // TECH-SPEC §4.3
 export interface GameState {
-  schemaVersion: 1;
-  rulesetVersion: '1.0';
-  catalogVersion: '1.0';
+  schemaVersion: 1 | 2;
+  rulesetVersion: ContentVersion;
+  catalogVersion: ContentVersion;
   stateVersion: number; // intero monotono incrementato a ogni apply valido
   rules: RulesConfig; // sezione 11 e Appendice C.4
   catalog: Record<string, CardRules>; // dizionario data-driven delle carte per la partita

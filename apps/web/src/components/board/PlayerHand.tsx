@@ -3,6 +3,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { getCard, type CatalogCard } from '@epochs/content';
 import {
   LOGISTICS_CAP_BY_ERA,
+  effectiveCardCost,
   RESOURCE_KEYS,
   type CardInstance,
   type PlayerView,
@@ -64,12 +65,13 @@ export function buildUnplayableBannerMessage(
     }
     case 'insufficient_resources': {
       if (view !== undefined && view !== null) {
+        const cost = effectiveCardCost(card.rules, view.self, view.rulesetVersion);
         const missingResources: Resource[] = RESOURCE_KEYS.filter(
-          (res) => card.rules.cost[res] > view.self.resources[res],
+          (res) => cost[res] > view.self.resources[res],
         );
         if (missingResources.length === 1) {
           const singleRes = missingResources[0]!;
-          return `${RESOURCE_LABELS_IT[singleRes]} insufficiente (${view.self.resources[singleRes]}/${card.rules.cost[singleRes]}) — Risorse insufficienti`;
+          return `${RESOURCE_LABELS_IT[singleRes]} insufficiente (${view.self.resources[singleRes]}/${cost[singleRes]}) — Risorse insufficienti`;
         }
         if (missingResources.length > 1) {
           const labels = missingResources
@@ -370,7 +372,11 @@ export function PlayerHand({
 
   const selectedInstance =
     selectedHandUid !== null ? (hand.find((c) => c.uid === selectedHandUid) ?? null) : null;
-  const selectedCatalogCard = selectedInstance !== null ? getCard(selectedInstance.cardId) : null;
+  const selectedCatalogCard =
+    selectedInstance !== null ? getCard(selectedInstance.cardId, view.catalogVersion) : null;
+  const selectedCost = selectedCatalogCard
+    ? effectiveCardCost(selectedCatalogCard.rules, view.self, view.rulesetVersion ?? '1.0')
+    : null;
 
   return (
     <section
@@ -428,7 +434,7 @@ export function PlayerHand({
         >
           <div>
             <strong className="font-display" style={{ marginRight: '6px' }}>
-              {getCard(unplayableBanner.cardId).text.name}:
+              {getCard(unplayableBanner.cardId, view.catalogVersion).text.name}:
             </strong>
             <span data-testid="unplayable-reason-text">{unplayableBanner.message}</span>
           </div>
@@ -480,6 +486,14 @@ export function PlayerHand({
             <span>{selectedCatalogCard.text.typeLine}</span>
             <span style={{ margin: '0 6px', color: 'var(--chalk-muted)' }}>—</span>
             <span>{selectedCatalogCard.rulesText}</span>
+            {selectedCost &&
+              view.rulesetVersion === '2.0' &&
+              selectedCatalogCard.rules.type === 'unit' && (
+                <p data-testid="hand-effective-cost" style={{ margin: '4px 0 0' }}>
+                  Costo attuale: {selectedCost.food} Cibo, {selectedCost.wood} Legno,{' '}
+                  {selectedCost.metal} Metallo. Il costo stampato resta sulla carta.
+                </p>
+              )}
           </div>
 
           {onPlayCard !== undefined && (
@@ -506,6 +520,13 @@ export function PlayerHand({
       )}
 
       {/* Ventaglio delle carte in mano (fino a 10 carte, navigabile con Frecce/Tab/Invio) */}
+      {view.rulesetVersion === '2.0' &&
+        view.self.civilizationId === 'feudal' &&
+        !view.self.organizationUsed && (
+          <small role="status">
+            Organizzazione disponibile: −1 Cibo alla prima Unità (minimo 0).
+          </small>
+        )}
       {hand.length === 0 ? (
         <div
           className="board-zone__empty"
@@ -531,7 +552,7 @@ export function PlayerHand({
           }}
         >
           {hand.map((instance, idx) => {
-            const catalogCard = getCard(instance.cardId);
+            const catalogCard = getCard(instance.cardId, view.catalogVersion);
             const { playable, reason } = resolveCardPlayability(instance, catalogCard);
             const isSelected =
               view.phase === 'prebattle'

@@ -110,8 +110,7 @@ export async function buildSingleCardArt(
     fs.writeFileSync(placeholderSvgPath, svgContent, 'utf8');
   }
 
-  const sourceKind: 'master' | 'placeholder' =
-    masterPath !== null ? 'master' : 'placeholder';
+  const sourceKind: 'master' | 'placeholder' = masterPath !== null ? 'master' : 'placeholder';
   const inputBuffer =
     masterPath !== null
       ? fs.readFileSync(masterPath)
@@ -131,14 +130,8 @@ export async function buildSingleCardArt(
       const avifOutPath = path.join(outCardsDir, `${cardId}-${width}.avif`);
 
       const [webpBuffer, avifBuffer] = await Promise.all([
-        resizedPipeline
-          .clone()
-          .webp({ quality: 80, effort: 1 })
-          .toBuffer(),
-        resizedPipeline
-          .clone()
-          .avif({ quality: 65, effort: 0 })
-          .toBuffer(),
+        resizedPipeline.clone().webp({ quality: 80, effort: 1 }).toBuffer(),
+        resizedPipeline.clone().avif({ quality: 65, effort: 0 }).toBuffer(),
       ]);
 
       fs.writeFileSync(webpOutPath, webpBuffer);
@@ -150,6 +143,7 @@ export async function buildSingleCardArt(
 }
 
 export interface BuildArtPipelineConfig {
+  readonly includeExpansion?: boolean;
   readonly rootDir?: string | undefined;
   readonly rulesPath?: string | undefined;
   readonly artPath?: string | undefined;
@@ -159,39 +153,36 @@ export interface BuildArtPipelineConfig {
   readonly concurrency?: number | undefined;
 }
 
-export async function runArtBuild(
-  config: BuildArtPipelineConfig = {},
-): Promise<ArtManifest> {
+export async function runArtBuild(config: BuildArtPipelineConfig = {}): Promise<ArtManifest> {
   const rootDir = config.rootDir ?? process.cwd();
-  const rulesPath =
-    config.rulesPath ?? path.join(rootDir, 'data', 'cards.rules.json');
-  const artPath =
-    config.artPath ?? path.join(rootDir, 'data', 'cards.art.json');
-  const masterDir =
-    config.masterDir ?? path.join(rootDir, 'data', 'art', 'src');
-  const outCardsDir =
-    config.outCardsDir ?? path.join(rootDir, 'apps', 'web', 'public', 'cards');
-  const placeholdersDir =
-    config.placeholdersDir ?? path.join(outCardsDir, 'placeholders');
+  const rulesPath = config.rulesPath ?? path.join(rootDir, 'data', 'cards.rules.json');
+  const artPath = config.artPath ?? path.join(rootDir, 'data', 'cards.art.json');
+  const masterDir = config.masterDir ?? path.join(rootDir, 'data', 'art', 'src');
+  const outCardsDir = config.outCardsDir ?? path.join(rootDir, 'apps', 'web', 'public', 'cards');
+  const placeholdersDir = config.placeholdersDir ?? path.join(outCardsDir, 'placeholders');
 
-  const rulesMap = CardsRulesFileSchema.parse(
-    JSON.parse(fs.readFileSync(rulesPath, 'utf8')),
-  );
-  const artMap = CardsArtFileSchema.parse(
-    JSON.parse(fs.readFileSync(artPath, 'utf8')),
-  );
+  const rulesMap = CardsRulesFileSchema.parse(JSON.parse(fs.readFileSync(rulesPath, 'utf8')));
+  const artMap = CardsArtFileSchema.parse(JSON.parse(fs.readFileSync(artPath, 'utf8')));
+  if (config.includeExpansion) {
+    const expansionRules = CardsRulesFileSchema.parse(
+      JSON.parse(fs.readFileSync(path.join(rootDir, 'data/v2/cards.rules.json'), 'utf8')),
+    );
+    const expansionArt = CardsArtFileSchema.parse(
+      JSON.parse(fs.readFileSync(path.join(rootDir, 'data/v2/cards.art.json'), 'utf8')),
+    );
+    for (const [id, card] of Object.entries(expansionRules))
+      if (!rulesMap[id]) {
+        rulesMap[id] = card;
+        artMap[id] = expansionArt[id]!;
+      }
+  }
 
   fs.mkdirSync(outCardsDir, { recursive: true });
   fs.mkdirSync(placeholdersDir, { recursive: true });
 
-  const sortedCardIds = Object.keys(rulesMap).sort((a, b) =>
-    a < b ? -1 : a > b ? 1 : 0,
-  );
+  const sortedCardIds = Object.keys(rulesMap).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 
-  const concurrency = Math.max(
-    1,
-    Math.min(config.concurrency ?? os.availableParallelism(), 8),
-  );
+  const concurrency = Math.max(1, Math.min(config.concurrency ?? os.availableParallelism(), 8));
   const entriesById: Record<string, CardArtManifestEntry> = {};
 
   let cursor = 0;
@@ -218,6 +209,21 @@ export async function runArtBuild(
 
   await Promise.all(Array.from({ length: concurrency }, () => worker()));
 
+  // Version-specific art may coexist with a v1 master under the same card ID.
+  if (config.includeExpansion) {
+    const expansionArt = CardsArtFileSchema.parse(
+      JSON.parse(fs.readFileSync(path.join(rootDir, 'data/v2/cards.art.json'), 'utf8')),
+    );
+    for (const [id, art] of Object.entries(expansionArt)) {
+      const artId = art.file.match(/^cards\/(.+)-1024\.webp$/)?.[1];
+      if (artId === `${id}-v2` && rulesMap[id]) {
+        await buildSingleCardArt({
+          card: { ...rulesMap[id], id: artId }, art, masterDir, outCardsDir, placeholdersDir,
+        });
+      }
+    }
+  }
+
   const orderedCards: Record<string, CardArtManifestEntry> = {};
   for (const id of sortedCardIds) {
     orderedCards[id] = entriesById[id]!;
@@ -230,21 +236,16 @@ export async function runArtBuild(
   };
 
   const manifestPath = path.join(outCardsDir, 'art-manifest.json');
-  fs.writeFileSync(
-    manifestPath,
-    `${JSON.stringify(manifest, null, 2)}\n`,
-    'utf8',
-  );
+  fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
 
   return manifest;
 }
 
 const isDirectRun =
-  process.argv[1] !== undefined &&
-  path.basename(process.argv[1]) === 'art-build.ts';
+  process.argv[1] !== undefined && path.basename(process.argv[1]) === 'art-build.ts';
 
 if (isDirectRun) {
-  runArtBuild()
+  runArtBuild({ includeExpansion: true })
     .then((manifest) => {
       const count = Object.keys(manifest.cards).length;
       console.log(

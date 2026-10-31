@@ -127,13 +127,14 @@ test('crea un mazzo 3×20, blocca bozze incomplete, salva e usa il mazzo persona
   await page.getByTestId('home-seed-input').fill(seed);
   await page.getByRole('button', { name: 'Chiudi finestra' }).click();
   await page.getByTestId('open-bot-setup-btn').click();
+  await page.getByTestId('bot-opponent-deck-select').selectOption(`custom:${exported.id}`);
   await page.getByTestId('start-bot-match-btn').click();
   const modal = page.getByTestId('mulligan-modal');
   await expect(modal).toBeVisible();
   const expectedHand = createGame({
     seed,
     catalog: CARDS_RULES,
-    decks: { P1: exported, P2: balancedDeck },
+    decks: { P1: exported, P2: exported },
   }).state.players.P1.hand.map((card) => card.cardId);
   expect(
     await modal
@@ -165,22 +166,18 @@ test('importa JSON da testo e file, rifiuta dati invalidi e aggiorna un mazzo sa
   // Un file incompleto non sovrascrive la bozza corrente.
   const invalid = structuredClone(deck);
   invalid.subdecks['2'].pop();
-  await page
-    .getByLabel('File JSON')
-    .setInputFiles({
-      name: 'invalid.json',
-      mimeType: 'application/json',
-      buffer: Buffer.from(JSON.stringify(invalid)),
-    });
+  await page.getByLabel('File JSON').setInputFiles({
+    name: 'invalid.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(invalid)),
+  });
   await expect(page.getByRole('alert')).toBeVisible();
   await expect(page.getByTestId('deck-era-1')).toContainText('19/20');
-  await page
-    .getByLabel('File JSON')
-    .setInputFiles({
-      name: 'deck.json',
-      mimeType: 'application/json',
-      buffer: Buffer.from(JSON.stringify({ ...deck, name: 'Mazzo aggiornato' })),
-    });
+  await page.getByLabel('File JSON').setInputFiles({
+    name: 'deck.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({ ...deck, name: 'Mazzo aggiornato' })),
+  });
   await expect(page.getByTestId('deck-name-input')).toHaveValue('Mazzo aggiornato');
   await page.getByTestId('deck-save-btn').click();
   await expect(page.getByTestId('deck-saved-select').locator('option')).toHaveCount(2);
@@ -188,7 +185,7 @@ test('importa JSON da testo e file, rifiuta dati invalidi e aggiorna un mazzo sa
   await expect(page.getByTestId('deck-save-btn')).toBeDisabled();
   await page.getByTestId('deck-saved-select').selectOption(deck.id);
   await expect(page.getByTestId('deck-name-input')).toHaveValue('Mazzo aggiornato');
-  await page.getByTestId('deck-preset-select').selectOption('balanced-tactical');
+  await page.getByTestId('deck-preset-select').selectOption('balanced-tactical-v2');
   await page.getByTestId('deck-save-btn').click();
   await expect(page.getByTestId('deck-saved-select').locator('option')).toHaveCount(3);
 });

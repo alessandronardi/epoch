@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { CARD_CATALOG, KEYWORD_TOOLTIPS_IT, getCard } from '@epochs/content';
+import { CARD_CATALOG, V2_CARD_CATALOG, KEYWORD_TOOLTIPS_IT, getCard } from '@epochs/content';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CardArtPicture } from '../src/components/card/CardArtPicture.js';
@@ -12,109 +12,81 @@ afterEach(() => {
 });
 
 describe('<CardArchiveScreen> and <QuickRulesScreen>', () => {
-  it('renders all 45 cards by default with <CardArtPicture> responsive AVIF/WebP sources and SVG fallback', () => {
+  it('renders all 62 expansion cards by default with <CardArtPicture> responsive AVIF/WebP sources and SVG fallback', () => {
     render(<CardArchiveScreen />);
 
-    expect(screen.getByTestId('archive-results-count').textContent).toContain(
-      '45 / 45 carte',
-    );
+    expect(screen.getByTestId('archive-results-count').textContent).toContain('62 / 62 carte');
 
     const grid = screen.getByTestId('archive-cards-grid');
-    expect(grid.querySelectorAll('[data-card-id]').length).toBe(45);
+    expect(grid.querySelectorAll('[data-card-id]').length).toBe(62);
 
     // Check <CardArtPicture> structure on a card
     const pictureEl = screen.getByTestId('card-art-picture-e1_farm');
     const sources = pictureEl.querySelectorAll('source');
     expect(sources.length).toBe(2);
     expect(sources[0]?.getAttribute('type')).toBe('image/avif');
-    expect(sources[0]?.getAttribute('srcset')).toContain(
-      '/cards/e1_farm-256.avif 256w',
-    );
-    expect(sources[0]?.getAttribute('srcset')).toContain(
-      '/cards/e1_farm-512.avif 512w',
-    );
-    expect(sources[0]?.getAttribute('srcset')).toContain(
-      '/cards/e1_farm-1024.avif 1024w',
-    );
+    expect(sources[0]?.getAttribute('srcset')).toContain('/cards/e1_farm-256.avif 256w');
+    expect(sources[0]?.getAttribute('srcset')).toContain('/cards/e1_farm-512.avif 512w');
+    expect(sources[0]?.getAttribute('srcset')).toContain('/cards/e1_farm-1024.avif 1024w');
     expect(sources[1]?.getAttribute('type')).toBe('image/webp');
-    expect(sources[1]?.getAttribute('srcset')).toContain(
-      '/cards/e1_farm-512.webp 512w',
-    );
+    expect(sources[1]?.getAttribute('srcset')).toContain('/cards/e1_farm-512.webp 512w');
 
     const img = pictureEl.querySelector('img');
     expect(img?.getAttribute('src')).toBe('/cards/placeholders/e1_farm.svg');
-    expect(img?.getAttribute('alt')).toBe(
-      CARD_CATALOG.cardsById['e1_farm']?.art.alt.it,
-    );
+    expect(img?.getAttribute('alt')).toBe(CARD_CATALOG.cardsById['e1_farm']?.art.alt.it);
   });
 
-  it('filters cards by Era (15 per Era), Type, Category, Line and textual search query, and resets filters', () => {
+  it('filters cards by Era, Type, Category, Line and textual search query, and resets filters', () => {
     render(<CardArchiveScreen />);
 
     // 1. Filter by Era I, II, III (15 cards each)
     for (const era of [1, 2, 3] as const) {
       fireEvent.click(screen.getByTestId(`archive-filter-era-${era}`));
       expect(screen.getByTestId('archive-results-count').textContent).toContain(
-        '15 / 45 carte',
+        `${V2_CARD_CATALOG.allCards.filter((card) => card.rules.era === era).length} / 62 carte`,
       );
     }
 
     // Back to all Eras
     fireEvent.click(screen.getByTestId('archive-filter-era-all'));
-    expect(screen.getByTestId('archive-results-count').textContent).toContain(
-      '45 / 45 carte',
-    );
+    expect(screen.getByTestId('archive-results-count').textContent).toContain('62 / 62 carte');
 
-    // 2. Filter by Type: conversion (2 cards: e3_gld, e3_frn)
+    // 2. Filter by Type: the common conversions and Byzantine arsenal.
     fireEvent.change(screen.getByTestId('archive-filter-type'), {
       target: { value: 'conversion' },
     });
-    expect(screen.getByTestId('archive-results-count').textContent).toContain(
-      '2 / 45 carte',
-    );
+    expect(screen.getByTestId('archive-results-count').textContent).toContain('3 / 62 carte');
     expect(screen.getByTestId('card-e3_gld')).toBeDefined();
     expect(screen.getByTestId('card-e3_frn')).toBeDefined();
 
     // 3. Reset filters
     fireEvent.click(screen.getByTestId('archive-reset-filters-btn'));
-    expect(screen.getByTestId('archive-results-count').textContent).toContain(
-      '45 / 45 carte',
-    );
+    expect(screen.getByTestId('archive-results-count').textContent).toContain('62 / 62 carte');
 
     // 4. Filter by Category (cavalry -> 6 cards) + Era II (2 cards: u2_cav_l, u2_cav_h)
     fireEvent.change(screen.getByTestId('archive-filter-category'), {
       target: { value: 'cavalry' },
     });
-    expect(screen.getByTestId('archive-results-count').textContent).toContain(
-      '6 / 45 carte',
-    );
+    expect(screen.getByTestId('archive-results-count').textContent).toContain('6 / 62 carte');
     fireEvent.click(screen.getByTestId('archive-filter-era-2'));
-    expect(screen.getByTestId('archive-results-count').textContent).toContain(
-      '2 / 45 carte',
-    );
+    expect(screen.getByTestId('archive-results-count').textContent).toContain('2 / 62 carte');
 
     // 5. Filter by Line (rear in Era II -> incompatible with cavalry which is center -> empty state)
     fireEvent.change(screen.getByTestId('archive-filter-line'), {
       target: { value: 'rear' },
     });
-    expect(screen.getByTestId('archive-results-count').textContent).toContain(
-      '0 / 45 carte',
-    );
+    expect(screen.getByTestId('archive-results-count').textContent).toContain('0 / 62 carte');
     expect(screen.getByTestId('archive-empty-state')).toBeDefined();
 
     // 6. Reset and test textual search query (by name and by rules text)
     fireEvent.click(screen.getByTestId('archive-reset-filters-btn'));
     const searchInput = screen.getByTestId('archive-search-input');
     fireEvent.change(searchInput, { target: { value: 'Altoforno Reale' } });
-    expect(screen.getByTestId('archive-results-count').textContent).toContain(
-      '1 / 45 carte',
-    );
+    expect(screen.getByTestId('archive-results-count').textContent).toContain('1 / 62 carte');
     expect(screen.getByTestId('card-e3_frn')).toBeDefined();
 
     fireEvent.change(searchInput, { target: { value: 'Impalamento' } });
-    expect(screen.getByTestId('archive-results-count').textContent).toContain(
-      '6 / 45 carte',
-    );
+    expect(screen.getByTestId('archive-results-count').textContent).toContain('8 / 62 carte');
   });
 
   it('opens <CardInspectModal> with keyword tooltips when selecting a card in <CardArchiveScreen>', () => {
@@ -123,12 +95,12 @@ describe('<CardArchiveScreen> and <QuickRulesScreen>', () => {
     fireEvent.click(screen.getByTestId('card-u2_spr_h'));
     const modal = screen.getByTestId('card-inspect-modal');
     expect(modal.getAttribute('data-inspected-card-id')).toBe('u2_spr_h');
-    expect(
-      screen.getByTestId('keyword-tooltip-Impalamento').textContent,
-    ).toContain(KEYWORD_TOOLTIPS_IT.Impalamento);
-    expect(
-      screen.getByTestId('keyword-tooltip-Demolizione (DEM)').textContent,
-    ).toContain(KEYWORD_TOOLTIPS_IT['Demolizione (DEM)']);
+    expect(screen.getByTestId('keyword-tooltip-Impalamento').textContent).toContain(
+      KEYWORD_TOOLTIPS_IT.Impalamento,
+    );
+    expect(screen.getByTestId('keyword-tooltip-Demolizione (DEM)').textContent).toContain(
+      KEYWORD_TOOLTIPS_IT['Demolizione (DEM)'],
+    );
 
     fireEvent.click(screen.getByTestId('card-inspect-close'));
     expect(screen.queryByTestId('card-inspect-modal')).toBeNull();
@@ -136,7 +108,13 @@ describe('<CardArchiveScreen> and <QuickRulesScreen>', () => {
 
   it('opens the rules from the home menu', () => {
     const onNavigate = vi.fn();
-    render(<HomeScreen onNavigate={onNavigate} onStartBotMatch={vi.fn()} onStartHotSeatMatch={vi.fn()} />);
+    render(
+      <HomeScreen
+        onNavigate={onNavigate}
+        onStartBotMatch={vi.fn()}
+        onStartHotSeatMatch={vi.fn()}
+      />,
+    );
     const button = screen.getByTestId('nav-full-rules-btn');
     expect(button.getAttribute('aria-label')).toBe('Regolamento');
     expect(button.getAttribute('aria-disabled')).toBeNull();
@@ -151,24 +129,26 @@ describe('<CardArchiveScreen> and <QuickRulesScreen>', () => {
     expect(screen.getByTestId('screen-rules')).toBeDefined();
     expect(screen.getByRole('heading', { name: 'Regolamento', level: 1 })).toBeDefined();
     expect(screen.getByRole('navigation', { name: 'Indice del regolamento' })).toBeDefined();
-    expect(screen.getByTestId('rules-section-eras').textContent).toContain('scegliendo le carte da scartare');
-    expect(screen.getByTestId('rules-section-settings').textContent).toContain('partita locale Hot-Seat');
+    expect(screen.getByTestId('rules-section-eras').textContent).toContain(
+      'scegliendo le carte da scartare',
+    );
+    expect(screen.getByTestId('rules-section-settings').textContent).toContain(
+      'partita locale Hot-Seat',
+    );
     expect(screen.getByTestId('rules-section-settings').textContent).toContain('partite online');
-    expect(
-      screen.getByTestId('rules-section-eras').textContent,
-    ).toContain('20 carte per Era');
-    expect(
-      screen.getByTestId('rules-section-economy').textContent,
-    ).toContain('4 Cibo, 4 Legno, 0 Metallo');
-    expect(
-      screen.getByTestId('rules-section-development').textContent,
-    ).toContain('4 slot in Era I');
-    expect(
-      screen.getByTestId('rules-section-battle').textContent,
-    ).toContain('Fase 1 — Tiro degli Arcieri');
-    expect(
-      screen.getByTestId('rules-section-siege').textContent,
-    ).toContain('Base nuova Era + floor(Mura residue / 2)');
+    expect(screen.getByTestId('rules-section-eras').textContent).toContain('20 carte per Era');
+    expect(screen.getByTestId('rules-section-economy').textContent).toContain(
+      '4 Cibo, 4 Legno, 0 Metallo',
+    );
+    expect(screen.getByTestId('rules-section-development').textContent).toContain(
+      '4 slot in Era I',
+    );
+    expect(screen.getByTestId('rules-section-battle').textContent).toContain(
+      'Fase 1 — Tiro degli Arcieri',
+    );
+    expect(screen.getByTestId('rules-section-siege').textContent).toContain(
+      'Base nuova Era + floor(Mura residue / 2)',
+    );
 
     for (const [kw, desc] of Object.entries(KEYWORD_TOOLTIPS_IT)) {
       const box = screen.getByTestId(`rules-keyword-${kw}`);

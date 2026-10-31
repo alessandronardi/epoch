@@ -7,6 +7,7 @@ import {
   addResources,
   autoDiscard,
   canAfford,
+  effectiveCardCost,
   getTotalCardCost,
   type CardInstance,
   type CardRules,
@@ -16,18 +17,14 @@ import {
   type PlayerView,
   type Resources,
 } from '../../engine/src/index.js';
-import {
-  enumeratePlayableDevelopmentMoves,
-  type Bot,
-} from './random-bot.js';
+import { enumeratePlayableDevelopmentMoves, type Bot } from './random-bot.js';
 
 /**
  * Catalogo predefinito delle 45 carte ufficiali caricato da `data/cards.rules.json`.
  */
-export const DEFAULT_BOT_CATALOG: Readonly<Record<string, CardRules>> =
-  Object.freeze(
-    structuredClone(rawRulesJson as unknown as Record<string, CardRules>),
-  );
+export const DEFAULT_BOT_CATALOG: Readonly<Record<string, CardRules>> = Object.freeze(
+  structuredClone(rawRulesJson as unknown as Record<string, CardRules>),
+);
 
 export interface GreedyBotOptions {
   readonly name?: string;
@@ -39,10 +36,7 @@ export type RationalBotOptions = GreedyBotOptions;
 export type BotKind = 'random' | 'greedy' | 'rational';
 
 function resolveBotOptions(
-  optionsOrCatalog:
-    | GreedyBotOptions
-    | Readonly<Record<string, CardRules>>
-    | undefined,
+  optionsOrCatalog: GreedyBotOptions | Readonly<Record<string, CardRules>> | undefined,
   defaultName: string,
 ): { name: string; catalog: Readonly<Record<string, CardRules>> } {
   if (optionsOrCatalog === undefined) {
@@ -156,10 +150,7 @@ export function predictsEnemyBreach(
 
   // Durante development (prima di UnitsRevealed), stima il rischio di breccia
   // dai segnali pubblici dell'avversario (slotsUsed, demBonus, coveredCount) rispetto alle nostre Mura e difese.
-  const opponentDeployed = Math.max(
-    view.opponent.slotsUsed,
-    view.opponent.coveredCount,
-  );
+  const opponentDeployed = Math.max(view.opponent.slotsUsed, view.opponent.coveredCount);
   if (opponentDeployed === 0) {
     return false;
   }
@@ -172,14 +163,10 @@ export function predictsEnemyBreach(
     }
   }
 
-  const estimatedDemPerEnemySlot =
-    view.era + (view.era === 3 ? view.opponent.demBonus : 0);
+  const estimatedDemPerEnemySlot = view.era + (view.era === 3 ? view.opponent.demBonus : 0);
   const estimatedEnemyDem = opponentDeployed * estimatedDemPerEnemySlot;
 
-  return (
-    estimatedEnemyDem >= effectiveOwnWalls &&
-    ownCombatants <= opponentDeployed
-  );
+  return estimatedEnemyDem >= effectiveOwnWalls && ownCombatants <= opponentDeployed;
 }
 
 /**
@@ -197,9 +184,7 @@ export class GreedyBot implements Bot {
   public readonly name: string;
   protected readonly catalog: Readonly<Record<string, CardRules>>;
 
-  public constructor(
-    optionsOrCatalog?: GreedyBotOptions | Readonly<Record<string, CardRules>>,
-  ) {
+  public constructor(optionsOrCatalog?: GreedyBotOptions | Readonly<Record<string, CardRules>>) {
     const resolved = resolveBotOptions(optionsOrCatalog, 'GreedyBot');
     this.name = resolved.name;
     this.catalog = resolved.catalog;
@@ -235,9 +220,7 @@ export class GreedyBot implements Bot {
     }
 
     const maxMulligan = Math.min(legal.maxMulliganCards, hand.length);
-    const economyCards = hand.filter(
-      (c) => this.catalog[c.cardId]?.type === 'economy',
-    );
+    const economyCards = hand.filter((c) => this.catalog[c.cardId]?.type === 'economy');
     const hasEconomyInHand = economyCards.length > 0;
     const hasMineInHand = economyCards.some((c) => {
       const prod = this.catalog[c.cardId]?.production;
@@ -256,10 +239,7 @@ export class GreedyBot implements Bot {
 
       // Tiene sempre gli edifici economici di Era I
       if (rules.type === 'economy') {
-        keptCountsByCardId.set(
-          card.cardId,
-          (keptCountsByCardId.get(card.cardId) ?? 0) + 1,
-        );
+        keptCountsByCardId.set(card.cardId, (keptCountsByCardId.get(card.cardId) ?? 0) + 1);
         continue;
       }
 
@@ -286,10 +266,7 @@ export class GreedyBot implements Bot {
         // Ha almeno un edificio economico: tiene le unità a basso costo (<= 3) non ridondanti
         const needsMetalWithoutMine = rules.cost.metal > 0 && !hasMineInHand;
         const isLowCostUnit =
-          rules.type === 'unit' &&
-          totalCost <= 3 &&
-          !needsMetalWithoutMine &&
-          prevKept < 2;
+          rules.type === 'unit' && totalCost <= 3 && !needsMetalWithoutMine && prevKept < 2;
 
         if (isLowCostUnit) {
           keptCountsByCardId.set(card.cardId, prevKept + 1);
@@ -377,6 +354,33 @@ export class GreedyBot implements Bot {
     if (playableMoves.length === 0) {
       return { type: 'Pass' };
     }
+    // Exchange only when it makes a card affordable; do not churn resources.
+    for (const cmd of legal.marketCommands ?? []) {
+      const after = { ...view.self.resources };
+      after[cmd.give] -= 2;
+      after[cmd.receive] += 1;
+      if (
+        hand.some((c) => {
+          const card = this.catalog[c.cardId];
+          if (!card || card.type === 'instant') return false;
+          const cost = effectiveCardCost(card, view.self, view.rulesetVersion);
+          return !canAfford(view.self.resources, cost) && canAfford(after, cost);
+        })
+      )
+        return cmd;
+    }
+    if (view.era < 3 && view.self.units.length >= 1) {
+      const support = legal.playableFieldCardUids.find((uid) => {
+        const card = lookupRulesByUid(hand, uid, this.catalog);
+        return (
+          card?.type === 'structure' &&
+          !(view.self.structures ?? []).some(
+            (c) => this.catalog[c.cardId]?.structureEffect?.kind === card.structureEffect?.kind,
+          )
+        );
+      });
+      if (support) return { type: 'PlayCard', cardUid: support };
+    }
 
     // 1. In Era III: valuta Riconversioni (Gilda dei Mercanti con >= 3 edifici; Altoforno Reale con >= 2 unità)
     if (
@@ -425,14 +429,9 @@ export class GreedyBot implements Bot {
     // in Era I e II conviene comunque costruirli per il Raccolto 2x dell'Era successiva,
     // oppure in Era III se servono edifici per sbloccare una Riconversione in mano.
     if (playableEconomyCards.length > 0) {
-      const hasConversionInHand = hand.some(
-        (c) => this.catalog[c.cardId]?.type === 'conversion',
-      );
+      const hasConversionInHand = hand.some((c) => this.catalog[c.cardId]?.type === 'conversion');
       if (view.era < 3 || (hasConversionInHand && buildings.length < 3)) {
-        const bestEconomy = this.pickBestEconomyCard(
-          view,
-          playableEconomyCards,
-        );
+        const bestEconomy = this.pickBestEconomyCard(view, playableEconomyCards);
         return {
           type: 'PlayCard',
           cardUid: bestEconomy.uid,
@@ -473,8 +472,7 @@ export class GreedyBot implements Bot {
     }
 
     if (guildUid !== null && furnaceUid !== null) {
-      const chosenUid =
-        buildings.length > units.length ? guildUid : furnaceUid;
+      const chosenUid = buildings.length > units.length ? guildUid : furnaceUid;
       return {
         type: 'PlayConversion',
         cardUid: chosenUid,
@@ -501,9 +499,7 @@ export class GreedyBot implements Bot {
     return null;
   }
 
-  protected pickBestBuildingToSacrifice(
-    view: Readonly<PlayerView>,
-  ): string | null {
+  protected pickBestBuildingToSacrifice(view: Readonly<PlayerView>): string | null {
     const { legal, buildings, resources } = view.self;
     if (legal.sacrificableBuildingUids.length === 0) {
       return null;
@@ -558,16 +554,12 @@ export class GreedyBot implements Bot {
       let scarcityBonus = 0;
       for (const r of RESOURCE_KEYS) {
         if (prod[r] > 0) {
-          const effectiveSupply =
-            currentProd[r] * 2 + view.self.resources[r];
+          const effectiveSupply = currentProd[r] * 2 + view.self.resources[r];
           scarcityBonus += prod[r] * Math.max(0, 10 - effectiveSupply) * 0.1;
         }
       }
 
-      const score =
-        totalProd * 10 +
-        scarcityBonus -
-        getTotalCardCost(candidate.rules) * 0.05;
+      const score = totalProd * 10 + scarcityBonus - getTotalCardCost(candidate.rules) * 0.05;
       if (score > bestScore) {
         bestScore = score;
         best = candidate;
@@ -596,23 +588,33 @@ export class GreedyBot implements Bot {
       }
     }
 
-    const minLineCount = Math.min(
-      lineCounts.front,
-      lineCounts.center,
-      lineCounts.rear,
-    );
+    const minLineCount = Math.min(lineCounts.front, lineCounts.center, lineCounts.rear);
 
     let best = candidates[0]!;
     let bestScore = Number.NEGATIVE_INFINITY;
 
     for (const candidate of candidates) {
       const { rules } = candidate;
-      const efficiency = calculateUnitEfficiency(rules);
+      const bonus = rules.abilities.reduce(
+        (sum, a) =>
+          sum +
+          (a.kind === 'fury'
+            ? a.amount
+            : a.kind === 'discipline' &&
+                view.self.units.some((u) => this.catalog[u.cardId]?.category === 'spearman')
+              ? a.amount
+              : 0),
+        0,
+      );
+      const efficiency = calculateUnitEfficiency({
+        ...rules,
+        cost: effectiveCardCost(rules, view.self, view.rulesetVersion),
+        atk: (rules.atk ?? 0) + bonus,
+      });
       const line: Line = rules.line ?? 'front';
       const excessOnLine = lineCounts[line] - minLineCount;
       const lineBalanceAdjustment = -excessOnLine * 0.85;
-      const combatantAdjustment =
-        combatantCount === 0 && rules.isCombatant === false ? -2.0 : 0;
+      const combatantAdjustment = combatantCount === 0 && rules.isCombatant === false ? -2.0 : 0;
 
       const score = efficiency + lineBalanceAdjustment + combatantAdjustment;
       if (score > bestScore) {
@@ -694,7 +696,12 @@ export class GreedyBot implements Bot {
             rules,
             priority: 20 + ownArchersCount * effect.amount,
           });
-        } else if (effect.target === 'own_front' && ownFrontUnitsCount >= 2) {
+        } else if (
+          (effect.target === 'own_front' && ownFrontUnitsCount >= 2) ||
+          (effect.target === 'own_infantry' &&
+            view.self.units.filter((u) => this.catalog[u.cardId]?.category === 'infantry').length >=
+              2)
+        ) {
           desirableCandidates.push({
             uid,
             rules,
@@ -712,10 +719,7 @@ export class GreedyBot implements Bot {
           }
         } else if (effect.target === 'enemy' && effect.amount < 0) {
           const wallReduction = Math.abs(effect.amount);
-          const effectiveEnemyWalls = Math.max(
-            0,
-            view.opponent.walls - wallReduction,
-          );
+          const effectiveEnemyWalls = Math.max(0, view.opponent.walls - wallReduction);
           if (
             ownCombatantsCount > 0 &&
             ownTotalDem > 0 &&
@@ -741,11 +745,7 @@ export class GreedyBot implements Bot {
 
     for (const candidate of desirableCandidates) {
       const { effect } = candidate.rules;
-      if (
-        effect?.kind === 'walls_mod' &&
-        effect.target === 'enemy' &&
-        remainingEnemyWalls <= 0
-      ) {
+      if (effect?.kind === 'walls_mod' && effect.target === 'enemy' && remainingEnemyWalls <= 0) {
         continue;
       }
       if (
@@ -762,10 +762,7 @@ export class GreedyBot implements Bot {
         currentCost = nextCost;
         if (effect?.kind === 'walls_mod') {
           if (effect.target === 'enemy') {
-            remainingEnemyWalls = Math.max(
-              0,
-              remainingEnemyWalls + effect.amount,
-            );
+            remainingEnemyWalls = Math.max(0, remainingEnemyWalls + effect.amount);
           } else {
             currentExtraOwnWalls += effect.amount;
           }
@@ -783,9 +780,7 @@ export class GreedyBot implements Bot {
  * così da negare il bottino di Razzia (max 1 Cibo e 1 Legno) all'avversario.
  */
 export class RationalBot extends GreedyBot {
-  public constructor(
-    optionsOrCatalog?: RationalBotOptions | Readonly<Record<string, CardRules>>,
-  ) {
+  public constructor(optionsOrCatalog?: RationalBotOptions | Readonly<Record<string, CardRules>>) {
     const resolved = resolveBotOptions(optionsOrCatalog, 'RationalBot');
     super({
       name: resolved.name,
@@ -793,9 +788,7 @@ export class RationalBot extends GreedyBot {
     });
   }
 
-  protected override chooseDevelopment(
-    view: Readonly<PlayerView>,
-  ): ClientCommand {
+  protected override chooseDevelopment(view: Readonly<PlayerView>): ClientCommand {
     const { legal, hand, resources } = view.self;
     const hasRaidableResources = resources.food > 0 || resources.wood > 0;
     const fearsBreach = predictsEnemyBreach(view, this.catalog, 0);
@@ -809,15 +802,8 @@ export class RationalBot extends GreedyBot {
     // Se GreedyBot ha scelto una carta da campo che già consuma Cibo o Legno,
     // seleziona tra le carte dello stesso tipo quella che massimizza il consumo di Cibo/Legno residui.
     if (baseCommand.type === 'PlayCard') {
-      const cardRules = lookupRulesByUid(
-        hand,
-        baseCommand.cardUid,
-        this.catalog,
-      );
-      if (
-        cardRules !== undefined &&
-        cardRules.cost.food + cardRules.cost.wood > 0
-      ) {
+      const cardRules = lookupRulesByUid(hand, baseCommand.cardUid, this.catalog);
+      if (cardRules !== undefined && cardRules.cost.food + cardRules.cost.wood > 0) {
         const sameTypeCandidates: Array<{ uid: string; rules: CardRules }> = [];
         for (const uid of legal.playableFieldCardUids) {
           const rules = lookupRulesByUid(hand, uid, this.catalog);
@@ -829,10 +815,7 @@ export class RationalBot extends GreedyBot {
             sameTypeCandidates.push({ uid, rules });
           }
         }
-        const bestSpendMove = this.pickBestRaidDenialFieldCard(
-          view,
-          sameTypeCandidates,
-        );
+        const bestSpendMove = this.pickBestRaidDenialFieldCard(view, sameTypeCandidates);
         return {
           type: 'PlayCard',
           cardUid: bestSpendMove.uid,
@@ -842,8 +825,7 @@ export class RationalBot extends GreedyBot {
 
     // Se GreedyBot avrebbe passato (es. Edificio in Era III Ciclo 3) o giocato Gilda dei Mercanti,
     // spende attivamente Cibo e Legno residui giocando qualsiasi carta da campo legale che li consumi.
-    const raidDenialFieldCandidates: Array<{ uid: string; rules: CardRules }> =
-      [];
+    const raidDenialFieldCandidates: Array<{ uid: string; rules: CardRules }> = [];
     for (const uid of legal.playableFieldCardUids) {
       const rules = lookupRulesByUid(hand, uid, this.catalog);
       if (rules !== undefined && rules.cost.food + rules.cost.wood > 0) {
@@ -852,10 +834,7 @@ export class RationalBot extends GreedyBot {
     }
 
     if (raidDenialFieldCandidates.length > 0) {
-      const chosen = this.pickBestRaidDenialFieldCard(
-        view,
-        raidDenialFieldCandidates,
-      );
+      const chosen = this.pickBestRaidDenialFieldCard(view, raidDenialFieldCandidates);
       return {
         type: 'PlayCard',
         cardUid: chosen.uid,
@@ -875,20 +854,16 @@ export class RationalBot extends GreedyBot {
 
     for (const candidate of candidates) {
       const { rules } = candidate;
-      const foodSpent = Math.min(resources.food, rules.cost.food);
-      const woodSpent = Math.min(resources.wood, rules.cost.wood);
-      const emptiesFoodBonus =
-        resources.food > 0 && resources.food - rules.cost.food === 0 ? 3 : 0;
-      const emptiesWoodBonus =
-        resources.wood > 0 && resources.wood - rules.cost.wood === 0 ? 3 : 0;
+      const cost = effectiveCardCost(rules, view.self, view.rulesetVersion);
+      const foodSpent = Math.min(resources.food, cost.food);
+      const woodSpent = Math.min(resources.wood, cost.wood);
+      const emptiesFoodBonus = resources.food > 0 && resources.food - cost.food === 0 ? 3 : 0;
+      const emptiesWoodBonus = resources.wood > 0 && resources.wood - cost.wood === 0 ? 3 : 0;
       const baseEfficiency =
-        rules.type === 'unit' ? calculateUnitEfficiency(rules) : 1;
+        rules.type === 'unit' ? calculateUnitEfficiency({ ...rules, cost }) : 1;
 
       const score =
-        (foodSpent + woodSpent) * 4 +
-        emptiesFoodBonus +
-        emptiesWoodBonus +
-        baseEfficiency;
+        (foodSpent + woodSpent) * 4 + emptiesFoodBonus + emptiesWoodBonus + baseEfficiency;
 
       if (score > bestScore) {
         bestScore = score;
@@ -899,9 +874,7 @@ export class RationalBot extends GreedyBot {
     return best;
   }
 
-  protected override choosePrebattle(
-    view: Readonly<PlayerView>,
-  ): ClientCommand {
+  protected override choosePrebattle(view: Readonly<PlayerView>): ClientCommand {
     const { legal, hand, resources } = view.self;
     if (!legal.canLockInstants) {
       throw new Error(
@@ -921,10 +894,7 @@ export class RationalBot extends GreedyBot {
       const rules = lookupRulesByUid(hand, uid, this.catalog);
       if (rules !== undefined) {
         currentCost = addResources(currentCost, rules.cost);
-        if (
-          rules.effect?.kind === 'walls_mod' &&
-          rules.effect.target === 'own'
-        ) {
+        if (rules.effect?.kind === 'walls_mod' && rules.effect.target === 'own') {
           extraOwnWalls += rules.effect.amount;
         }
       }

@@ -11,7 +11,7 @@ import {
   RemoteGameController,
   type RemoteControllerSnapshot,
 } from '../controllers/remote-controller.js';
-import { PRESET_DECK_OPTIONS, type PresetDeckOption } from './HomeScreen.js';
+import { PRESET_DECK_OPTIONS, DEFAULT_PLAYER_DECK_ID, presetOption, type PresetDeckOption } from '../content/presets.js';
 
 export interface OnlineLobbyScreenProps {
   readonly createController?: ((wsUrl: string) => RemoteGameController) | undefined;
@@ -43,7 +43,7 @@ export function OnlineLobbyScreen({
   onOpenReplayViewer,
   onBackHome,
 }: OnlineLobbyScreenProps): ReactElement {
-  const fallbackDeck = availableDecks[0] ?? PRESET_DECK_OPTIONS[0]!;
+  const fallbackDeck = availableDecks.find(deck => deck.id === DEFAULT_PLAYER_DECK_ID) ?? availableDecks[0] ?? presetOption(DEFAULT_PLAYER_DECK_ID);
   const [selectedDeckId, setSelectedDeckId] = useState<string>(fallbackDeck.id);
   const [joinRoomCodeInput, setJoinRoomCodeInput] = useState<string>('');
   const [replayGameIdInput, setReplayGameIdInput] = useState<string>(() =>
@@ -233,8 +233,8 @@ export function OnlineLobbyScreen({
           style={{
             padding: '16px 20px',
             borderRadius: '12px',
-            backgroundColor: 'rgba(20, 30, 39, 0.92)',
-            border: '1.5px solid var(--brass, #B58E48)',
+            backgroundColor: 'var(--panel)',
+            border: '1px solid var(--panel-border)',
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
@@ -270,7 +270,7 @@ export function OnlineLobbyScreen({
               style={{
                 margin: 0,
                 fontSize: 'clamp(1.35rem, 2.5vw, 1.85rem)',
-                color: 'var(--brass, #B58E48)',
+                color: 'var(--brass)',
               }}
             >
               Lobby Multiplayer Online
@@ -286,9 +286,9 @@ export function OnlineLobbyScreen({
               style={{
                 padding: '8px 14px',
                 borderRadius: '6px',
-                border: '1px solid var(--brass, #B58E48)',
+                border: '1px solid var(--brass)',
                 backgroundColor: 'rgba(181, 142, 72, 0.2)',
-                color: 'var(--chalk, #E9E5D6)',
+                color: 'var(--chalk)',
                 fontFamily: 'var(--font-numeric)',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -306,8 +306,8 @@ export function OnlineLobbyScreen({
                 padding: '8px 16px',
                 borderRadius: '6px',
                 border: '1px solid rgba(233, 229, 214, 0.35)',
-                backgroundColor: 'var(--surface-card, #223444)',
-                color: 'var(--chalk, #E9E5D6)',
+                backgroundColor: 'var(--surface-card)',
+                color: 'var(--chalk)',
                 fontFamily: 'var(--font-numeric)',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -327,8 +327,8 @@ export function OnlineLobbyScreen({
               padding: '12px 16px',
               borderRadius: '8px',
               backgroundColor: 'rgba(168, 64, 77, 0.22)',
-              border: '1.5px solid var(--crimson, #A8404D)',
-              color: 'var(--chalk, #E9E5D6)',
+              border: '1.5px solid var(--crimson)',
+              color: 'var(--chalk)',
               fontFamily: 'var(--font-body)',
               fontSize: '0.94rem',
             }}
@@ -346,8 +346,8 @@ export function OnlineLobbyScreen({
           style={{
             padding: '16px 20px',
             borderRadius: '10px',
-            backgroundColor: 'rgba(20, 30, 39, 0.88)',
-            border: '1px solid rgba(181, 142, 72, 0.4)',
+            backgroundColor: 'var(--panel-soft)',
+            border: '1px solid var(--panel-border)',
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
             gap: '14px',
@@ -371,9 +371,9 @@ export function OnlineLobbyScreen({
               style={{
                 padding: '8px 10px',
                 borderRadius: '6px',
-                border: '1px solid rgba(181, 142, 72, 0.45)',
-                backgroundColor: 'var(--surface-card, #223444)',
-                color: 'var(--chalk, #E9E5D6)',
+                border: '1px solid var(--panel-border)',
+                backgroundColor: 'var(--surface-card)',
+                color: 'var(--chalk)',
                 fontFamily: 'var(--font-body)',
                 fontSize: '0.92rem',
               }}
@@ -406,8 +406,8 @@ export function OnlineLobbyScreen({
                   padding: '8px 10px',
                   borderRadius: '6px',
                   border: '1px solid rgba(233, 229, 214, 0.25)',
-                  backgroundColor: 'var(--surface-card, #223444)',
-                  color: 'var(--chalk, #E9E5D6)',
+                  backgroundColor: 'var(--surface-card)',
+                  color: 'var(--chalk)',
                   fontFamily: 'var(--font-numeric)',
                   fontSize: '0.9rem',
                 }}
@@ -420,9 +420,9 @@ export function OnlineLobbyScreen({
                 style={{
                   padding: '8px 14px',
                   borderRadius: '6px',
-                  border: '1px solid var(--brass, #B58E48)',
-                  backgroundColor: 'var(--surface-card, #223444)',
-                  color: 'var(--chalk, #E9E5D6)',
+                  border: '1px solid var(--brass)',
+                  backgroundColor: 'var(--surface-card)',
+                  color: 'var(--chalk)',
                   fontFamily: 'var(--font-numeric)',
                   fontWeight: 700,
                   cursor: 'pointer',
@@ -449,8 +449,8 @@ export function OnlineLobbyScreen({
             style={{
               padding: '18px 20px',
               borderRadius: '12px',
-              backgroundColor: 'rgba(20, 30, 39, 0.88)',
-              border: '1.5px solid var(--brass, #B58E48)',
+              backgroundColor: 'var(--panel-soft)',
+              border: '1px solid var(--panel-border)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -464,7 +464,7 @@ export function OnlineLobbyScreen({
                 style={{
                   margin: 0,
                   fontSize: '1.22rem',
-                  color: 'var(--brass, #B58E48)',
+                  color: 'var(--brass)',
                 }}
               >
                 Coda Veloce (Matchmaking Rapido)
@@ -487,7 +487,7 @@ export function OnlineLobbyScreen({
                     padding: '10px 12px',
                     borderRadius: '8px',
                     backgroundColor: 'rgba(181, 142, 72, 0.18)',
-                    border: '1px solid var(--brass, #B58E48)',
+                    border: '1px solid var(--brass)',
                     fontFamily: 'var(--font-numeric)',
                     fontWeight: 700,
                   }}
@@ -506,9 +506,9 @@ export function OnlineLobbyScreen({
                 width: '100%',
                 padding: '11px 18px',
                 borderRadius: '8px',
-                border: '1.5px solid var(--brass, #B58E48)',
-                backgroundColor: 'var(--brass, #B58E48)',
-                color: 'var(--table-deep, #141E27)',
+                border: '1px solid var(--panel-border)',
+                backgroundColor: 'var(--brass)',
+                color: 'var(--table-deep)',
                 fontFamily: 'var(--font-numeric)',
                 fontSize: '1rem',
                 fontWeight: 700,
@@ -526,8 +526,8 @@ export function OnlineLobbyScreen({
             style={{
               padding: '18px 20px',
               borderRadius: '12px',
-              backgroundColor: 'rgba(20, 30, 39, 0.88)',
-              border: '1px solid rgba(181, 142, 72, 0.45)',
+              backgroundColor: 'var(--panel-soft)',
+              border: '1px solid var(--panel-border)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -541,7 +541,7 @@ export function OnlineLobbyScreen({
                 style={{
                   margin: 0,
                   fontSize: '1.22rem',
-                  color: 'var(--chalk, #E9E5D6)',
+                  color: 'var(--chalk)',
                 }}
               >
                 Stanza Privata con Codice
@@ -566,9 +566,9 @@ export function OnlineLobbyScreen({
                   width: '100%',
                   padding: '10px 16px',
                   borderRadius: '8px',
-                  border: '1.5px solid var(--brass, #B58E48)',
-                  backgroundColor: 'var(--surface-card, #223444)',
-                  color: 'var(--chalk, #E9E5D6)',
+                  border: '1px solid var(--panel-border)',
+                  backgroundColor: 'var(--surface-card)',
+                  color: 'var(--chalk)',
                   fontFamily: 'var(--font-numeric)',
                   fontSize: '0.98rem',
                   fontWeight: 700,
@@ -585,7 +585,7 @@ export function OnlineLobbyScreen({
                     padding: '10px 14px',
                     borderRadius: '8px',
                     backgroundColor: 'rgba(181, 142, 72, 0.2)',
-                    border: '1.5px solid var(--brass, #B58E48)',
+                    border: '1px solid var(--panel-border)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -599,7 +599,7 @@ export function OnlineLobbyScreen({
                     style={{
                       fontSize: '1.25rem',
                       letterSpacing: '0.12em',
-                      color: 'var(--brass, #B58E48)',
+                      color: 'var(--brass)',
                     }}
                   >
                     {snapshot.roomCode}
@@ -635,8 +635,8 @@ export function OnlineLobbyScreen({
                       padding: '8px 12px',
                       borderRadius: '6px',
                       border: '1px solid rgba(233, 229, 214, 0.3)',
-                      backgroundColor: 'var(--surface-card, #223444)',
-                      color: 'var(--chalk, #E9E5D6)',
+                      backgroundColor: 'var(--surface-card)',
+                      color: 'var(--chalk)',
                       fontFamily: 'var(--font-numeric)',
                       fontSize: '1rem',
                       letterSpacing: '0.08em',
@@ -651,9 +651,9 @@ export function OnlineLobbyScreen({
                     style={{
                       padding: '8px 16px',
                       borderRadius: '6px',
-                      border: '1.5px solid var(--brass, #B58E48)',
-                      backgroundColor: 'var(--brass, #B58E48)',
-                      color: 'var(--table-deep, #141E27)',
+                      border: '1px solid var(--panel-border)',
+                      backgroundColor: 'var(--brass)',
+                      color: 'var(--table-deep)',
                       fontFamily: 'var(--font-numeric)',
                       fontSize: '0.96rem',
                       fontWeight: 700,
@@ -674,8 +674,8 @@ export function OnlineLobbyScreen({
           style={{
             padding: '16px 20px',
             borderRadius: '10px',
-            backgroundColor: 'rgba(20, 30, 39, 0.86)',
-            border: '1px solid rgba(181, 142, 72, 0.35)',
+            backgroundColor: 'var(--panel-soft)',
+            border: '1px solid var(--panel-border)',
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'end',
@@ -690,7 +690,7 @@ export function OnlineLobbyScreen({
               style={{
                 margin: 0,
                 fontSize: '1.05rem',
-                color: 'var(--brass, #B58E48)',
+                color: 'var(--brass)',
               }}
             >
               Replay Deterministico Partita Conclusa
@@ -729,8 +729,8 @@ export function OnlineLobbyScreen({
                 padding: '8px 12px',
                 borderRadius: '6px',
                 border: '1px solid rgba(233, 229, 214, 0.28)',
-                backgroundColor: 'var(--surface-card, #223444)',
-                color: 'var(--chalk, #E9E5D6)',
+                backgroundColor: 'var(--surface-card)',
+                color: 'var(--chalk)',
                 fontFamily: 'var(--font-numeric)',
                 fontSize: '0.92rem',
                 minWidth: '210px',
@@ -744,9 +744,9 @@ export function OnlineLobbyScreen({
               style={{
                 padding: '8px 16px',
                 borderRadius: '6px',
-                border: '1px solid var(--brass, #B58E48)',
-                backgroundColor: 'var(--surface-card, #223444)',
-                color: 'var(--chalk, #E9E5D6)',
+                border: '1px solid var(--brass)',
+                backgroundColor: 'var(--surface-card)',
+                color: 'var(--chalk)',
                 fontFamily: 'var(--font-numeric)',
                 fontWeight: 700,
                 cursor: 'pointer',

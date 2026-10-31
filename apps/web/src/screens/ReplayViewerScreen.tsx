@@ -3,7 +3,7 @@
 // - Controlli Play / Pausa / Passo Avanti / Passo Indietro / Reset / Fine
 // - Selettore del punto di vista (P1, P2, Pubblico)
 
-import { CARDS_TEXT_IT } from '@epochs/content';
+import { getCatalog } from '@epochs/content';
 import { getOpponent, type GameEvent, type PlayerView } from '@epochs/engine';
 import { useEffect, useState, type ReactElement } from 'react';
 import {
@@ -21,6 +21,7 @@ import { LAST_FINISHED_GAME_STORAGE_KEY } from '../controllers/remote-controller
 import { describeEvent } from '../state/event-describer.js';
 
 export interface ReplayViewerScreenProps {
+  readonly onCatalogVersion?: ((version:'1.0'|'2.0')=>void) | undefined;
   readonly loadReplay?:
     ((id: string, perspective: ReplayPerspective) => Promise<ReplayPayload>) | undefined;
   readonly onInteraction?:
@@ -48,6 +49,7 @@ function readStoredGameId(): string {
 }
 
 export function ReplayViewerScreen({
+  onCatalogVersion,
   initialGameId,
   initialPerspective = 'P1',
   httpBaseUrl = 'http://127.0.0.1:3000',
@@ -171,6 +173,9 @@ export function ReplayViewerScreen({
     replay === null ? [] : activeStep !== null ? activeStep.events : replay.initialEvents;
 
   const selfId = currentView?.me ?? 'P1';
+  const catalogVersion=currentView?.catalogVersion??'1.0';
+  const CARDS_TEXT_IT=getCatalog(catalogVersion).textById;
+  useEffect(()=>{onCatalogVersion?.(catalogVersion);},[onCatalogVersion,catalogVersion]);
   const opponentId = getOpponent(selfId);
 
   return (
@@ -203,8 +208,8 @@ export function ReplayViewerScreen({
           style={{
             padding: '14px 18px',
             borderRadius: '12px',
-            backgroundColor: 'rgba(20, 30, 39, 0.92)',
-            border: '1.5px solid var(--brass, #B58E48)',
+            backgroundColor: 'var(--panel)',
+            border: '1px solid var(--panel-border)',
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
@@ -221,7 +226,7 @@ export function ReplayViewerScreen({
               style={{
                 margin: '4px 0 0 0',
                 fontSize: 'clamp(1.3rem, 2.4vw, 1.75rem)',
-                color: 'var(--chalk, #E9E5D6)',
+                color: 'var(--chalk)',
               }}
             >
               Visualizzatore Replay Deterministico
@@ -236,9 +241,9 @@ export function ReplayViewerScreen({
             style={{
               padding: '8px 16px',
               borderRadius: '6px',
-              border: '1px solid var(--brass, #B58E48)',
-              backgroundColor: 'var(--surface-card, #223444)',
-              color: 'var(--chalk, #E9E5D6)',
+              border: '1px solid var(--brass)',
+              backgroundColor: 'var(--surface-card)',
+              color: 'var(--chalk)',
               fontFamily: 'var(--font-numeric)',
               fontWeight: 700,
               cursor: 'pointer',
@@ -254,8 +259,8 @@ export function ReplayViewerScreen({
           style={{
             padding: '14px 18px',
             borderRadius: '10px',
-            backgroundColor: 'rgba(20, 30, 39, 0.88)',
-            border: '1px solid rgba(181, 142, 72, 0.4)',
+            backgroundColor: 'var(--panel-soft)',
+            border: '1px solid var(--panel-border)',
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'end',
@@ -290,9 +295,9 @@ export function ReplayViewerScreen({
                 style={{
                   padding: '8px 10px',
                   borderRadius: '6px',
-                  border: '1px solid rgba(181, 142, 72, 0.45)',
-                  backgroundColor: 'var(--surface-card, #223444)',
-                  color: 'var(--chalk, #E9E5D6)',
+                  border: '1px solid var(--panel-border)',
+                  backgroundColor: 'var(--surface-card)',
+                  color: 'var(--chalk)',
                   fontFamily: 'var(--font-numeric)',
                   fontSize: '0.92rem',
                   minWidth: '210px',
@@ -318,8 +323,8 @@ export function ReplayViewerScreen({
                   padding: '8px 10px',
                   borderRadius: '6px',
                   border: '1px solid rgba(233, 229, 214, 0.25)',
-                  backgroundColor: 'var(--surface-card, #223444)',
-                  color: 'var(--chalk, #E9E5D6)',
+                  backgroundColor: 'var(--surface-card)',
+                  color: 'var(--chalk)',
                   fontFamily: 'var(--font-numeric)',
                   fontSize: '0.88rem',
                   minWidth: '180px',
@@ -336,9 +341,9 @@ export function ReplayViewerScreen({
               style={{
                 padding: '8px 16px',
                 borderRadius: '6px',
-                border: '1.5px solid var(--brass, #B58E48)',
-                backgroundColor: 'var(--brass, #B58E48)',
-                color: 'var(--table-deep, #141E27)',
+                border: '1px solid var(--panel-border)',
+                backgroundColor: 'var(--brass)',
+                color: 'var(--table-deep)',
                 fontFamily: 'var(--font-numeric)',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -379,12 +384,10 @@ export function ReplayViewerScreen({
                     padding: '8px 12px',
                     borderRadius: '6px',
                     border: active
-                      ? '1.5px solid var(--brass, #B58E48)'
+                      ? '1.5px solid var(--brass)'
                       : '1px solid rgba(233, 229, 214, 0.25)',
-                    backgroundColor: active
-                      ? 'rgba(181, 142, 72, 0.26)'
-                      : 'var(--surface-card, #223444)',
-                    color: 'var(--chalk, #E9E5D6)',
+                    backgroundColor: active ? 'rgba(181, 142, 72, 0.26)' : 'var(--surface-card)',
+                    color: 'var(--chalk)',
                     fontFamily: 'var(--font-numeric)',
                     fontSize: '0.88rem',
                     fontWeight: 700,
@@ -406,8 +409,8 @@ export function ReplayViewerScreen({
               padding: '12px 16px',
               borderRadius: '8px',
               backgroundColor: 'rgba(168, 64, 77, 0.22)',
-              border: '1.5px solid var(--crimson, #A8404D)',
-              color: 'var(--chalk, #E9E5D6)',
+              border: '1.5px solid var(--crimson)',
+              color: 'var(--chalk)',
             }}
           >
             {errorMessage}
@@ -423,8 +426,8 @@ export function ReplayViewerScreen({
               style={{
                 padding: '12px 16px',
                 borderRadius: '10px',
-                backgroundColor: 'rgba(20, 30, 39, 0.92)',
-                border: '1.5px solid var(--brass, #B58E48)',
+                backgroundColor: 'var(--panel)',
+                border: '1px solid var(--panel-border)',
                 display: 'flex',
                 flexWrap: 'wrap',
                 alignItems: 'center',
@@ -447,8 +450,8 @@ export function ReplayViewerScreen({
                     padding: '7px 12px',
                     borderRadius: '6px',
                     border: '1px solid rgba(233, 229, 214, 0.3)',
-                    backgroundColor: 'var(--surface-card, #223444)',
-                    color: 'var(--chalk, #E9E5D6)',
+                    backgroundColor: 'var(--surface-card)',
+                    color: 'var(--chalk)',
                     fontFamily: 'var(--font-numeric)',
                     fontWeight: 700,
                     cursor: stepIndex === 0 ? 'not-allowed' : 'pointer',
@@ -471,8 +474,8 @@ export function ReplayViewerScreen({
                     padding: '7px 12px',
                     borderRadius: '6px',
                     border: '1px solid rgba(233, 229, 214, 0.3)',
-                    backgroundColor: 'var(--surface-card, #223444)',
-                    color: 'var(--chalk, #E9E5D6)',
+                    backgroundColor: 'var(--surface-card)',
+                    color: 'var(--chalk)',
                     fontFamily: 'var(--font-numeric)',
                     fontWeight: 700,
                     cursor: stepIndex === 0 ? 'not-allowed' : 'pointer',
@@ -492,11 +495,9 @@ export function ReplayViewerScreen({
                   style={{
                     padding: '7px 16px',
                     borderRadius: '6px',
-                    border: '1.5px solid var(--brass, #B58E48)',
-                    backgroundColor: isPlaying
-                      ? 'rgba(181, 142, 72, 0.28)'
-                      : 'var(--brass, #B58E48)',
-                    color: isPlaying ? 'var(--chalk, #E9E5D6)' : 'var(--table-deep, #141E27)',
+                    border: '1px solid var(--panel-border)',
+                    backgroundColor: isPlaying ? 'rgba(181, 142, 72, 0.28)' : 'var(--brass)',
+                    color: isPlaying ? 'var(--chalk)' : 'var(--table-deep)',
                     fontFamily: 'var(--font-numeric)',
                     fontWeight: 700,
                     cursor: 'pointer',
@@ -518,9 +519,9 @@ export function ReplayViewerScreen({
                   style={{
                     padding: '7px 14px',
                     borderRadius: '6px',
-                    border: '1px solid var(--brass, #B58E48)',
-                    backgroundColor: 'var(--surface-card, #223444)',
-                    color: 'var(--chalk, #E9E5D6)',
+                    border: '1px solid var(--brass)',
+                    backgroundColor: 'var(--surface-card)',
+                    color: 'var(--chalk)',
                     fontFamily: 'var(--font-numeric)',
                     fontWeight: 700,
                     cursor: stepIndex >= totalSteps ? 'not-allowed' : 'pointer',
@@ -543,8 +544,8 @@ export function ReplayViewerScreen({
                     padding: '7px 12px',
                     borderRadius: '6px',
                     border: '1px solid rgba(233, 229, 214, 0.3)',
-                    backgroundColor: 'var(--surface-card, #223444)',
-                    color: 'var(--chalk, #E9E5D6)',
+                    backgroundColor: 'var(--surface-card)',
+                    color: 'var(--chalk)',
                     fontFamily: 'var(--font-numeric)',
                     fontWeight: 700,
                     cursor: stepIndex >= totalSteps ? 'not-allowed' : 'pointer',
@@ -601,8 +602,8 @@ export function ReplayViewerScreen({
                 style={{
                   padding: '16px 18px',
                   borderRadius: '10px',
-                  backgroundColor: 'rgba(20, 30, 39, 0.88)',
-                  border: '1px solid rgba(181, 142, 72, 0.4)',
+                  backgroundColor: 'var(--panel-soft)',
+                  border: '1px solid var(--panel-border)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '12px',
@@ -636,8 +637,8 @@ export function ReplayViewerScreen({
                   style={{
                     padding: '12px',
                     borderRadius: '8px',
-                    backgroundColor: 'var(--surface-card, #223444)',
-                    border: '1px solid rgba(181, 142, 72, 0.35)',
+                    backgroundColor: 'var(--surface-card)',
+                    border: '1px solid var(--panel-border)',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '6px',
@@ -705,9 +706,9 @@ export function ReplayViewerScreen({
                           style={{
                             padding: '4px 8px',
                             borderRadius: '4px',
-                            border: '1px solid rgba(181, 142, 72, 0.5)',
-                            backgroundColor: 'rgba(20, 30, 39, 0.85)',
-                            color: 'var(--chalk, #E9E5D6)',
+                            border: '1px solid var(--panel-border)',
+                            backgroundColor: 'var(--panel)',
+                            color: 'var(--chalk)',
                             fontSize: '0.8rem',
                             cursor: 'pointer',
                           }}
@@ -725,7 +726,7 @@ export function ReplayViewerScreen({
                   style={{
                     padding: '12px',
                     borderRadius: '8px',
-                    backgroundColor: 'var(--surface-card, #223444)',
+                    backgroundColor: 'var(--surface-card)',
                     border: '1px solid rgba(233, 229, 214, 0.2)',
                     display: 'flex',
                     flexDirection: 'column',
@@ -768,8 +769,8 @@ export function ReplayViewerScreen({
                 style={{
                   padding: '16px 18px',
                   borderRadius: '10px',
-                  backgroundColor: 'rgba(20, 30, 39, 0.88)',
-                  border: '1px solid rgba(181, 142, 72, 0.4)',
+                  backgroundColor: 'var(--panel-soft)',
+                  border: '1px solid var(--panel-border)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '10px',
@@ -818,21 +819,21 @@ export function ReplayViewerScreen({
                         style={{
                           padding: '6px 10px',
                           borderRadius: '6px',
-                          backgroundColor: 'var(--surface-card, #223444)',
-                          borderLeft: '3px solid var(--brass, #B58E48)',
+                          backgroundColor: 'var(--surface-card)',
+                          borderLeft: '3px solid var(--brass)',
                           fontSize: '0.88rem',
                         }}
                       >
                         <strong
                           className="font-numeric"
                           style={{
-                            color: 'var(--brass, #B58E48)',
+                            color: 'var(--brass)',
                             marginRight: '6px',
                           }}
                         >
                           #{ev.n}
                         </strong>
-                        <span>{describeEvent(ev, 'it')}</span>
+                        <span>{describeEvent(ev, 'it',catalogVersion)}</span>
                       </div>
                     ))
                   )}

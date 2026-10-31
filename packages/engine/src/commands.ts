@@ -1,6 +1,16 @@
 // GDD §2.2, §2.3, §3.4, §4.1, §5.1, TECH-SPEC §4.5, §4.6, §6.2
 
-import type { PlayerId } from './types.js';
+import type { PlayerId, Resource } from './types.js';
+
+export interface ActivateMarketClientCommand {
+  type: 'ActivateMarket';
+  structureUid: string;
+  give: Resource;
+  receive: Resource;
+}
+export interface ActivateMarketCommand extends ActivateMarketClientCommand {
+  player: PlayerId;
+}
 
 export interface SubmitMulliganClientCommand {
   type: 'SubmitMulligan';
@@ -42,6 +52,7 @@ export interface ConcedeClientCommand {
 
 // TECH-SPEC §6.2 — comando inviato dal client/bot senza il campo player
 export type ClientCommand =
+  | ActivateMarketClientCommand
   | SubmitMulliganClientCommand
   | SubmitDiscardClientCommand
   | PlayCardClientCommand
@@ -85,6 +96,7 @@ export interface ConcedeCommand extends ConcedeClientCommand {
 
 // TECH-SPEC §4.5 — unione discriminata di tutti i comandi del motore
 export type Command =
+  | ActivateMarketCommand
   | SubmitMulliganCommand
   | SubmitDiscardCommand
   | PlayCardCommand
@@ -118,6 +130,4 @@ export interface RuleError {
 }
 
 // TECH-SPEC §4.1, §4.6 — errori di dominio restituiti come valori
-export type Result<T, E = RuleError> =
-  | { ok: true; value: T }
-  | { ok: false; error: E };
+export type Result<T, E = RuleError> = { ok: true; value: T } | { ok: false; error: E };

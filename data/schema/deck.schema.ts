@@ -1,3 +1,4 @@
+import type { CivilizationId, ContentVersion } from '../versions.js';
 import { z } from 'zod';
 
 const CardIdSchema = z.string().min(1);
@@ -11,6 +12,10 @@ export interface DeckSubdecks {
 }
 
 export interface DeckPayload {
+  schemaVersion?: 1 | 2;
+  rulesetVersion?: ContentVersion;
+  catalogVersion?: ContentVersion;
+  civilizationId?: CivilizationId;
   id?: string;
   name: string;
   description?: string;
@@ -19,6 +24,10 @@ export interface DeckPayload {
 
 const BaseDeckPayloadSchema = z
   .object({
+    schemaVersion: z.union([z.literal(1), z.literal(2)]).optional(),
+    rulesetVersion: z.enum(['1.0', '2.0']).optional(),
+    catalogVersion: z.enum(['1.0', '2.0']).optional(),
+    civilizationId: z.enum(['feudal', 'norse', 'byzantine']).optional(),
     id: z.string().min(1).optional(),
     name: z.string().min(1).max(60),
     description: z.string().max(240).optional(),
@@ -32,8 +41,25 @@ const BaseDeckPayloadSchema = z
   })
   .strict();
 
-export const DeckPayloadSchema: z.ZodType<DeckPayload> =
-  BaseDeckPayloadSchema.superRefine((deck, ctx) => {
+export const DeckPayloadSchema: z.ZodType<DeckPayload> = BaseDeckPayloadSchema.superRefine(
+  (deck, ctx) => {
+    const isV2 =
+      deck.schemaVersion === 2 ||
+      deck.rulesetVersion === '2.0' ||
+      deck.catalogVersion === '2.0' ||
+      deck.civilizationId !== undefined;
+    if (
+      isV2 &&
+      (deck.schemaVersion !== 2 ||
+        deck.rulesetVersion !== '2.0' ||
+        deck.catalogVersion !== '2.0' ||
+        deck.civilizationId === undefined)
+    )
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['civilizationId'],
+        message: 'V2 decks require schema 2, rules/catalog 2.0 and an explicit civilization.',
+      });
     const counts: Record<string, number> = {};
 
     const eras: Array<['1' | '2' | '3', 1 | 2 | 3]> = [
@@ -42,21 +68,12 @@ export const DeckPayloadSchema: z.ZodType<DeckPayload> =
       ['3', 3],
     ];
 
-    for (const [eraKey, eraNo] of eras) {
+    for (const [eraKey] of eras) {
       const cards = deck.subdecks[eraKey];
       for (let i = 0; i < cards.length; i++) {
         const cardId = cards[i];
         if (cardId === undefined) continue;
         counts[cardId] = (counts[cardId] ?? 0) + 1;
-
-        const match = /^[euic]([123])_/.exec(cardId);
-        if (match !== null && Number(match[1]) !== eraNo) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['subdecks', eraKey, i],
-            message: `Card "${cardId}" does not belong to Era ${eraNo} subdeck.`,
-          });
-        }
       }
     }
 
@@ -69,4 +86,5 @@ export const DeckPayloadSchema: z.ZodType<DeckPayload> =
         });
       }
     }
-  }) as unknown as z.ZodType<DeckPayload>;
+  },
+) as unknown as z.ZodType<DeckPayload>;

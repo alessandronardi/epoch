@@ -348,7 +348,7 @@ function createGameStoreInitializer(): StateCreator<GameStoreState> {
         skipped['4'] = 'Nessun assedio eseguito';
       const units = applyPlaybackUnits(state.playbackUnits, event);
       const era = resolveEventEra(event, state.presentationView?.era ?? state.view?.era ?? 1);
-      const text = describeEvent(event);
+      const text = describeEvent(event, 'it', state.view?.catalogVersion ?? '1.0');
       const clearStage =
         event.type === 'EraEnded' ||
         event.type === 'EraStarted' ||
@@ -366,7 +366,7 @@ function createGameStoreInitializer(): StateCreator<GameStoreState> {
             text,
             stageLabel: stage,
             event,
-            details: describeBattleDetails(event, state.playbackUnits),
+            details: describeBattleDetails(event, state.playbackUnits, state.view?.catalogVersion),
           },
         ],
         latestAnnouncement: text,

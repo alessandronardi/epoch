@@ -1,0 +1,404 @@
+{
+  "greedy-0-1": {
+    "games": 1000,
+    "score": 0.5135,
+    "ci95": [
+      0.4955200682329896,
+      0.5314799317670102
+    ],
+    "drawRate": 0.663,
+    "asP1": 0.5119999999999999,
+    "asP2": 0.515,
+    "seatGap": 0.0030000000000001137,
+    "desiredScore": true,
+    "hardScore": true,
+    "desiredDrawRate": false,
+    "perSeed": [
+      {
+        "seed": "expansion-calibration-1",
+        "games": 200,
+        "score": 0.5575,
+        "ci95": [
+          0.5187099641090381,
+          0.5962900358909619
+        ],
+        "drawRate": 0.675
+      },
+      {
+        "seed": "expansion-calibration-2",
+        "games": 200,
+        "score": 0.4975,
+        "ci95": [
+          0.4591353131645793,
+          0.5358646868354207
+        ],
+        "drawRate": 0.695
+      },
+      {
+        "seed": "expansion-calibration-3",
+        "games": 200,
+        "score": 0.49,
+        "ci95": [
+          0.4483409483675568,
+          0.5316590516324432
+        ],
+        "drawRate": 0.64
+      },
+      {
+        "seed": "expansion-calibration-4",
+        "games": 200,
+        "score": 0.515,
+        "ci95": [
+          0.47454581721845546,
+          0.5554541827815446
+        ],
+        "drawRate": 0.66
+      },
+      {
+        "seed": "expansion-calibration-5",
+        "games": 200,
+        "score": 0.5075,
+        "ci95": [
+          0.46612137626125577,
+          0.5488786237387442
+        ],
+        "drawRate": 0.645
+      }
+    ]
+  },
+  "greedy-0-2": {
+    "games": 1000,
+    "score": 0.422,
+    "ci95": [
+      0.40626125119922757,
+      0.4377387488007724
+    ],
+    "drawRate": 0.718,
+    "asP1": 0.422,
+    "asP2": 0.42200000000000004,
+    "seatGap": 5.551115123125783e-17,
+    "desiredScore": false,
+    "hardScore": true,
+    "desiredDrawRate": false,
+    "perSeed": [
+      {
+        "seed": "expansion-calibration-1",
+        "games": 200,
+        "score": 0.4575,
+        "ci95": [
+          0.42434473028992625,
+          0.4906552697100738
+        ],
+        "drawRate": 0.765
+      },
+      {
+        "seed": "expansion-calibration-2",
+        "games": 200,
+        "score": 0.42,
+        "ci95": [
+          0.38636601383829705,
+          0.4536339861617029
+        ],
+        "drawRate": 0.74
+      },
+      {
+        "seed": "expansion-calibration-3",
+        "games": 200,
+        "score": 0.405,
+        "ci95": [
+          0.36864237100786623,
+          0.4413576289921338
+        ],
+        "drawRate": 0.69
+      },
+      {
+        "seed": "expansion-calibration-4",
+        "games": 200,
+        "score": 0.43,
+        "ci95": [
+          0.39454969080373836,
+          0.4654503091962616
+        ],
+        "drawRate": 0.72
+      },
+      {
+        "seed": "expansion-calibration-5",
+        "games": 200,
+        "score": 0.3975,
+        "ci95": [
+          0.36054496892697774,
+          0.4344550310730223
+        ],
+        "drawRate": 0.675
+      }
+    ]
+  },
+  "greedy-1-2": {
+    "games": 1000,
+    "score": 0.393,
+    "ci95": [
+      0.37496846490567554,
+      0.4110315350943245
+    ],
+    "drawRate": 0.616,
+    "asP1": 0.40199999999999997,
+    "asP2": 0.384,
+    "seatGap": 0.01799999999999996,
+    "desiredScore": false,
+    "hardScore": false,
+    "desiredDrawRate": false,
+    "perSeed": [
+      {
+        "seed": "expansion-calibration-1",
+        "games": 200,
+        "score": 0.39,
+        "ci95": [
+          0.3482252606923621,
+          0.43177473930763793
+        ],
+        "drawRate": 0.59
+      },
+      {
+        "seed": "expansion-calibration-2",
+        "games": 200,
+        "score": 0.405,
+        "ci95": [
+          0.3613993937619945,
+          0.4486006062380056
+        ],
+        "drawRate": 0.57
+      },
+      {
+        "seed": "expansion-calibration-3",
+        "games": 200,
+        "score": 0.37,
+        "ci95": [
+          0.33055453736342966,
+          0.40944546263657033
+        ],
+        "drawRate": 0.61
+      },
+      {
+        "seed": "expansion-calibration-4",
+        "games": 200,
+        "score": 0.4275,
+        "ci95": [
+          0.3885733462540215,
+          0.46642665374597847
+        ],
+        "drawRate": 0.665
+      },
+      {
+        "seed": "expansion-calibration-5",
+        "games": 200,
+        "score": 0.3725,
+        "ci95": [
+          0.33509067982198953,
+          0.40990932017801046
+        ],
+        "drawRate": 0.645
+      }
+    ]
+  },
+  "rational-0-1": {
+    "games": 1000,
+    "score": 0.501,
+    "ci95": [
+      0.4837367970359909,
+      0.5182632029640092
+    ],
+    "drawRate": 0.69,
+    "asP1": 0.49000000000000005,
+    "asP2": 0.512,
+    "seatGap": 0.021999999999999964,
+    "desiredScore": true,
+    "hardScore": true,
+    "desiredDrawRate": false,
+    "perSeed": [
+      {
+        "seed": "expansion-calibration-1",
+        "games": 200,
+        "score": 0.535,
+        "ci95": [
+          0.49856281373769973,
+          0.5714371862623003
+        ],
+        "drawRate": 0.72
+      },
+      {
+        "seed": "expansion-calibration-2",
+        "games": 200,
+        "score": 0.49,
+        "ci95": [
+          0.4519748932451388,
+          0.5280251067548611
+        ],
+        "drawRate": 0.7
+      },
+      {
+        "seed": "expansion-calibration-3",
+        "games": 200,
+        "score": 0.485,
+        "ci95": [
+          0.445756933205249,
+          0.524243066794751
+        ],
+        "drawRate": 0.68
+      },
+      {
+        "seed": "expansion-calibration-4",
+        "games": 200,
+        "score": 0.5125,
+        "ci95": [
+          0.4723286490495287,
+          0.5526713509504713
+        ],
+        "drawRate": 0.665
+      },
+      {
+        "seed": "expansion-calibration-5",
+        "games": 200,
+        "score": 0.4825,
+        "ci95": [
+          0.4435857462396021,
+          0.5214142537603979
+        ],
+        "drawRate": 0.685
+      }
+    ]
+  },
+  "rational-0-2": {
+    "games": 1000,
+    "score": 0.4335,
+    "ci95": [
+      0.41845942476820447,
+      0.4485405752317955
+    ],
+    "drawRate": 0.747,
+    "asP1": 0.43599999999999994,
+    "asP2": 0.43100000000000005,
+    "seatGap": 0.004999999999999893,
+    "desiredScore": false,
+    "hardScore": true,
+    "desiredDrawRate": false,
+    "perSeed": [
+      {
+        "seed": "expansion-calibration-1",
+        "games": 200,
+        "score": 0.4675,
+        "ci95": [
+          0.43412710229081786,
+          0.5008728977091822
+        ],
+        "drawRate": 0.765
+      },
+      {
+        "seed": "expansion-calibration-2",
+        "games": 200,
+        "score": 0.43,
+        "ci95": [
+          0.3973859049492417,
+          0.4626140950507583
+        ],
+        "drawRate": 0.76
+      },
+      {
+        "seed": "expansion-calibration-3",
+        "games": 200,
+        "score": 0.4125,
+        "ci95": [
+          0.3774622063348072,
+          0.44753779366519275
+        ],
+        "drawRate": 0.715
+      },
+      {
+        "seed": "expansion-calibration-4",
+        "games": 200,
+        "score": 0.4425,
+        "ci95": [
+          0.40978432905123086,
+          0.47521567094876915
+        ],
+        "drawRate": 0.765
+      },
+      {
+        "seed": "expansion-calibration-5",
+        "games": 200,
+        "score": 0.415,
+        "ci95": [
+          0.38088871007272646,
+          0.4491112899272735
+        ],
+        "drawRate": 0.73
+      }
+    ]
+  },
+  "rational-1-2": {
+    "games": 1000,
+    "score": 0.415,
+    "ci95": [
+      0.39743033485996015,
+      0.4325696651400398
+    ],
+    "drawRate": 0.65,
+    "asP1": 0.43,
+    "asP2": 0.4,
+    "seatGap": 0.02999999999999997,
+    "desiredScore": false,
+    "hardScore": true,
+    "desiredDrawRate": false,
+    "perSeed": [
+      {
+        "seed": "expansion-calibration-1",
+        "games": 200,
+        "score": 0.42,
+        "ci95": [
+          0.3810470093909732,
+          0.4589529906090268
+        ],
+        "drawRate": 0.66
+      },
+      {
+        "seed": "expansion-calibration-2",
+        "games": 200,
+        "score": 0.41,
+        "ci95": [
+          0.36904193589687884,
+          0.4509580641031211
+        ],
+        "drawRate": 0.62
+      },
+      {
+        "seed": "expansion-calibration-3",
+        "games": 200,
+        "score": 0.4,
+        "ci95": [
+          0.36070163096202057,
+          0.4392983690379795
+        ],
+        "drawRate": 0.64
+      },
+      {
+        "seed": "expansion-calibration-4",
+        "games": 200,
+        "score": 0.445,
+        "ci95": [
+          0.4052194992338454,
+          0.4847805007661546
+        ],
+        "drawRate": 0.66
+      },
+      {
+        "seed": "expansion-calibration-5",
+        "games": 200,
+        "score": 0.4,
+        "ci95": [
+          0.36258906724703016,
+          0.4374109327529699
+        ],
+        "drawRate": 0.67
+      }
+    ]
+  }
+}

@@ -18,6 +18,7 @@ import { useState, type ReactElement, type ReactNode } from 'react';
 import type { GameController } from '../../controllers/types.js';
 import { useGameStore } from '../../state/game-store.js';
 import { Card } from '../card/Card.js';
+import { RESOURCE_LABELS_IT } from '../icons/DomainIcons.js';
 import { buildUnplayableBannerMessage, type DraggedHandCardData } from './PlayerHand.js';
 
 export const PLAY_FIELD_DROPZONE_ID = 'epochs-play-field-dropzone';
@@ -112,7 +113,7 @@ export function triggerPlayHandCardByUid(
     return false;
   }
 
-  const catalogCard = getCard(instance.cardId);
+  const catalogCard = getCard(instance.cardId, view.catalogVersion);
   const playability = view.self.legal.handPlayability[instance.uid];
 
   if (!playability?.playable) {
@@ -328,6 +329,23 @@ export function ActionControls({
         minWidth: '0',
       }}
     >
+      {(view.self.legal.marketCommands ?? []).length > 0 && (
+        <div aria-label="Scambi del Mercato">
+          {view.self.legal.marketCommands!.map((cmd) => (
+            <button
+              type="button"
+              className="touch-target"
+              disabled={isPlaying || !controller}
+              key={`${cmd.structureUid}-${cmd.give}-${cmd.receive}`}
+              onClick={() => {
+                if (!useGameStore.getState().isPlaying) controller?.dispatch(cmd);
+              }}
+            >
+              Mercato: 2 {RESOURCE_LABELS_IT[cmd.give]} → 1 {RESOURCE_LABELS_IT[cmd.receive]}
+            </button>
+          ))}
+        </div>
+      )}
       <button
         type="button"
         className="touch-target"

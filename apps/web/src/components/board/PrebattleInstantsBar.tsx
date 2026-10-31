@@ -32,6 +32,7 @@ export interface PrebattleInstantsPreview {
   readonly projectedEnemyWalls: number;
   readonly frontAtkBonus: number;
   readonly archersAtkBonus: number;
+  readonly infantryAtkBonus: number;
   readonly affectedFrontUnitsCount: number;
   readonly affectedArcherUnitsCount: number;
 }
@@ -66,13 +67,14 @@ export function calculatePrebattleInstantsPreview(
   let enemyWallsDelta = 0;
   let frontAtkBonus = 0;
   let archersAtkBonus = 0;
+  let infantryAtkBonus = 0;
 
   for (const uid of selectedInstantUids) {
     const instance = handByUid.get(uid);
     if (!instance) {
       continue;
     }
-    const card = getCard(instance.cardId);
+    const card = getCard(instance.cardId, view.catalogVersion);
     if (card.rules.type !== 'instant') {
       continue;
     }
@@ -92,6 +94,8 @@ export function calculatePrebattleInstantsPreview(
         frontAtkBonus += effect.amount;
       } else if (effect.target === 'own_archers') {
         archersAtkBonus += effect.amount;
+      } else if (effect.target === 'own_infantry') {
+        infantryAtkBonus += effect.amount;
       }
     }
   }
@@ -108,7 +112,7 @@ export function calculatePrebattleInstantsPreview(
 
   const affectedFrontUnitsCount = view.self.units.filter((u) => u.line === 'front').length;
   const affectedArcherUnitsCount = view.self.units.filter(
-    (u) => getCard(u.cardId).rules.category === 'archer',
+    (u) => getCard(u.cardId, view.catalogVersion).rules.category === 'archer',
   ).length;
 
   return {
@@ -122,6 +126,7 @@ export function calculatePrebattleInstantsPreview(
     projectedEnemyWalls,
     frontAtkBonus,
     archersAtkBonus,
+    infantryAtkBonus,
     affectedFrontUnitsCount,
     affectedArcherUnitsCount,
   };
@@ -159,7 +164,7 @@ export function PrebattleInstantsBar({
   const instantHandEntries: SelectedInstantItem[] = view.self.hand
     .map((instance) => ({
       instance,
-      card: getCard(instance.cardId),
+      card: getCard(instance.cardId, view.catalogVersion),
     }))
     .filter((entry) => entry.card.rules.type === 'instant');
 
@@ -435,6 +440,8 @@ export function PrebattleInstantsBar({
             <StatIcon stat="atk" size={13} />
             <span>
               Fronte: +{preview.frontAtkBonus} ATK ({preview.affectedFrontUnitsCount} unità)
+              {preview.infantryAtkBonus > 0 &&
+                ` · Fanteria: +${preview.infantryAtkBonus} ATK (esclusi Lancieri)`}
             </span>
           </span>
 
