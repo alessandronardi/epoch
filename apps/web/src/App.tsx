@@ -229,6 +229,11 @@ export function App(): ReactElement {
       <>
         <style>{A11Y_CONTRAST_OVERRIDES_CSS}</style>
         <HomeScreen
+          offlineDemo={
+            (import.meta as unknown as { env?: Record<string, string> }).env?.['VITE_OFFLINE_DEMO'] === 'true' ||
+            ((import.meta as unknown as { env?: Record<string, string> }).env?.['MODE'] === 'production' &&
+              (import.meta as unknown as { env?: Record<string, string> }).env?.['VITE_OFFLINE_DEMO'] !== 'false')
+          }
           availableDecks={availableDecks}
           onStartBotMatch={startBotMatch}
           onStartHotSeatMatch={startHotSeatMatch}

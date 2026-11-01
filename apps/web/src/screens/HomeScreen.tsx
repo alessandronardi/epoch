@@ -23,6 +23,7 @@ export interface StartHotSeatMatchRequest {
 }
 
 export interface HomeScreenProps {
+  readonly offlineDemo?: boolean;
   readonly availableDecks?: readonly PresetDeckOption[] | undefined;
   readonly defaultSeed?: string | undefined;
   readonly onStartBotMatch: (request: StartBotMatchRequest) => void;
@@ -31,6 +32,7 @@ export interface HomeScreenProps {
 }
 
 export function HomeScreen({
+  offlineDemo = false,
   availableDecks = PRESET_DECK_OPTIONS,
   defaultSeed = 'epochs-cartographer-seed-1',
   onStartBotMatch,
@@ -119,9 +121,10 @@ export function HomeScreen({
           <HomeAction
             art="online"
             label="Multiplayer Online"
-            description="Entra in coda, crea una stanza privata o guarda un replay."
+            description={offlineDemo ? 'Il multiplayer online sarà disponibile prossimamente.' : 'Entra in coda, crea una stanza privata o guarda un replay.'}
             testId="nav-online-lobby-btn"
             onClick={() => onNavigate('online')}
+            unavailable={offlineDemo}
           />
           <HomeAction
             art="tutorial"
@@ -606,6 +609,7 @@ function HomeAction({
           height={384}
           draggable={false}
         />
+        {unavailable && <span className="home-action__coming-soon" aria-hidden="true">Coming soon</span>}
       </button>
       <span
         role="tooltip"

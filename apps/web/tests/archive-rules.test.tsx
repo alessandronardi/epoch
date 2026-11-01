@@ -122,6 +122,24 @@ describe('<CardArchiveScreen> and <QuickRulesScreen>', () => {
     expect(onNavigate).toHaveBeenCalledWith('rules');
   });
 
+  it('marks online multiplayer as coming soon and prevents navigation in the offline demo', () => {
+    const onNavigate = vi.fn();
+    render(
+      <HomeScreen
+        offlineDemo
+        onNavigate={onNavigate}
+        onStartBotMatch={vi.fn()}
+        onStartHotSeatMatch={vi.fn()}
+      />,
+    );
+    const button = screen.getByTestId('nav-online-lobby-btn');
+    expect(button.getAttribute('aria-disabled')).toBe('true');
+    expect(button.textContent).toContain('Coming soon');
+    expect(screen.getByRole('tooltip', { name: /Multiplayer Online/ }).textContent).toContain('prossimamente');
+    fireEvent.click(button);
+    expect(onNavigate).not.toHaveBeenCalled();
+  });
+
   it('renders <QuickRulesScreen> with all 6 normative sections and all 6 keyword tooltips', () => {
     const onBackHome = vi.fn();
     render(<QuickRulesScreen onBackHome={onBackHome} />);

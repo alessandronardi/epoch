@@ -313,6 +313,22 @@ textarea::placeholder {
   filter: saturate(0.35) brightness(0.7);
 }
 
+.home-action__coming-soon {
+  position: absolute;
+  z-index: 1;
+  bottom: 10%;
+  width: 100%;
+  padding: 4px 2px;
+  background: #18232cee;
+  border-block: 1px solid #d4ab60;
+  color: #fff1d1;
+  font-size: clamp(0.55rem, 1.4vw, 0.72rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .home-action__button:hover,
 .home-action__button:focus-visible {
   transform: translateY(-4px);

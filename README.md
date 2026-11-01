@@ -53,6 +53,12 @@ Il server avviato senza `DATABASE_PATH` usa un database in memoria.
 
 ## Configurazione del server
 
+La build di produzione è una beta offline: la voce Multiplayer Online mostra
+«Coming soon» e non apre la lobby. Per riabilitare il multiplayer in una build
+di produzione, impostare `VITE_OFFLINE_DEMO=false`; in sviluppo è disponibile
+per impostazione predefinita e `VITE_OFFLINE_DEMO=true` attiva la beta offline.
+Il tutorial online resta una dimostrazione locale e non richiede il server.
+
 [.env.example](.env.example) documenta tutte le variabili lette dal backend:
 
 - `PORT`: porta HTTP/WebSocket, default `3000`.
