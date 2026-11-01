@@ -290,7 +290,31 @@ export function CardArchiveScreen({
           }}
         >
           {/* Riga 1: Ricerca testuale + Pulsanti Era + Pulsante Reset */}
-          <label>Civiltà<select value={civilizationFilter} onChange={e=>setCivilizationFilter(e.target.value)}><option value="all">Tutte</option>{Object.entries(CIVILIZATIONS).map(([id,c])=><option key={id} value={id}>{c.name} e comuni</option>)}</select></label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label htmlFor="archive-civilization-select" className="font-numeric" style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--chalk-muted)' }}>
+              Civiltà
+            </label>
+            <select
+              id="archive-civilization-select"
+              className="touch-target"
+              value={civilizationFilter}
+              onChange={(event) => setCivilizationFilter(event.target.value)}
+              style={{
+                padding: '8px 10px',
+                borderRadius: '6px',
+                border: '1px solid var(--panel-border)',
+                backgroundColor: 'var(--surface-card)',
+                color: 'var(--chalk)',
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.92rem',
+              }}
+            >
+              <option value="all">Tutte</option>
+              {Object.entries(CIVILIZATIONS).map(([id, civilization]) => (
+                <option key={id} value={id}>{civilization.name} e comuni</option>
+              ))}
+            </select>
+          </div>
           <div
             style={{
               display: 'flex',
